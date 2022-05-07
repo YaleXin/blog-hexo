@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico">
+  <link rel="mask-icon" href="/images/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yalexin.gitee.io","root":"/","scheme":"Gemini","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":true},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="背景那是一个闷热的下午，正值期末复习之际，突然手机响了：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="记一次C语言程序设计">
+<meta property="og:url" content="https://yalexin.gitee.io/2020/07/02/%E8%AE%B0%E4%B8%80%E6%AC%A1C%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/index.html">
+<meta property="og:site_name" content="黄阿信">
+<meta property="og:description" content="背景那是一个闷热的下午，正值期末复习之际，突然手机响了：">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://q.yalexin.top/%E8%81%8A%E5%A4%A9%E6%88%AA%E5%9B%BE.png">
+<meta property="og:image" content="https://q.yalexin.top/%E9%A2%98%E7%9B%AE.jpg">
+<meta property="article:published_time" content="2020-07-02T11:32:46.000Z">
+<meta property="article:modified_time" content="2022-05-07T07:30:55.660Z">
+<meta property="article:author" content="YaleXin">
+<meta property="article:tag" content="课程设计">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://q.yalexin.top/%E8%81%8A%E5%A4%A9%E6%88%AA%E5%9B%BE.png">
+
+<link rel="canonical" href="https://yalexin.gitee.io/2020/07/02/%E8%AE%B0%E4%B8%80%E6%AC%A1C%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>记一次C语言程序设计 | 黄阿信</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">黄阿信</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">要么改变世界，要么适应世界。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">90</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">12</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">90</span></a>
+
+  </li>
+        <li class="menu-item menu-item-guestbook">
+
+    <a href="/guestbook/" rel="section"><i class="fa fa-fw fa-book"></i>留言板</a>
+
+  </li>
+        <li class="menu-item menu-item-links">
+
+    <a href="/links/" rel="section"><i class="fa fa-fw fa-link"></i>友链</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yalexin.gitee.io/2020/07/02/%E8%AE%B0%E4%B8%80%E6%AC%A1C%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/cat_mouse.jpg">
+      <meta itemprop="name" content="YaleXin">
+      <meta itemprop="description" content="学渣一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="黄阿信">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          记一次C语言程序设计
+        </h1>
+
+        <div class="post-meta">
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-07-02 19:32:46" itemprop="dateCreated datePublished" datetime="2020-07-02T19:32:46+08:00">2020-07-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-05-07 15:30:55" itemprop="dateModified" datetime="2022-05-07T15:30:55+08:00">2022-05-07</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">笔记</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2020/07/02/%E8%AE%B0%E4%B8%80%E6%AC%A1C%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/" class="post-meta-item leancloud_visitors" data-flag-title="记一次C语言程序设计" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">评论：</span>
+    
+    <a title="valine" href="/2020/07/02/%E8%AE%B0%E4%B8%80%E6%AC%A1C%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/07/02/%E8%AE%B0%E4%B8%80%E6%AC%A1C%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>15k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>14 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>那是一个闷热的下午，正值期末复习之际，突然手机响了：<a id="more"></a></p>
+<p><img src="https://q.yalexin.top/%E8%81%8A%E5%A4%A9%E6%88%AA%E5%9B%BE.png" alt></p>
+<p>然后因为是高中同桌兼舍友，所以就立马接了下来。但是当时我这边刚好是准备考试，所以时间上肯定不充裕，原本是想着两三天写出来，但是最后发现一天左右就完成了。但是功能并没有完全实现，还差最后的功能没有做出来，也没有过多的测试。</p>
+<h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><p><img src="https://q.yalexin.top/%E9%A2%98%E7%9B%AE.jpg" alt></p>
+<p>其实C语言很多课程设计题目大多是使用结构体+文件操作（不排除大神的课设做得很复杂的情况），我当年拿到的就是学生成绩管理系统，对！就是这种烂大街的题目，这类题也是使用结构体+文件操作就可以解决，但是当时年少不知事，文件操作我自己一直掌握得不好，所以当时的程序无法保存数据~~，当时我还写了好久，在界面美观（狗屁美观，现在想想就是太花里胡哨了，在黑框里谈啥美观）上。所以本次课设，我就不考虑啥美观了，毕竟时间有限，能力也有限，简单构思了几分钟后，就根据整体框架设计结构体了，然后…………</p>
+<h2 id="源程序"><a href="#源程序" class="headerlink" title="源程序"></a>源程序</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br><span class="line">309</span><br><span class="line">310</span><br><span class="line">311</span><br><span class="line">312</span><br><span class="line">313</span><br><span class="line">314</span><br><span class="line">315</span><br><span class="line">316</span><br><span class="line">317</span><br><span class="line">318</span><br><span class="line">319</span><br><span class="line">320</span><br><span class="line">321</span><br><span class="line">322</span><br><span class="line">323</span><br><span class="line">324</span><br><span class="line">325</span><br><span class="line">326</span><br><span class="line">327</span><br><span class="line">328</span><br><span class="line">329</span><br><span class="line">330</span><br><span class="line">331</span><br><span class="line">332</span><br><span class="line">333</span><br><span class="line">334</span><br><span class="line">335</span><br><span class="line">336</span><br><span class="line">337</span><br><span class="line">338</span><br><span class="line">339</span><br><span class="line">340</span><br><span class="line">341</span><br><span class="line">342</span><br><span class="line">343</span><br><span class="line">344</span><br><span class="line">345</span><br><span class="line">346</span><br><span class="line">347</span><br><span class="line">348</span><br><span class="line">349</span><br><span class="line">350</span><br><span class="line">351</span><br><span class="line">352</span><br><span class="line">353</span><br><span class="line">354</span><br><span class="line">355</span><br><span class="line">356</span><br><span class="line">357</span><br><span class="line">358</span><br><span class="line">359</span><br><span class="line">360</span><br><span class="line">361</span><br><span class="line">362</span><br><span class="line">363</span><br><span class="line">364</span><br><span class="line">365</span><br><span class="line">366</span><br><span class="line">367</span><br><span class="line">368</span><br><span class="line">369</span><br><span class="line">370</span><br><span class="line">371</span><br><span class="line">372</span><br><span class="line">373</span><br><span class="line">374</span><br><span class="line">375</span><br><span class="line">376</span><br><span class="line">377</span><br><span class="line">378</span><br><span class="line">379</span><br><span class="line">380</span><br><span class="line">381</span><br><span class="line">382</span><br><span class="line">383</span><br><span class="line">384</span><br><span class="line">385</span><br><span class="line">386</span><br><span class="line">387</span><br><span class="line">388</span><br><span class="line">389</span><br><span class="line">390</span><br><span class="line">391</span><br><span class="line">392</span><br><span class="line">393</span><br><span class="line">394</span><br><span class="line">395</span><br><span class="line">396</span><br><span class="line">397</span><br><span class="line">398</span><br><span class="line">399</span><br><span class="line">400</span><br><span class="line">401</span><br><span class="line">402</span><br><span class="line">403</span><br><span class="line">404</span><br><span class="line">405</span><br><span class="line">406</span><br><span class="line">407</span><br><span class="line">408</span><br><span class="line">409</span><br><span class="line">410</span><br><span class="line">411</span><br><span class="line">412</span><br><span class="line">413</span><br><span class="line">414</span><br><span class="line">415</span><br><span class="line">416</span><br><span class="line">417</span><br><span class="line">418</span><br><span class="line">419</span><br><span class="line">420</span><br><span class="line">421</span><br><span class="line">422</span><br><span class="line">423</span><br><span class="line">424</span><br><span class="line">425</span><br><span class="line">426</span><br><span class="line">427</span><br><span class="line">428</span><br><span class="line">429</span><br><span class="line">430</span><br><span class="line">431</span><br><span class="line">432</span><br><span class="line">433</span><br><span class="line">434</span><br><span class="line">435</span><br><span class="line">436</span><br><span class="line">437</span><br><span class="line">438</span><br><span class="line">439</span><br><span class="line">440</span><br><span class="line">441</span><br><span class="line">442</span><br><span class="line">443</span><br><span class="line">444</span><br><span class="line">445</span><br><span class="line">446</span><br><span class="line">447</span><br><span class="line">448</span><br><span class="line">449</span><br><span class="line">450</span><br><span class="line">451</span><br><span class="line">452</span><br><span class="line">453</span><br><span class="line">454</span><br><span class="line">455</span><br><span class="line">456</span><br><span class="line">457</span><br><span class="line">458</span><br><span class="line">459</span><br><span class="line">460</span><br><span class="line">461</span><br><span class="line">462</span><br><span class="line">463</span><br><span class="line">464</span><br><span class="line">465</span><br><span class="line">466</span><br><span class="line">467</span><br><span class="line">468</span><br><span class="line">469</span><br><span class="line">470</span><br><span class="line">471</span><br><span class="line">472</span><br><span class="line">473</span><br><span class="line">474</span><br><span class="line">475</span><br><span class="line">476</span><br><span class="line">477</span><br><span class="line">478</span><br><span class="line">479</span><br><span class="line">480</span><br><span class="line">481</span><br><span class="line">482</span><br><span class="line">483</span><br><span class="line">484</span><br><span class="line">485</span><br><span class="line">486</span><br><span class="line">487</span><br><span class="line">488</span><br><span class="line">489</span><br><span class="line">490</span><br><span class="line">491</span><br><span class="line">492</span><br><span class="line">493</span><br><span class="line">494</span><br><span class="line">495</span><br><span class="line">496</span><br><span class="line">497</span><br><span class="line">498</span><br><span class="line">499</span><br><span class="line">500</span><br><span class="line">501</span><br><span class="line">502</span><br><span class="line">503</span><br><span class="line">504</span><br><span class="line">505</span><br><span class="line">506</span><br><span class="line">507</span><br><span class="line">508</span><br><span class="line">509</span><br><span class="line">510</span><br><span class="line">511</span><br><span class="line">512</span><br><span class="line">513</span><br><span class="line">514</span><br><span class="line">515</span><br><span class="line">516</span><br><span class="line">517</span><br><span class="line">518</span><br><span class="line">519</span><br><span class="line">520</span><br><span class="line">521</span><br><span class="line">522</span><br><span class="line">523</span><br><span class="line">524</span><br><span class="line">525</span><br><span class="line">526</span><br><span class="line">527</span><br><span class="line">528</span><br><span class="line">529</span><br><span class="line">530</span><br><span class="line">531</span><br><span class="line">532</span><br><span class="line">533</span><br><span class="line">534</span><br><span class="line">535</span><br><span class="line">536</span><br><span class="line">537</span><br><span class="line">538</span><br><span class="line">539</span><br><span class="line">540</span><br><span class="line">541</span><br><span class="line">542</span><br><span class="line">543</span><br><span class="line">544</span><br><span class="line">545</span><br><span class="line">546</span><br><span class="line">547</span><br><span class="line">548</span><br><span class="line">549</span><br><span class="line">550</span><br><span class="line">551</span><br><span class="line">552</span><br><span class="line">553</span><br><span class="line">554</span><br><span class="line">555</span><br><span class="line">556</span><br><span class="line">557</span><br><span class="line">558</span><br><span class="line">559</span><br><span class="line">560</span><br><span class="line">561</span><br><span class="line">562</span><br><span class="line">563</span><br><span class="line">564</span><br><span class="line">565</span><br><span class="line">566</span><br><span class="line">567</span><br><span class="line">568</span><br><span class="line">569</span><br><span class="line">570</span><br><span class="line">571</span><br><span class="line">572</span><br><span class="line">573</span><br><span class="line">574</span><br><span class="line">575</span><br><span class="line">576</span><br><span class="line">577</span><br><span class="line">578</span><br><span class="line">579</span><br><span class="line">580</span><br><span class="line">581</span><br><span class="line">582</span><br><span class="line">583</span><br><span class="line">584</span><br><span class="line">585</span><br><span class="line">586</span><br><span class="line">587</span><br><span class="line">588</span><br><span class="line">589</span><br><span class="line">590</span><br><span class="line">591</span><br><span class="line">592</span><br><span class="line">593</span><br><span class="line">594</span><br><span class="line">595</span><br><span class="line">596</span><br><span class="line">597</span><br><span class="line">598</span><br><span class="line">599</span><br><span class="line">600</span><br><span class="line">601</span><br><span class="line">602</span><br><span class="line">603</span><br><span class="line">604</span><br><span class="line">605</span><br><span class="line">606</span><br><span class="line">607</span><br><span class="line">608</span><br><span class="line">609</span><br><span class="line">610</span><br><span class="line">611</span><br><span class="line">612</span><br><span class="line">613</span><br><span class="line">614</span><br><span class="line">615</span><br><span class="line">616</span><br><span class="line">617</span><br><span class="line">618</span><br><span class="line">619</span><br><span class="line">620</span><br><span class="line">621</span><br><span class="line">622</span><br><span class="line">623</span><br><span class="line">624</span><br><span class="line">625</span><br><span class="line">626</span><br><span class="line">627</span><br><span class="line">628</span><br><span class="line">629</span><br><span class="line">630</span><br><span class="line">631</span><br><span class="line">632</span><br><span class="line">633</span><br><span class="line">634</span><br><span class="line">635</span><br><span class="line">636</span><br><span class="line">637</span><br><span class="line">638</span><br><span class="line">639</span><br><span class="line">640</span><br><span class="line">641</span><br><span class="line">642</span><br><span class="line">643</span><br><span class="line">644</span><br><span class="line">645</span><br><span class="line">646</span><br><span class="line">647</span><br><span class="line">648</span><br><span class="line">649</span><br><span class="line">650</span><br><span class="line">651</span><br><span class="line">652</span><br><span class="line">653</span><br><span class="line">654</span><br><span class="line">655</span><br><span class="line">656</span><br><span class="line">657</span><br><span class="line">658</span><br><span class="line">659</span><br><span class="line">660</span><br><span class="line">661</span><br><span class="line">662</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * @Author: YaleXin</span></span><br><span class="line"><span class="comment"> * @Date: 2020-05-26 15:12:01</span></span><br><span class="line"><span class="comment"> * @LastEditTime: 2020-05-27 15:09:36</span></span><br><span class="line"><span class="comment"> * @LastEditors: YaleXin</span></span><br><span class="line"><span class="comment"> * @Description:</span></span><br><span class="line"><span class="comment"> * @FilePath: \my_c_workspace\maoning\1.c</span></span><br><span class="line"><span class="comment"> * @祈祷不出现BUG</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;malloc.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;windows.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> OK 1</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ERROR 0</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">DiscInfo</span> &#123;</span></span><br><span class="line">    <span class="keyword">char</span> name[<span class="number">50</span>];</span><br><span class="line">    <span class="keyword">char</span> country[<span class="number">50</span>];</span><br><span class="line">    <span class="keyword">char</span> type[<span class="number">50</span>];</span><br><span class="line">    <span class="keyword">char</span> director[<span class="number">50</span>];</span><br><span class="line">    <span class="keyword">char</span> producer[<span class="number">50</span>];</span><br><span class="line">    <span class="keyword">char</span> stars[<span class="number">500</span>];</span><br><span class="line">    <span class="keyword">int</span> inventory;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">DiscInfo</span> *<span class="title">next</span>;</span></span><br><span class="line">&#125; DiscInfo;</span><br><span class="line"><span class="comment">// 每一条借阅记录</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">RentInfo</span> &#123;</span></span><br><span class="line">    <span class="keyword">long</span> CId;</span><br><span class="line">    <span class="keyword">char</span> DName[<span class="number">50</span>];</span><br><span class="line">    <span class="keyword">long</span> <span class="keyword">long</span> BDate;</span><br><span class="line">    <span class="keyword">long</span> <span class="keyword">long</span> RDate;</span><br><span class="line">    <span class="keyword">long</span> rentNum;</span><br><span class="line">    <span class="keyword">int</span> isReturn;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">RentInfo</span> *<span class="title">next</span>;</span></span><br><span class="line">&#125; RentInfo;</span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">Blist</span> &#123;</span></span><br><span class="line">    <span class="keyword">char</span> DName[<span class="number">50</span>];</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">Blist</span> *<span class="title">next</span>;</span></span><br><span class="line">&#125; Blist;</span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">CustomerInfo</span> &#123;</span></span><br><span class="line">    <span class="keyword">long</span> id;</span><br><span class="line">    <span class="keyword">char</span> name[<span class="number">50</span>];</span><br><span class="line">    <span class="keyword">long</span> acount;</span><br><span class="line">    Blist *RentList;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">CustomerInfo</span> *<span class="title">next</span>;</span></span><br><span class="line">&#125; CustomerInfo;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">customerInitial</span><span class="params">(CustomerInfo **L)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">char</span> <span class="built_in">buffer</span>[<span class="number">50</span>];</span><br><span class="line">    <span class="keyword">long</span> id;</span><br><span class="line">    FILE *fp = fopen(<span class="string">"customer.txt"</span>, <span class="string">"r"</span>);</span><br><span class="line">    <span class="keyword">if</span> (fp == <span class="literal">NULL</span>)</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"customer.txt not exist！\n"</span>);</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">while</span> (<span class="built_in">fscanf</span>(fp, <span class="string">"%ld"</span>, &amp;id) &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            CustomerInfo *cRead = (CustomerInfo *)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(CustomerInfo));</span><br><span class="line">            cRead-&gt;RentList = <span class="literal">NULL</span>;</span><br><span class="line">            cRead-&gt;next = <span class="literal">NULL</span>;</span><br><span class="line">            cRead-&gt;id = id;</span><br><span class="line">            <span class="built_in">fscanf</span>(fp, <span class="string">"%s"</span>, cRead-&gt;name);</span><br><span class="line">            <span class="built_in">fscanf</span>(fp, <span class="string">"%ld"</span>, &amp;cRead-&gt;acount);</span><br><span class="line">            <span class="built_in">fscanf</span>(fp, <span class="string">"%s"</span>, <span class="built_in">buffer</span>);</span><br><span class="line">            <span class="keyword">while</span> (<span class="built_in">strcmp</span>(<span class="built_in">buffer</span>, <span class="string">"END"</span>)) &#123;</span><br><span class="line">                Blist *b = (Blist *)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(Blist));</span><br><span class="line">                <span class="built_in">strcpy</span>(b-&gt;DName, <span class="built_in">buffer</span>);</span><br><span class="line">                b-&gt;next = cRead-&gt;RentList;</span><br><span class="line">                cRead-&gt;RentList = b;</span><br><span class="line">                <span class="built_in">fscanf</span>(fp, <span class="string">"%s"</span>, <span class="built_in">buffer</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            cRead-&gt;next = (*L);</span><br><span class="line">            (*L) = cRead;</span><br><span class="line">        &#125;</span><br><span class="line">        fclose(fp);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"\n\n\n读取到的顾客信息：\n\n"</span>);</span><br><span class="line">        CustomerInfo *c = *L;</span><br><span class="line">        <span class="keyword">while</span> (c != <span class="literal">NULL</span>) &#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">"%ld %s %ld"</span>, c-&gt;id, c-&gt;name, c-&gt;acount);</span><br><span class="line">            Blist *b = c-&gt;RentList;</span><br><span class="line">            <span class="keyword">while</span> (b != <span class="literal">NULL</span>) &#123;</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">" %s"</span>, b-&gt;DName);</span><br><span class="line">                b = b-&gt;next;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">"\n"</span>);</span><br><span class="line">            c = c-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    system(<span class="string">"pause"</span>);</span><br><span class="line">    <span class="keyword">return</span> OK;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">discInitial</span><span class="params">(DiscInfo **L)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">char</span> <span class="built_in">buffer</span>[<span class="number">500</span>];</span><br><span class="line">    FILE *fp = fopen(<span class="string">"disc.txt"</span>, <span class="string">"r"</span>);</span><br><span class="line">    <span class="keyword">if</span> (fp == <span class="literal">NULL</span>)</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"disc.txt not exist！\n"</span>);</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">while</span> (<span class="built_in">fscanf</span>(fp, <span class="string">"%s"</span>, <span class="built_in">buffer</span>) &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            DiscInfo *dRead = (DiscInfo *)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(DiscInfo));</span><br><span class="line">            dRead-&gt;next = <span class="literal">NULL</span>;</span><br><span class="line">            <span class="built_in">strcpy</span>(dRead-&gt;name, <span class="built_in">buffer</span>);</span><br><span class="line">            <span class="built_in">fscanf</span>(fp, <span class="string">"%s"</span>, dRead-&gt;country);</span><br><span class="line">            <span class="built_in">fscanf</span>(fp, <span class="string">"%s"</span>, dRead-&gt;type);</span><br><span class="line">            <span class="built_in">fscanf</span>(fp, <span class="string">"%s"</span>, dRead-&gt;director);</span><br><span class="line">            <span class="built_in">fscanf</span>(fp, <span class="string">"%s"</span>, dRead-&gt;producer);</span><br><span class="line">            <span class="built_in">fscanf</span>(fp, <span class="string">"%s"</span>, dRead-&gt;stars);</span><br><span class="line">            <span class="built_in">fscanf</span>(fp, <span class="string">"%d"</span>, &amp;dRead-&gt;inventory);</span><br><span class="line">            dRead-&gt;next = (*L);</span><br><span class="line">            *L = dRead;</span><br><span class="line">        &#125;</span><br><span class="line">        fclose(fp);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"\n\n\n读取到的碟片信息：\n\n"</span>);</span><br><span class="line">        DiscInfo *d = *L;</span><br><span class="line">        <span class="keyword">while</span> (d != <span class="literal">NULL</span>) &#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">"%s %s %s %s %s %s %d\n"</span>, d-&gt;name, d-&gt;country, d-&gt;type,</span><br><span class="line">                   d-&gt;director, d-&gt;producer, d-&gt;stars, d-&gt;inventory);</span><br><span class="line">            d = d-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    system(<span class="string">"pause"</span>);</span><br><span class="line">    <span class="keyword">return</span> OK;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">rentInitial</span><span class="params">(RentInfo **L)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">char</span> <span class="built_in">buffer</span>[<span class="number">50</span>];</span><br><span class="line">    <span class="keyword">long</span> id;</span><br><span class="line">    FILE *fp = fopen(<span class="string">"rent.txt"</span>, <span class="string">"r"</span>);</span><br><span class="line">    <span class="keyword">if</span> (fp == <span class="literal">NULL</span>)</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"rent.txt not exist！\n"</span>);</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">while</span> (<span class="built_in">fscanf</span>(fp, <span class="string">"%ld"</span>, &amp;id) &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            RentInfo *rRead = (RentInfo *)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(RentInfo));</span><br><span class="line">            rRead-&gt;next = <span class="literal">NULL</span>;</span><br><span class="line">            rRead-&gt;CId = id;</span><br><span class="line">            <span class="built_in">fscanf</span>(fp, <span class="string">"%s"</span>, rRead-&gt;DName);</span><br><span class="line">            <span class="built_in">fscanf</span>(fp, <span class="string">"%lld"</span>, &amp;rRead-&gt;BDate);</span><br><span class="line">            <span class="built_in">fscanf</span>(fp, <span class="string">"%lld"</span>, &amp;rRead-&gt;RDate);</span><br><span class="line">            <span class="built_in">fscanf</span>(fp, <span class="string">"%ld"</span>, &amp;rRead-&gt;rentNum);</span><br><span class="line">            <span class="built_in">fscanf</span>(fp, <span class="string">"%d"</span>, &amp;rRead-&gt;isReturn);</span><br><span class="line">            rRead-&gt;next = *L;</span><br><span class="line">            *L = rRead;</span><br><span class="line">        &#125;</span><br><span class="line">        fclose(fp);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"\n\n\n读取到的借阅信息\n\n"</span>);</span><br><span class="line">        RentInfo *r = *L;</span><br><span class="line">        <span class="keyword">while</span> (r != <span class="literal">NULL</span>) &#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">"%ld %s %lld %lld %ld %d\n"</span>, r-&gt;CId, r-&gt;DName, r-&gt;BDate,</span><br><span class="line">                   r-&gt;RDate, r-&gt;rentNum, r-&gt;isReturn);</span><br><span class="line">            r = r-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    system(<span class="string">"pause"</span>);</span><br><span class="line">    <span class="keyword">return</span> OK;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">discAdd</span><span class="params">(DiscInfo **L)</span> </span>&#123;</span><br><span class="line">    DiscInfo *newDisc = (DiscInfo *)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(DiscInfo));</span><br><span class="line">    newDisc-&gt;next = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"请输入影碟名字:\n"</span>);</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">"%s"</span>, newDisc-&gt;name);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"请输入影碟国家:\n"</span>);</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">"%s"</span>, newDisc-&gt;country);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"请输入影碟类型:\n"</span>);</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">"%s"</span>, newDisc-&gt;type);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"请输入影碟导演:\n"</span>);</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">"%s"</span>, newDisc-&gt;director);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"请输入影碟制片人:\n"</span>);</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">"%s"</span>, newDisc-&gt;producer);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"请输入影碟主演明星(如有多个，每个明星之间以空格隔开):\n"</span>);</span><br><span class="line">    getchar();</span><br><span class="line">    fgets(newDisc-&gt;stars, <span class="keyword">sizeof</span>(newDisc-&gt;stars), <span class="built_in">stdin</span>);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"请输入影碟库存量:\n"</span>);</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">"%d"</span>, &amp;newDisc-&gt;inventory);</span><br><span class="line">    <span class="keyword">if</span> (*L == <span class="literal">NULL</span>) &#123;</span><br><span class="line">        *L = newDisc;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        newDisc-&gt;next = *L;</span><br><span class="line">        *L = newDisc;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"添加完毕\n"</span>);</span><br><span class="line">    system(<span class="string">"pause"</span>);</span><br><span class="line">    <span class="keyword">return</span> OK;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">discQuery</span><span class="params">(DiscInfo *L)</span> </span>&#123;</span><br><span class="line">    DiscInfo *p = L;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"请输入您想要查询的碟片名字:\n"</span>);</span><br><span class="line">    <span class="keyword">char</span> query[<span class="number">50</span>];</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">"%s"</span>, query);</span><br><span class="line">    <span class="keyword">while</span> (p != <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (!<span class="built_in">strcmp</span>(query, p-&gt;name)) <span class="keyword">break</span>;</span><br><span class="line">        p = p-&gt;next;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (p != <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (p-&gt;inventory &gt; <span class="number">0</span>)</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">"可以借阅！\n"</span>);</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">"不可以借阅，因为库存为零\n"</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"不存在该影碟"</span>);</span><br><span class="line">    system(<span class="string">"pause"</span>);</span><br><span class="line">    <span class="keyword">return</span> OK;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">discDelete</span><span class="params">(DiscInfo **L)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> ((*L) == <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"还没有用户，无法删除!\n"</span>);</span><br><span class="line">        system(<span class="string">"pause"</span>);</span><br><span class="line">        <span class="keyword">return</span> ERROR;</span><br><span class="line">    &#125;</span><br><span class="line">    DiscInfo *p1 = (*L)-&gt;next, *p2 = *L;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"请输入您想要删除的碟片名字:\n"</span>);</span><br><span class="line">    <span class="keyword">char</span> query[<span class="number">50</span>];</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">"%s"</span>, query);</span><br><span class="line">    <span class="comment">// 删除头节点</span></span><br><span class="line">    <span class="keyword">if</span> (!<span class="built_in">strcmp</span>((*L)-&gt;name, query)) &#123;</span><br><span class="line">        (*L) = (*L)-&gt;next;</span><br><span class="line">        <span class="built_in">free</span>(p2);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"删除成功"</span>);</span><br><span class="line"></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">while</span> (p1 != <span class="literal">NULL</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (!<span class="built_in">strcmp</span>(query, p1-&gt;name)) <span class="keyword">break</span>;</span><br><span class="line">            p2 = p1;</span><br><span class="line">            p1 = p1-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (p1 == <span class="literal">NULL</span>)</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">"不存在该影片\n"</span>);</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            p2-&gt;next = p1-&gt;next;</span><br><span class="line">            <span class="built_in">free</span>(p1);</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">"删除成功"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    system(<span class="string">"pause"</span>);</span><br><span class="line">    <span class="keyword">return</span> OK;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">discModify</span><span class="params">(DiscInfo **L)</span> </span>&#123;</span><br><span class="line">    DiscInfo *p = *L;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"请输入您想要修改的碟片的名字:\n"</span>);</span><br><span class="line">    <span class="keyword">char</span> query[<span class="number">50</span>];</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">"%s"</span>, query);</span><br><span class="line">    <span class="keyword">while</span> (p != <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (!<span class="built_in">strcmp</span>(query, p-&gt;name)) <span class="keyword">break</span>;</span><br><span class="line">        p = p-&gt;next;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (p != <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"请输入新影碟国家:\n"</span>);</span><br><span class="line">        <span class="built_in">scanf</span>(<span class="string">"%s"</span>, p-&gt;country);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"请输入新影碟类型:\n"</span>);</span><br><span class="line">        <span class="built_in">scanf</span>(<span class="string">"%s"</span>, p-&gt;type);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"请输入新影碟导演:\n"</span>);</span><br><span class="line">        <span class="built_in">scanf</span>(<span class="string">"%s"</span>, p-&gt;director);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"请输入新影碟制片人:\n"</span>);</span><br><span class="line">        <span class="built_in">scanf</span>(<span class="string">"%s"</span>, p-&gt;producer);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"请输入新影碟主演明星(如有多个，每个明星之间以空格隔开):\n"</span>);</span><br><span class="line">        getchar();</span><br><span class="line">        fgets(p-&gt;stars, <span class="keyword">sizeof</span>(p-&gt;stars), <span class="built_in">stdin</span>);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"请输入新影碟库存量:\n"</span>);</span><br><span class="line">        <span class="built_in">scanf</span>(<span class="string">"%d"</span>, &amp;p-&gt;inventory);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"修改成功！\n"</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"不存在该影碟"</span>);</span><br><span class="line">    system(<span class="string">"pause"</span>);</span><br><span class="line">    <span class="keyword">return</span> OK;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">customerAdd</span><span class="params">(CustomerInfo **L)</span> </span>&#123;</span><br><span class="line">    CustomerInfo *newCustomer = (CustomerInfo *)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(CustomerInfo));</span><br><span class="line">    newCustomer-&gt;next = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"请输入顾客名字：\n"</span>);</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">"%s"</span>, newCustomer-&gt;name);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"请输入顾客账户id：\n"</span>);</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">"%ld"</span>, &amp;newCustomer-&gt;id);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"请输入顾客账户金额：\n"</span>);</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">"%ld"</span>, &amp;newCustomer-&gt;acount);</span><br><span class="line">    newCustomer-&gt;RentList = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="keyword">if</span> (*L == <span class="literal">NULL</span>) &#123;</span><br><span class="line">        *L = newCustomer;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        newCustomer-&gt;next = *L;</span><br><span class="line">        *L = newCustomer;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"添加完毕\n"</span>);</span><br><span class="line">    system(<span class="string">"pause"</span>);</span><br><span class="line">    <span class="keyword">return</span> OK;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">customerDelete</span><span class="params">(CustomerInfo **L)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> ((*L) == <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"还没有用户，无法删除!\n"</span>);</span><br><span class="line">        system(<span class="string">"pause"</span>);</span><br><span class="line">        <span class="keyword">return</span> ERROR;</span><br><span class="line">    &#125;</span><br><span class="line">    CustomerInfo *p1 = (*L)-&gt;next, *p2 = *L;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"请输入想要删除的顾客名字：\n"</span>);</span><br><span class="line">    <span class="keyword">char</span> query[<span class="number">50</span>];</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">"%s"</span>, query);</span><br><span class="line">    <span class="comment">// 删除头节点</span></span><br><span class="line">    <span class="keyword">if</span> (!<span class="built_in">strcmp</span>((*L)-&gt;name, query)) &#123;</span><br><span class="line">        <span class="keyword">if</span> ((*L)-&gt;RentList != <span class="literal">NULL</span>) &#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">"该用户还未归还借阅的碟片，不能删除用户\n"</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            (*L) = (*L)-&gt;next;</span><br><span class="line">            <span class="built_in">free</span>(p2);</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">"删除成功"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">while</span> (p1 != <span class="literal">NULL</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (!<span class="built_in">strcmp</span>(query, p1-&gt;name)) <span class="keyword">break</span>;</span><br><span class="line">            p2 = p1;</span><br><span class="line">            p1 = p1-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (p1 == <span class="literal">NULL</span>)</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">"不存在该用户\n"</span>);</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (p1-&gt;RentList != <span class="literal">NULL</span>) &#123;</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">"该用户还未归还借阅的碟片，不能删除用户\n"</span>);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                p2-&gt;next = p1-&gt;next;</span><br><span class="line">                <span class="built_in">free</span>(p1);</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">"删除成功"</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    system(<span class="string">"pause"</span>);</span><br><span class="line">    <span class="keyword">return</span> OK;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">customerModify</span><span class="params">(CustomerInfo **L)</span> </span>&#123;</span><br><span class="line">    CustomerInfo *p = *L;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"请输入想要修改的顾客的账户id：\n"</span>);</span><br><span class="line">    <span class="keyword">long</span> query;</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">"%ld"</span>, &amp;query);</span><br><span class="line">    <span class="keyword">while</span> (p != <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (query != p-&gt;id) <span class="keyword">break</span>;</span><br><span class="line">        p = p-&gt;next;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (p != <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"请输入新顾客名字:\n"</span>);</span><br><span class="line">        <span class="built_in">scanf</span>(<span class="string">"%s"</span>, p-&gt;name);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"请输入新顾客账户金额:\n"</span>);</span><br><span class="line">        <span class="built_in">scanf</span>(<span class="string">"%ld"</span>, &amp;p-&gt;acount);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"修改成功！\n"</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"不存在该用户"</span>);</span><br><span class="line">    system(<span class="string">"pause"</span>);</span><br><span class="line">    <span class="keyword">return</span> OK;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">borrowDisc</span><span class="params">(RentInfo **RL, DiscInfo **DL, CustomerInfo **CL)</span> </span>&#123;</span><br><span class="line">    DiscInfo *dp = *DL;</span><br><span class="line">    CustomerInfo *cp = *CL;</span><br><span class="line">    <span class="keyword">int</span> id;</span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"请输入借阅人的id,输入“0”结束本次借阅\n"</span>);</span><br><span class="line">        <span class="built_in">scanf</span>(<span class="string">"%ld"</span>, &amp;id);</span><br><span class="line">        <span class="keyword">if</span> (!id) <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">while</span> (cp != <span class="literal">NULL</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (cp-&gt;id == id) <span class="keyword">break</span>;</span><br><span class="line">            cp = cp-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (cp == <span class="literal">NULL</span>) &#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">"用户不存在，请重新输入\n"</span>);</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (cp-&gt;acount &lt; <span class="number">20</span>) &#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">"租金不足20元，无法借阅\n"</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">"请输入借阅日期(格式：年月日时分秒，如20200526192222)\n"</span>);</span><br><span class="line">            <span class="keyword">long</span> <span class="keyword">long</span> date;</span><br><span class="line">            <span class="comment">// scanf("%lld", &amp;date);</span></span><br><span class="line">            <span class="keyword">while</span> (<span class="built_in">scanf</span>(<span class="string">"%lld"</span>, &amp;date) &amp;&amp;</span><br><span class="line">                   !(date &lt; <span class="number">99999999999999</span> &amp;&amp; date &gt; <span class="number">10000000000000</span>)) &#123;</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">"日期格式错误\n"</span>);</span><br><span class="line">                <span class="comment">//  continue;</span></span><br><span class="line">            &#125;</span><br><span class="line">            <span class="built_in">printf</span>(</span><br><span class="line">                <span class="string">"请输入借阅的碟片数量（一次只能借阅同种碟片的一片，但是可以借阅"</span></span><br><span class="line">                <span class="string">"不同的碟片）\n"</span>);</span><br><span class="line">            <span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line">            <span class="built_in">scanf</span>(<span class="string">"%d"</span>, &amp;count);</span><br><span class="line">            <span class="keyword">int</span> status[<span class="number">100</span>];</span><br><span class="line">            <span class="keyword">char</span> <span class="built_in">buffer</span>[<span class="number">50</span>];</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= count; i++) &#123;</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">"请输入第%d个碟片的名字\n"</span>, i);</span><br><span class="line">                <span class="built_in">scanf</span>(<span class="string">"%s"</span>, <span class="built_in">buffer</span>);</span><br><span class="line">                dp = *DL;</span><br><span class="line">                <span class="keyword">while</span> (dp != <span class="literal">NULL</span>) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (!<span class="built_in">strcmp</span>(<span class="built_in">buffer</span>, dp-&gt;name)) <span class="keyword">break</span>;</span><br><span class="line">                    dp = dp-&gt;next;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> (dp == <span class="literal">NULL</span> || dp-&gt;inventory == <span class="number">0</span>)</span><br><span class="line">                    status[i] = <span class="number">0</span>;</span><br><span class="line">                <span class="keyword">else</span> &#123;</span><br><span class="line">                    dp-&gt;inventory--;</span><br><span class="line">                    RentInfo *newRent = (RentInfo *)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(RentInfo));</span><br><span class="line">                    newRent-&gt;next = <span class="literal">NULL</span>;</span><br><span class="line">                    newRent-&gt;BDate = date;</span><br><span class="line">                    newRent-&gt;CId = cp-&gt;id;</span><br><span class="line">                    newRent-&gt;isReturn = <span class="number">0</span>;</span><br><span class="line">                    <span class="built_in">strcpy</span>(newRent-&gt;DName, <span class="built_in">buffer</span>);</span><br><span class="line">                    <span class="keyword">if</span> (*RL == <span class="literal">NULL</span>) &#123;</span><br><span class="line">                        *RL = newRent;</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        newRent-&gt;next = *RL;</span><br><span class="line">                        *RL = newRent;</span><br><span class="line">                    &#125;</span><br><span class="line">                    newRent-&gt;isReturn = <span class="number">0</span>;</span><br><span class="line">                    Blist *newBlist = (Blist *)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(Blist));</span><br><span class="line">                    newBlist-&gt;next = <span class="literal">NULL</span>;</span><br><span class="line">                    <span class="built_in">strcpy</span>(newBlist-&gt;DName, <span class="built_in">buffer</span>);</span><br><span class="line">                    <span class="keyword">if</span> (cp-&gt;RentList == <span class="literal">NULL</span>) &#123;</span><br><span class="line">                        cp-&gt;RentList = newBlist;</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        newBlist-&gt;next = cp-&gt;RentList;</span><br><span class="line">                        cp-&gt;RentList = newBlist;</span><br><span class="line">                    &#125;</span><br><span class="line">                    status[i] == <span class="number">1</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">int</span> successCount = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= count; i++)</span><br><span class="line">                <span class="keyword">if</span> (!status[i])</span><br><span class="line">                    <span class="built_in">printf</span>(<span class="string">"借阅的第%d个碟片失败\n"</span>);</span><br><span class="line">                <span class="keyword">else</span></span><br><span class="line">                    successCount++;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">"本次借阅碟片成功数量：%d，失败数量：%d\n"</span>, successCount,</span><br><span class="line">                   count - successCount);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"操作成功\n"</span>);</span><br><span class="line">    system(<span class="string">"pause"</span>);</span><br><span class="line">    <span class="keyword">return</span> OK;</span><br><span class="line">&#125;  <span class="comment">// 2020 0222 181212</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">getDays</span><span class="params">(<span class="keyword">long</span> <span class="keyword">long</span> num1, <span class="keyword">long</span> <span class="keyword">long</span> num2)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> months[<span class="number">12</span>] = &#123;<span class="number">31</span>, <span class="number">28</span>, <span class="number">31</span>, <span class="number">30</span>, <span class="number">31</span>, <span class="number">30</span>, <span class="number">31</span>, <span class="number">31</span>, <span class="number">30</span>, <span class="number">31</span>, <span class="number">30</span>, <span class="number">31</span>&#125;;</span><br><span class="line">    <span class="keyword">int</span> sum = <span class="number">0</span>, year, month, day;</span><br><span class="line">    year = (num1 - num2) / <span class="number">10000000000</span>;</span><br><span class="line">    month = (num1 - num2) / <span class="number">100000000</span>;</span><br><span class="line">    day = (num1 - num2) / <span class="number">1000000</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt;= month - <span class="number">2</span>; i++) sum += months[i];</span><br><span class="line">    sum += day;</span><br><span class="line">    sum += year * <span class="number">365</span>;</span><br><span class="line">    <span class="keyword">return</span> sum;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">returnDisc</span><span class="params">(RentInfo **RL, DiscInfo **DL, CustomerInfo **CL)</span> </span>&#123;</span><br><span class="line">    DiscInfo *dp = *DL;</span><br><span class="line">    CustomerInfo *cp = *CL;</span><br><span class="line">    <span class="keyword">int</span> id;</span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"请输入归还人的id,输入“0”结束本次归还\n"</span>);</span><br><span class="line">        <span class="built_in">scanf</span>(<span class="string">"%ld"</span>, &amp;id);</span><br><span class="line">        <span class="keyword">if</span> (!id) <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">while</span> (cp != <span class="literal">NULL</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (cp-&gt;id == id) <span class="keyword">break</span>;</span><br><span class="line">            cp = cp-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (cp == <span class="literal">NULL</span>) &#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">"用户不存在，请重新输入\n"</span>);</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">"请输入归还日期(格式：年月日时分秒，如20200526192222)\n"</span>);</span><br><span class="line">            <span class="keyword">long</span> <span class="keyword">long</span> date;</span><br><span class="line">            <span class="comment">// scanf("%lld", &amp;date);</span></span><br><span class="line">            <span class="keyword">while</span> (<span class="built_in">scanf</span>(<span class="string">"%lld"</span>, &amp;date) &amp;&amp;</span><br><span class="line">                   !(date &lt; <span class="number">99999999999999</span> &amp;&amp; date &gt; <span class="number">10000000000000</span>)) &#123;</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">"日期格式错误\n"</span>);</span><br><span class="line">                <span class="comment">//  continue;</span></span><br><span class="line">            &#125;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">"请输入归还的碟片数量\n"</span>);</span><br><span class="line">            <span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line">            <span class="built_in">scanf</span>(<span class="string">"%d"</span>, &amp;count);</span><br><span class="line">            <span class="keyword">int</span> status[<span class="number">100</span>];</span><br><span class="line">            <span class="keyword">char</span> <span class="built_in">buffer</span>[<span class="number">100</span>][<span class="number">50</span>];</span><br><span class="line">            RentInfo *rp;</span><br><span class="line">            <span class="keyword">int</span> totalCost = <span class="number">0</span>, reality = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= count; i++) &#123;</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">"请输入第%d个碟片的名字\n"</span>, i);</span><br><span class="line">                <span class="built_in">scanf</span>(<span class="string">"%s"</span>, <span class="built_in">buffer</span>[i]);</span><br><span class="line">                rp = *RL;</span><br><span class="line">                <span class="keyword">while</span> (rp != <span class="literal">NULL</span>) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (!<span class="built_in">strcmp</span>(rp-&gt;DName, <span class="built_in">buffer</span>[i]) &amp;&amp; !(rp-&gt;isReturn)) &#123;</span><br><span class="line">                        rp-&gt;RDate = date;</span><br><span class="line">                        <span class="keyword">int</span> days = getDays(rp-&gt;RDate, rp-&gt;BDate);</span><br><span class="line">                        <span class="comment">// 日期错误</span></span><br><span class="line">                        <span class="keyword">if</span> (days &lt;= <span class="number">0</span>)</span><br><span class="line">                            status[i] = <span class="number">0</span>;</span><br><span class="line">                        <span class="keyword">else</span> &#123;</span><br><span class="line">                            rp-&gt;rentNum = days / <span class="number">3</span>;</span><br><span class="line">                            <span class="keyword">if</span> (days % <span class="number">3</span> &gt; <span class="number">0</span>) rp-&gt;rentNum++;</span><br><span class="line">                            totalCost += rp-&gt;rentNum;</span><br><span class="line">                            <span class="comment">// 不够钱</span></span><br><span class="line">                            <span class="keyword">if</span> (cp-&gt;acount + <span class="number">20</span> - rp-&gt;rentNum &lt; <span class="number">0</span>)</span><br><span class="line">                                status[i] = <span class="number">0</span>;</span><br><span class="line">                            <span class="keyword">else</span> &#123;</span><br><span class="line">                                reality += rp-&gt;rentNum;</span><br><span class="line">                                cp-&gt;acount = cp-&gt;acount + <span class="number">20</span> - rp-&gt;rentNum;</span><br><span class="line">                                status[i] = <span class="number">1</span>;</span><br><span class="line">                                <span class="comment">// 记上已经归还</span></span><br><span class="line">                                rp-&gt;isReturn = <span class="number">1</span>;</span><br><span class="line">                                DiscInfo *d = *DL;</span><br><span class="line">                                <span class="keyword">while</span> (d != <span class="literal">NULL</span>)</span><br><span class="line">                                    <span class="keyword">if</span> (!<span class="built_in">strcmp</span>(d-&gt;name, <span class="built_in">buffer</span>[i])) <span class="keyword">break</span>;</span><br><span class="line">                                <span class="comment">//库存加一</span></span><br><span class="line">                                d-&gt;inventory++;</span><br><span class="line">                                Blist *b1 = cp-&gt;RentList-&gt;next,</span><br><span class="line">                                      *b2 = cp-&gt;RentList;</span><br><span class="line">                                <span class="comment">// 头节点</span></span><br><span class="line">                                <span class="keyword">if</span> (!<span class="built_in">strcmp</span>(cp-&gt;RentList-&gt;DName, <span class="built_in">buffer</span>[i])) &#123;</span><br><span class="line">                                    cp-&gt;RentList = <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line">                                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                                    <span class="keyword">while</span> (b1 != <span class="literal">NULL</span>)</span><br><span class="line">                                        <span class="keyword">if</span> (!<span class="built_in">strcmp</span>(b1-&gt;DName, <span class="built_in">buffer</span>[i]))</span><br><span class="line">                                            <span class="keyword">break</span>;</span><br><span class="line">                                        <span class="keyword">else</span> &#123;</span><br><span class="line">                                            b2 = b1;</span><br><span class="line">                                            b1 = b1-&gt;next;</span><br><span class="line">                                        &#125;</span><br><span class="line">                                    <span class="comment">// 头节点</span></span><br><span class="line">                                    <span class="keyword">if</span> (b1 == <span class="literal">NULL</span>)</span><br><span class="line">                                        b2 = b2-&gt;next;</span><br><span class="line">                                    <span class="keyword">else</span></span><br><span class="line">                                        b2-&gt;next = b1-&gt;next;</span><br><span class="line">                                &#125;</span><br><span class="line">                            &#125;</span><br><span class="line">                        &#125;</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                    rp = rp-&gt;next;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> (rp == <span class="literal">NULL</span> || !(rp-&gt;isReturn)) &#123;</span><br><span class="line">                    status[i] = <span class="number">0</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">int</span> successCount = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= count; i++)</span><br><span class="line">                <span class="keyword">if</span> (!status[i])</span><br><span class="line">                    <span class="built_in">printf</span>(<span class="string">"归还第%d个碟片失败\n"</span>, i);</span><br><span class="line">                <span class="keyword">else</span></span><br><span class="line">                    successCount++;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">"本次归还碟片成功数量：%d，失败数量：%d\n"</span>, successCount,</span><br><span class="line">                   count - successCount);</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">"本次归还碟片需要支付总费用%d，实际支付：%d\n"</span>, totalCost,</span><br><span class="line">                   reality);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"操作成功\n"</span>);</span><br><span class="line"></span><br><span class="line">    system(<span class="string">"pause"</span>);</span><br><span class="line">    <span class="keyword">return</span> OK;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">save</span><span class="params">(RentInfo *RL, DiscInfo *DL, CustomerInfo *CL)</span> </span>&#123;</span><br><span class="line">    FILE *fp = fopen(<span class="string">".\\rent.txt"</span>, <span class="string">"w+"</span>);</span><br><span class="line">    <span class="keyword">if</span> (fp != <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="keyword">while</span> (RL != <span class="literal">NULL</span>) &#123;</span><br><span class="line">            <span class="built_in">fprintf</span>(fp, <span class="string">"%ld "</span>, RL-&gt;CId);</span><br><span class="line">            <span class="built_in">fprintf</span>(fp, <span class="string">"%s "</span>, RL-&gt;DName);</span><br><span class="line">            <span class="built_in">fprintf</span>(fp, <span class="string">"%lld "</span>, RL-&gt;BDate);</span><br><span class="line">            <span class="built_in">fprintf</span>(fp, <span class="string">"%lld "</span>, RL-&gt;RDate);</span><br><span class="line">            <span class="built_in">fprintf</span>(fp, <span class="string">"%ld "</span>, RL-&gt;rentNum);</span><br><span class="line">            <span class="built_in">fprintf</span>(fp, <span class="string">"%d "</span>, RL-&gt;isReturn);</span><br><span class="line">            fputc(<span class="string">'\n'</span>, fp);</span><br><span class="line">            RL = RL-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"rent.txt保存成功\n"</span>);</span><br><span class="line">        fclose(fp);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"rent.txt保存失败\n"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    fp = fopen(<span class="string">".\\customer.txt"</span>, <span class="string">"w+"</span>);</span><br><span class="line">    <span class="keyword">if</span> (fp != <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="keyword">while</span> (CL != <span class="literal">NULL</span>) &#123;</span><br><span class="line">            <span class="built_in">fprintf</span>(fp, <span class="string">"%ld "</span>, CL-&gt;id);</span><br><span class="line">            <span class="built_in">fprintf</span>(fp, <span class="string">"%s "</span>, CL-&gt;name);</span><br><span class="line">            <span class="built_in">fprintf</span>(fp, <span class="string">"%ld "</span>, CL-&gt;acount);</span><br><span class="line">            Blist *b = CL-&gt;RentList;</span><br><span class="line">            <span class="keyword">while</span> (b != <span class="literal">NULL</span>) &#123;</span><br><span class="line">                <span class="built_in">fprintf</span>(fp, <span class="string">"%s "</span>, b-&gt;DName);</span><br><span class="line">                b = b-&gt;next;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">char</span> <span class="built_in">end</span>[] = &#123;<span class="string">'E'</span>, <span class="string">'N'</span>, <span class="string">'D'</span>, <span class="string">'\n'</span>&#125;;</span><br><span class="line">            <span class="built_in">fprintf</span>(fp, <span class="string">"%s"</span>, <span class="string">"END\n"</span>);</span><br><span class="line">            CL = CL-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"customer.txt保存成功\n"</span>);</span><br><span class="line">        fclose(fp);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"customer.txt保存失败\n"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    fp = fopen(<span class="string">".\\disc.txt"</span>, <span class="string">"w+"</span>);</span><br><span class="line">    <span class="keyword">if</span> (fp != <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="keyword">while</span> (DL != <span class="literal">NULL</span>) &#123;</span><br><span class="line">            <span class="built_in">fprintf</span>(fp, <span class="string">"%s "</span>, DL-&gt;name);</span><br><span class="line">            <span class="built_in">fprintf</span>(fp, <span class="string">"%s "</span>, DL-&gt;country);</span><br><span class="line">            <span class="built_in">fprintf</span>(fp, <span class="string">"%s "</span>, DL-&gt;type);</span><br><span class="line">            <span class="built_in">fprintf</span>(fp, <span class="string">"%s "</span>, DL-&gt;director);</span><br><span class="line">            <span class="built_in">fprintf</span>(fp, <span class="string">"%s "</span>, DL-&gt;producer);</span><br><span class="line">            <span class="built_in">fprintf</span>(fp, <span class="string">"%s "</span>, DL-&gt;stars);</span><br><span class="line">            <span class="built_in">fprintf</span>(fp, <span class="string">"%d "</span>, DL-&gt;inventory);</span><br><span class="line">            fputc(<span class="string">'\n'</span>, fp);</span><br><span class="line">            DL = DL-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"customer.txt保存成功\n"</span>);</span><br><span class="line">        fclose(fp);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"customer.txt保存失败\n"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    system(<span class="string">"pause"</span>);</span><br><span class="line">    <span class="keyword">return</span> OK;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    CustomerInfo *CL = <span class="literal">NULL</span>;</span><br><span class="line">    DiscInfo *DL = <span class="literal">NULL</span>;</span><br><span class="line">    RentInfo *RL = <span class="literal">NULL</span>;</span><br><span class="line">    customerInitial(&amp;CL);</span><br><span class="line">    discInitial(&amp;DL);</span><br><span class="line">    rentInitial(&amp;RL);</span><br><span class="line">    <span class="keyword">int</span> <span class="built_in">exit</span> = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (!<span class="built_in">exit</span>) &#123;</span><br><span class="line">        <span class="keyword">int</span> choose;</span><br><span class="line">        system(<span class="string">"cls"</span>);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"1.影碟添加\n\n"</span>);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"2.影碟删除\n\n"</span>);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"3.影碟修改\n\n"</span>);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"4.顾客添加\n\n"</span>);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"5.顾客删除\n\n"</span>);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"6.顾客修改\n\n"</span>);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"7.碟片查询\n\n"</span>);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"8.碟片借阅\n\n"</span>);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"9.碟片归还\n\n"</span>);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"0.退出\n\n"</span>);</span><br><span class="line">        <span class="built_in">scanf</span>(<span class="string">"%d"</span>, &amp;choose);</span><br><span class="line">        <span class="keyword">switch</span> (choose) &#123;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">1</span>:</span><br><span class="line">                discAdd(&amp;DL);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">2</span>:</span><br><span class="line">                discDelete(&amp;DL);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">3</span>:</span><br><span class="line">                discModify(&amp;DL);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">4</span>:</span><br><span class="line">                customerAdd(&amp;CL);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">5</span>:</span><br><span class="line">                customerDelete(&amp;CL);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">6</span>:</span><br><span class="line">                customerModify(&amp;CL);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">7</span>:</span><br><span class="line">                discQuery(DL);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">8</span>:</span><br><span class="line">                borrowDisc(&amp;RL, &amp;DL, &amp;CL);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">9</span>:</span><br><span class="line">                returnDisc(&amp;RL, &amp;DL, &amp;CL);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">0</span>:</span><br><span class="line">                save(RL, DL, CL);</span><br><span class="line">                system(<span class="string">"cls"</span>);</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">"正在退出..."</span>);</span><br><span class="line">                Sleep(<span class="number">1000</span>);</span><br><span class="line">                system(<span class="string">"cls"</span>);</span><br><span class="line">                <span class="built_in">exit</span> = <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="反思"><a href="#反思" class="headerlink" title="反思"></a>反思</h2><ul>
+<li><p>写完后才发现<code>time.h</code>库文件中就有<code>*time_t</code>类型的变量，十分方便记录时间。而不是像我一样，直接拿<code>long long</code>变量来表示<del>~</del>。</p>
+</li>
+<li><p>客户的结构体设计得不合理，应该把借阅队列设置为影碟类型，而不是简单地用字符串简单表示。</p>
+</li>
+<li><p>…………</p>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>假如对您有所帮助，那就请我喝咖啡吧~~</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/WeChat.png" alt="YaleXin 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/Alipay.jpg" alt="YaleXin 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%AF%BE%E7%A8%8B%E8%AE%BE%E8%AE%A1/" rel="tag"><i class="fa fa-tag"></i> 课程设计</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/06/29/C%E8%AF%AD%E8%A8%80%E7%9A%84%E6%8C%87%E9%92%88/" rel="prev" title="C语言的指针">
+      <i class="fa fa-chevron-left"></i> C语言的指针
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/07/02/%E6%A8%A1%E6%8B%9F%E8%AE%BE%E8%AE%A1%E7%A3%81%E7%9B%98%E6%96%87%E4%BB%B6%E7%9A%84%E9%93%BE%E6%8E%A5%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84/" rel="next" title="模拟设计磁盘文件的链接存储结构">
+      模拟设计磁盘文件的链接存储结构 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+
+
+<div>
+    
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">------ 文章结束------</div>
+    
+</div>
+
+    
+ </div>
+
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#题目"><span class="nav-number">2.</span> <span class="nav-text">题目</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#源程序"><span class="nav-number">3.</span> <span class="nav-text">源程序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#反思"><span class="nav-number">4.</span> <span class="nav-text">反思</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="YaleXin"
+      src="/uploads/cat_mouse.jpg">
+  <p class="site-author-name" itemprop="name">YaleXin</p>
+  <div class="site-description" itemprop="description">学渣一枚</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">90</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">90</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-fas fa-heartbeat"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">YaleXin</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    <span title="站点总字数">222k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">3:22</span>
+</div>
+
+
+<span >本站已在此等候您 <span id="dnum" style="color:#35B8FF">0</span> 天 </span>
+<span><span id="hnum" style="color:#35B8FF">0</span> 小时 <span id="mnum" style="color:#35B8FF">0</span> 分 <span id="snum" style="color:#35B8FF">0</span> 秒</span>
+<script>
+    var now = new Date(); 
+    function createtime() { 
+        var grt= new Date("02/21/2020 11:30:00");
+        now.setTime(now.getTime()+250); 
+        days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); 
+        hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); 
+        if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); 
+        mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} 
+        seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); 
+        snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} 
+        document.getElementById("dnum").innerHTML = dnum;
+        document.getElementById("hnum").innerHTML = hnum;
+        document.getElementById("mnum").innerHTML = mnum;
+        document.getElementById("snum").innerHTML = snum;
+        
+    } 
+setInterval("createtime()",250);
+</script>
+  <div class="powered-by">
+    <span>powered by </span><a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span>总访客量：</span>
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span>总访问量：</span>
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+  <script>
+  function leancloudSelector(url) {
+    url = encodeURI(url);
+    return document.getElementById(url).querySelector('.leancloud-visitors-count');
+  }
+  if (CONFIG.page.isPost) {
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = decodeURI(visitors.getAttribute('id'));
+      var title = visitors.getAttribute('data-flag-title');
+
+      Counter('get', `/classes/Counter?where=${JSON.stringify({ url })}`)
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .then(response => response.json())
+              .then(() => {
+                leancloudSelector(url).innerText = counter.time + 1;
+              })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              })
+          } else {
+              Counter('post', '/classes/Counter', { title: title, url: url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.error('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+  } else {
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return decodeURI(element.getAttribute('id'));
+      });
+
+      Counter('get', `/classes/Counter?where=${JSON.stringify({ url: { '$in': entries } })}`)
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length === 0) {
+            document.querySelectorAll('.leancloud_visitors .leancloud-visitors-count').forEach(element => {
+              element.innerText = 0;
+            });
+            return;
+          }
+          for (let item of results) {
+            let { url, time } = item;
+            leancloudSelector(url).innerText = time;
+          }
+          for (let url of entries) {
+            var element = leancloudSelector(url);
+            if (element.innerText == '') {
+              element.innerText = 0;
+            }
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+  }
+
+  fetch('https://app-router.leancloud.cn/2/route?appId=CjaKbRAizU0DNH3B4Hllhtwp-gzGzoHsz')
+    .then(response => response.json())
+    .then(({ api_server }) => {
+      var Counter = (method, url, data) => {
+        return fetch(`https://${api_server}/1.1${url}`, {
+          method: method,
+          headers: {
+            'X-LC-Id'     : 'CjaKbRAizU0DNH3B4Hllhtwp-gzGzoHsz',
+            'X-LC-Key'    : 'B61jy2Xnwe90oJ2dtUeF6HHU',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'CjaKbRAizU0DNH3B4Hllhtwp-gzGzoHsz',
+      appKey     : 'B61jy2Xnwe90oJ2dtUeF6HHU',
+      placeholder: "支持匿名评论（如果想在收到回复的第一时间收到通知，请在上面填写邮箱）",
+      avatar     : 'retro',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+
+  
+  <script src="./valine.js"></script>
+
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'CjaKbRAizU0DNH3B4Hllhtwp-gzGzoHsz',
+        appKey: 'B61jy2Xnwe90oJ2dtUeF6HHU',
+        placeholder: '支持匿名评论（如果想在收到回复的第一时间收到通知，请在上面填写邮箱）',
+        avatar:'retro',
+        guest_info:guest,
+        pageSize:'10' || 10,
+        avatar_cdn:'',
+});
+  </script>
+
+</body>
+</html>
