@@ -2,14 +2,21 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://yalexin.gitee.io/tags/index.html</loc>
+    <loc>https://yalexin.gitee.io/2022/05/07/%E4%BD%BF%E7%94%A8Nuxt%E6%94%B9%E9%80%A0%E5%8D%9A%E5%AE%A2%E5%89%8D%E7%AB%AF/</loc>
+    
+    <lastmod>2022-05-07T11:48:32.391Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://yalexin.gitee.io/links/index.html</loc>
     
     <lastmod>2022-05-07T07:30:55.684Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://yalexin.gitee.io/links/index.html</loc>
+    <loc>https://yalexin.gitee.io/tags/index.html</loc>
     
     <lastmod>2022-05-07T07:30:55.684Z</lastmod>
     
@@ -44,14 +51,14 @@
   </url>
   
   <url>
-    <loc>https://yalexin.gitee.io/guestbook/index.html</loc>
+    <loc>https://yalexin.gitee.io/categories/index.html</loc>
     
     <lastmod>2022-05-07T07:30:55.675Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://yalexin.gitee.io/categories/index.html</loc>
+    <loc>https://yalexin.gitee.io/guestbook/index.html</loc>
     
     <lastmod>2022-05-07T07:30:55.675Z</lastmod>
     
