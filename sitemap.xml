@@ -2,9 +2,16 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://yalexin.gitee.io/2022/05/22/%E6%A8%A1%E7%B3%8A%E6%9F%A5%E8%AF%A2%E4%B9%8BSQL%E6%B3%A8%E5%85%A5%EF%BC%88%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8CNewsCenter%E9%A2%98%E8%A7%A3%EF%BC%89/</loc>
+    
+    <lastmod>2022-05-22T03:43:06.086Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://yalexin.gitee.io/2022/05/20/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8CWeb-php-include%E9%A2%98%E8%A7%A3/</loc>
     
-    <lastmod>2022-05-20T04:05:55.865Z</lastmod>
+    <lastmod>2022-05-20T04:29:09.464Z</lastmod>
     
   </url>
   
@@ -65,14 +72,14 @@
   </url>
   
   <url>
-    <loc>https://yalexin.gitee.io/guestbook/index.html</loc>
+    <loc>https://yalexin.gitee.io/categories/index.html</loc>
     
     <lastmod>2022-05-07T07:30:55.675Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://yalexin.gitee.io/categories/index.html</loc>
+    <loc>https://yalexin.gitee.io/guestbook/index.html</loc>
     
     <lastmod>2022-05-07T07:30:55.675Z</lastmod>
     

