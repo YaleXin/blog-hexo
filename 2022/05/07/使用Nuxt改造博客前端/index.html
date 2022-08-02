@@ -1,4 +1,407 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=2"><meta name="theme-color" content="#222"><meta name="generator" content="Hexo 4.2.0"><link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.ico"><link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico"><link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico"><link rel="mask-icon" href="/images/favicon.ico" color="#222"><link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css"><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css"><script id="hexo-configurations">var NexT=window.NexT||{},CONFIG={hostname:"yalexin.gitee.io",root:"/",scheme:"Gemini",version:"7.7.1",exturl:!1,sidebar:{position:"left",display:"post",padding:18,offset:12,onmobile:!0},copycode:{enable:!0,show_result:!0,style:"mac"},back2top:{enable:!0,sidebar:!1,scrollpercent:!0},bookmark:{enable:!1,color:"#222",save:"auto"},fancybox:!0,mediumzoom:!1,lazyload:!1,pangu:!1,comments:{style:"tabs",active:null,storage:!0,lazyload:!1,nav:null},algolia:{hits:{per_page:10},labels:{input_placeholder:"Search for Posts",hits_empty:"We didn't find any results for the search: ${query}",hits_stats:"${hits} results found in ${time} ms"}},localsearch:{enable:!1,trigger:"auto",top_n_per_article:1,unescape:!1,preload:!1},motion:{enable:!0,async:!1,transition:{post_block:"fadeIn",post_header:"slideDownIn",post_body:"slideDownIn",coll_header:"slideLeftIn",sidebar:"slideUpIn"}},path:"search.xml"}</script><meta name="description" content="前言是的，没错，我又来对我的博客系统下手了！回想起2020年，第一次使用hexo搭建的静态博客，那是我对博客系统的初体验，当时搭建完毕后，到处找插件，找主题，心情也很激动，因为这是我的第一个网站，当时熬夜搭建网站的激动现在仍然可以体会得到！"><meta property="og:type" content="article"><meta property="og:title" content="使用Nuxt改造博客前端"><meta property="og:url" content="https://yalexin.gitee.io/2022/05/07/%E4%BD%BF%E7%94%A8Nuxt%E6%94%B9%E9%80%A0%E5%8D%9A%E5%AE%A2%E5%89%8D%E7%AB%AF/index.html"><meta property="og:site_name" content="黄阿信"><meta property="og:description" content="前言是的，没错，我又来对我的博客系统下手了！回想起2020年，第一次使用hexo搭建的静态博客，那是我对博客系统的初体验，当时搭建完毕后，到处找插件，找主题，心情也很激动，因为这是我的第一个网站，当时熬夜搭建网站的激动现在仍然可以体会得到！"><meta property="og:locale" content="zh_CN"><meta property="article:published_time" content="2022-05-07T07:42:34.000Z"><meta property="article:modified_time" content="2022-05-07T16:22:08.127Z"><meta property="article:author" content="YaleXin"><meta property="article:tag" content="Vue"><meta property="article:tag" content="Nuxt"><meta property="article:tag" content="前端"><meta name="twitter:card" content="summary"><link rel="canonical" href="https://yalexin.gitee.io/2022/05/07/%E4%BD%BF%E7%94%A8Nuxt%E6%94%B9%E9%80%A0%E5%8D%9A%E5%AE%A2%E5%89%8D%E7%AB%AF/"><script id="page-configurations">CONFIG.page={sidebar:"",isHome:!1,isPost:!0}</script><title>使用Nuxt改造博客前端 | 黄阿信</title><noscript><style>.sidebar-inner,.use-motion .brand,.use-motion .collection-header,.use-motion .comments,.use-motion .menu-item,.use-motion .pagination,.use-motion .post-block,.use-motion .post-body,.use-motion .post-header{opacity:initial}.use-motion .site-subtitle,.use-motion .site-title{opacity:initial;top:initial}.use-motion .logo-line-before i{left:initial}.use-motion .logo-line-after i{right:initial}</style></noscript></head><body itemscope itemtype="http://schema.org/WebPage"><div class="container use-motion"><div class="headband"></div><header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="header-inner"><div class="site-brand-container"><div class="site-nav-toggle"><div class="toggle" aria-label="切换导航栏"><span class="toggle-line toggle-line-first"></span><span class="toggle-line toggle-line-middle"></span><span class="toggle-line toggle-line-last"></span></div></div><div class="site-meta"><div><a href="/" class="brand" rel="start"><span class="logo-line-before"><i></i></span> <span class="site-title">黄阿信</span><span class="logo-line-after"><i></i></span></a></div><p class="site-subtitle">要么改变世界，要么适应世界。</p></div><div class="site-nav-right"><div class="toggle popup-trigger"></div></div></div><nav class="site-nav"><ul id="menu" class="menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-fw fa-home"></i> 首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i> 标签<span class="badge">93</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i> 分类<span class="badge">14</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i> 归档<span class="badge">95</span></a></li><li class="menu-item menu-item-guestbook"><a href="/guestbook/" rel="section"><i class="fa fa-fw fa-book"></i> 留言板</a></li><li class="menu-item menu-item-links"><a href="/links/" rel="section"><i class="fa fa-fw fa-link"></i> 友链</a></li></ul></nav></div></header><div class="back-to-top"><i class="fa fa-arrow-up"></i> <span>0%</span></div><div class="reading-progress-bar"></div><main class="main"><div class="main-inner"><div class="content-wrap"><div class="content"><div class="posts-expand"><article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN"><link itemprop="mainEntityOfPage" href="https://yalexin.gitee.io/2022/05/07/%E4%BD%BF%E7%94%A8Nuxt%E6%94%B9%E9%80%A0%E5%8D%9A%E5%AE%A2%E5%89%8D%E7%AB%AF/"><span hidden itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="image" content="/uploads/cat_mouse.jpg"><meta itemprop="name" content="YaleXin"><meta itemprop="description" content="学渣一枚"></span><span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><meta itemprop="name" content="黄阿信"></span><header class="post-header"><h1 class="post-title" itemprop="name headline"> 使用Nuxt改造博客前端</h1><div class="post-meta"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-calendar-o"></i></span> <span class="post-meta-item-text">发表于</span> <time title="创建时间：2022-05-07 15:42:34" itemprop="dateCreated datePublished" datetime="2022-05-07T15:42:34+08:00">2022-05-07</time></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-calendar-check-o"></i></span> <span class="post-meta-item-text">更新于</span> <time title="修改时间：2022-05-08 00:22:08" itemprop="dateModified" datetime="2022-05-08T00:22:08+08:00">2022-05-08</time></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-folder-o"></i></span> <span class="post-meta-item-text">分类于</span> <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a></span></span><span id="/2022/05/07/%E4%BD%BF%E7%94%A8Nuxt%E6%94%B9%E9%80%A0%E5%8D%9A%E5%AE%A2%E5%89%8D%E7%AB%AF/" class="post-meta-item leancloud_visitors" data-flag-title="使用Nuxt改造博客前端" title="阅读次数"><span class="post-meta-item-icon"><i class="fa fa-eye"></i></span> <span class="post-meta-item-text">阅读次数：</span><span class="leancloud-visitors-count"></span></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-comment-o"></i></span> <span class="post-meta-item-text">评论：</span><a title="valine" href="/2022/05/07/%E4%BD%BF%E7%94%A8Nuxt%E6%94%B9%E9%80%A0%E5%8D%9A%E5%AE%A2%E5%89%8D%E7%AB%AF/#valine-comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/2022/05/07/%E4%BD%BF%E7%94%A8Nuxt%E6%94%B9%E9%80%A0%E5%8D%9A%E5%AE%A2%E5%89%8D%E7%AB%AF/" itemprop="commentCount"></span></a></span><br><span class="post-meta-item" title="本文字数"><span class="post-meta-item-icon"><i class="fa fa-file-word-o"></i></span> <span class="post-meta-item-text">本文字数：</span> <span>4.4k</span></span><span class="post-meta-item" title="阅读时长"><span class="post-meta-item-icon"><i class="fa fa-clock-o"></i></span> <span class="post-meta-item-text">阅读时长 &asymp;</span> <span>4 分钟</span></span></div></header><div class="post-body" itemprop="articleBody"><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>是的，没错，我又来对我的博客系统下手了！回想起2020年，第一次使用<a href="https://hexo.io/zh-cn/index.html" target="_blank" rel="noopener">hexo</a>搭建的静态博客，那是我对博客系统的初体验，当时搭建完毕后，到处找插件，找主题，心情也很激动，因为这是我的第一个网站，当时熬夜搭建网站的激动现在仍然可以体会得到！</p><a id="more"></a><p>后来慢慢地接触到了动态博客的概念，进一步了解到了<a href="http://typecho.org/" target="_blank" rel="noopener">typecho</a>，为了搭建它，我自己开始租借服务器，开启了玩转服务器之旅。</p><p>使用了<code>typecho</code>大概半年以后，逐渐感受到许多不便，特别是该博客使用的是<code>PHP</code>语言开发的，我没有接触过，也暂时不想接触，想要实现某些自定义功能的时候，无从下手。</p><p>于是，出于程序员的理念：</p><blockquote><p>当你觉得某个东西不好用的时候，那你就自己造它。</p></blockquote><p>我决定自己开干！自己编写一个博客系统！</p><p>口号喊得虽然很响，但是激情过后就是无尽的迷茫，自己根本无从下手，但是自己立下的誓言含泪也要完成吧！然后自己在在网上找了很多搭建博客的教程，但是要么就是没有文档，要么就是就给了截图，源码都不提供。不过我也能理解，几乎没有人愿意将从零搭建博客的过程全都记录下来吧，那样子太费时间了。</p><p>直到后来，在哔哩哔哩上面找到了李仁密老师的<a href="https://www.bilibili.com/video/BV13t411T72J" target="_blank" rel="noopener">小而美的博客</a>教程，上面详细介绍了如何使用<code>SpringBoot</code>搭建个人博客，然后我就跟着作者一行一行地敲代码，不过到后面我逐渐明白了怎么搭建以后，有一些代码就跟作者不一样了，不过<code>90%</code>左右的代码还是和作者一样的。</p><p>时间来到了21年年初，我又开始接触到了前后端分离的概念，觉得这玩意挺新奇的，我就萌发了改造博客的想法，不过要改的话，要改的地方有很多，主要是涉及前端页面的都要重新做，但是我的审美一直不在线，最后设计出来的页面差强人意。然后前端使用<code>Vue</code>和<code>Element-UI</code>,后端之前根据李仁密老师的教程，持久层使用的是<code>Hibernate</code>,然后我这次使用的是<code>Mybatis</code>,其他的思想沿用之前的想法。不过改完以后，有一个致命的弱点，那就是首页访问速度贼慢！而且如果我们尝试在浏览器中查看源码，我们获取到的就是只有一堆<code>js</code>文件，这样子就非常不利于搜索引擎，也就是说如果我不将我的博客链接发出去，那么就几乎不可能有人找得到我的博客。我原本写博客就是为了想分享一下自己的学习心得，或者和其他人一起交流，改造博客以后搜索引擎都不来我这了，这就违背了我的初衷，这也为我后面改造博客埋下伏笔。</p><h2 id="改造之路"><a href="#改造之路" class="headerlink" title="改造之路"></a>改造之路</h2><p>经过一年的使用后，我渐渐觉得博客系统还是需要一定的访问量，不然不好意思说是博客系统，然后我就比对了一下<code>Vue</code>项目进行服务端渲染的方案，最终选定使用<code>Nuxt</code>改造。</p><p>确定以后，就可以上手了，我之前编写的代码中，很多页面的请求数据都是放在<code>created()</code>函数中，但是在<code>Nuxt</code>框架下，该函数会在客户端和服务端各执行一次，这不是我想要的，因此主要工作是将请求数据的代码放在了<code>asyncData()</code>函数中。</p><p>还好我之前写的前端都是按照模块化开发，很多功能都是按照组件来进行开发，如此一来，改造起来就快很多了。</p><p>还好我之前使用的是前后端分离模式，后端就只需要提供接口，改造起来，后端一行代码也不需要更改。</p><h2 id="遇到的坑"><a href="#遇到的坑" class="headerlink" title="遇到的坑"></a>遇到的坑</h2><p>虽然改造起来比较简单，但是有些代码也并不是一帆风顺，也到了很多坑，还好自己或多或少找到了解决方案。</p><ul><li><p>错误一：地址栏刷新<code>/home</code>的时候，后台控制台报<code>status</code> 未定义，但是刷新</p><p><code>/</code>是可以的（我的之前代码逻辑是：输入<code>/</code>时候，路由直接跳转到<code>/home</code>）</p><p>解决方案：设置跨域代理，即先安装好<code>axios</code>:</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install @nuxtjs/axios -s</span><br></pre></td></tr></table></figure><p>接着在项目的根目录下中<code>plugins</code>中新建<code>axios.js</code>文件，输入以下内容：</p><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * @Author      : YaleXin</span></span><br><span class="line"><span class="comment"> * @Email       : me@yalexin.top</span></span><br><span class="line"><span class="comment"> * @LastEditors : YaleXin</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">import</span> &#123; Message &#125; <span class="keyword">from</span> <span class="string">"element-ui"</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; MessageBox &#125; <span class="keyword">from</span> <span class="string">"element-ui"</span>;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span> (<span class="params">&#123;store, route, redirect, $axios,req&#125;</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// Error拦截器：出现错误的时候被调用，根据状态码做对应判断并显示全局Message</span></span><br><span class="line">    $axios.onError(<span class="function">(<span class="params">error</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="comment">// console.log('erro statusr =', error.response.status);</span></span><br><span class="line">      <span class="keyword">switch</span> (<span class="built_in">parseInt</span>(error.response.status)) &#123;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">400</span>: Message(&#123;</span><br><span class="line">					showClose: <span class="literal">true</span>,</span><br><span class="line">					message: <span class="string">'发送数据错误'</span>,</span><br><span class="line">					type: <span class="string">"error"</span></span><br><span class="line">        &#125;);</span><br><span class="line">          <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">402</span>: Message(&#123;</span><br><span class="line">					showClose: <span class="literal">true</span>,</span><br><span class="line">					message: <span class="string">'江湖中查无此人！'</span>,</span><br><span class="line">					type: <span class="string">"error"</span></span><br><span class="line">        &#125;);</span><br><span class="line">          <span class="keyword">break</span>;</span><br><span class="line">          <span class="comment">// 密码错误</span></span><br><span class="line">				<span class="keyword">case</span> <span class="number">403</span>: Message(&#123;</span><br><span class="line">					showClose: <span class="literal">true</span>,</span><br><span class="line">					message: <span class="string">'密令错误！'</span>,</span><br><span class="line">					type: <span class="string">"error"</span></span><br><span class="line">				&#125;);</span><br><span class="line">					<span class="keyword">break</span>;</span><br><span class="line">            <span class="comment">// 密码错误</span></span><br><span class="line">				<span class="keyword">case</span> <span class="number">405</span>: Message(&#123;</span><br><span class="line">					showClose: <span class="literal">true</span>,</span><br><span class="line">					message: <span class="string">'口令错误！'</span>,</span><br><span class="line">					type: <span class="string">"error"</span></span><br><span class="line">				&#125;);</span><br><span class="line">					<span class="keyword">break</span>;</span><br><span class="line">				<span class="keyword">case</span> <span class="number">480</span>: <span class="comment">// 未登录</span></span><br><span class="line">          <span class="built_in">console</span>.log(<span class="string">'480!!'</span>);</span><br><span class="line">          redirect(redirectURL(route,req))</span><br><span class="line">					<span class="keyword">break</span>;</span><br><span class="line">				<span class="keyword">case</span> <span class="number">500</span>: Message(&#123;</span><br><span class="line">					showClose: <span class="literal">true</span>,</span><br><span class="line">					message: <span class="string">'后端出错'</span>,</span><br><span class="line">					type: <span class="string">"error"</span></span><br><span class="line">				&#125;); <span class="keyword">break</span>;</span><br><span class="line">			&#125;</span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="comment">// Response拦截器：对正常返回的数据进行处理</span></span><br><span class="line">    $axios.onResponse(<span class="function">(<span class="params">response</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> response.data </span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 获取重定向地址</span></span><br><span class="line"><span class="keyword">const</span> redirectURL = <span class="function">(<span class="params">route,req</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="comment">// 客户端</span></span><br><span class="line">  <span class="keyword">if</span>(process.client) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="string">'/admin/login'</span></span><br><span class="line">  &#125; <span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">'/admin/login'</span></span><br><span class="line">  &#125;</span><br><span class="line"> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>然后在<code>nuxt.config.js</code>中配置<code>axios</code></p><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"> plugins: [</span><br><span class="line">   &#123;</span><br><span class="line">     src: <span class="string">'~/plugins/axios'</span>,</span><br><span class="line">     <span class="string">'ssr'</span>: <span class="literal">true</span> <span class="comment">// 服务端渲染</span></span><br><span class="line">  &#125;,</span><br><span class="line"> buildModules: [</span><br><span class="line">   <span class="string">'@nuxtjs/axios'</span>,</span><br><span class="line"> ],</span><br><span class="line"> modules: [</span><br><span class="line">   <span class="string">'@nuxtjs/axios'</span>,</span><br><span class="line">   <span class="string">'@nuxtjs/proxy'</span>,</span><br><span class="line"> ],</span><br><span class="line"> axios: &#123;</span><br><span class="line">   <span class="comment">// Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308</span></span><br><span class="line">   proxy: <span class="literal">true</span>, <span class="comment">// 开启跨域行为</span></span><br><span class="line">   prefix: <span class="string">'/api'</span>, <span class="comment">// 配置基本得url地址</span></span><br><span class="line">   credentials: <span class="literal">true</span></span><br><span class="line"> &#125;,</span><br><span class="line">     <span class="comment">// 配置代理</span></span><br><span class="line"> proxy: &#123;</span><br><span class="line">   <span class="string">'/api'</span>: &#123;</span><br><span class="line">       target: <span class="string">'http://localhost:8080/api/'</span>,</span><br><span class="line">       ws: <span class="literal">false</span>,</span><br><span class="line">       changeOrigin: <span class="literal">true</span>,</span><br><span class="line">       pathRewrite: &#123;</span><br><span class="line">           <span class="string">'^/api'</span>: <span class="string">''</span>,</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;,</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure></li><li><p>我的项目中用了<code>echarts</code>，但是我就仅仅用来热力图组件，不想把整个<code>echarts</code>项目安装进我的项目，就想着怎么按需引入。后来在某个地方找到官方定制的<a href="https://echarts.apache.org/zh/builder.html" target="_blank" rel="noopener">网站</a>，在上面的网站选后组件以后，直接下载<code>js</code>文件，然后就按照文档教程，在需要引入的地方引入：</p><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">// .vue 文件中：</span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript"><span class="keyword">import</span> echarts <span class="keyword">from</span> <span class="string">"~/assets/js/echarts.min.js"</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="javascript"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span></span><br><span class="line">    mounted()&#123;</span><br><span class="line">        echarts.init(...);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure></li><li><p>有的时候<code>node</code>服务端报<code>window is not defined</code></p><p>解决方案：有些代码会在服务端和客户端中都执行一遍，但是在服务端中，是没有<code>window</code>这个对象的，因此要在代码中加一个判断是在哪个端的语句：</p><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 如果是客户端</span></span><br><span class="line"> <span class="keyword">if</span> (process.client) &#123;</span><br><span class="line">  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li><li><p>在组件中引用自定义的<code>css</code>文件总是失效。</p><p>解决方法：原先按照<code>vue</code>的方式，引用方式为：</p><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">@<span class="keyword">import</span> <span class="string">"~/assets/css/blog.css"</span></span><br></pre></td></tr></table></figure><p>这个方法似乎在<code>Nuxt</code>框架下不行，要换成以下方式引用：</p><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript">    <span class="keyword">export</span> <span class="keyword">default</span> &#123;</span></span><br><span class="line">        head()&#123;</span><br><span class="line"><span class="actionscript">    		<span class="keyword">return</span>&#123;</span></span><br><span class="line">      			link: [</span><br><span class="line"><span class="javascript">        			&#123;<span class="attr">rel</span>: <span class="string">'stylesheet'</span>, <span class="attr">href</span>: 									<span class="built_in">require</span>(<span class="string">'~/assets/css/blog.css'</span>)&#125;</span></span><br><span class="line">      			]</span><br><span class="line">    		&#125;</span><br><span class="line">  		&#125;,</span><br><span class="line">    &#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>总得来说，改造起来困难不是很大，加上<code>vue</code>的生态的确很好，很多问题都可以找得到解决方案，目前改造后的系统：</p></li><li><input checked="checked" disabled="disabled" type="checkbox"><p>支持页面动画，改善用户体验</p></li><li><input checked="checked" disabled="disabled" type="checkbox"><p>全站的站内链接均使用<code>nuxt-link</code>方式，加快页面切换以及避免相同路由切换时报错，而且还有利于<code>SEO</code></p></li><li><input checked="checked" disabled="disabled" type="checkbox"><p>后台登陆支持验证码，增加安全性，之前的是输入正确的用户名和密码以后就可以登录了，安全性不是很大（==虽然验证码也没有加多少安全性==）</p></li><li><input checked="checked" disabled="disabled" type="checkbox"><p>后台markdown解析增加高亮语法、删除线语法，<del>就是这样子</del>，这个插件官方没有，应该是太简单做了，我对照着原有的插件就做出来了。</p></li><li><input checked="checked" disabled="disabled" type="checkbox"><p>支持公式：如这是西塔$\theta$,下面是公式<br>$$<br>y=\sum_{i=0}^{n}x_i<br>$$</p></li><li></li></ul><p>未来<strong>可能</strong>进一步完善的方向：</p><ul><li><input disabled="disabled" type="checkbox"> 恢复文章下的评论组件，为什么叫恢复呢，因为之前的是支持的，但是我改造以后，回复按钮的绑定事件一直不触发，当时调了一天都没有调出来，调到自闭。</li><li><input disabled="disabled" type="checkbox"> 支持夜间模式，这个好像挺难的，不好实现，有可能最终不实现了，哈哈哈哈哈哈哈哈哈。</li></ul></div><div class="reward-container"><div>假如对您有所帮助，那就请我喝咖啡吧~~</div> <button onclick='var qr=document.getElementById("qr");qr.style.display="none"===qr.style.display?"block":"none"'> 打赏</button><div id="qr" style="display:none"><div style="display:inline-block"> <img src="/images/WeChat.png" alt="YaleXin 微信支付"><p>微信支付</p></div><div style="display:inline-block"> <img src="/images/Alipay.jpg" alt="YaleXin 支付宝"><p>支付宝</p></div></div></div><footer class="post-footer"><div class="post-tags"><a href="/tags/Vue/" rel="tag"><i class="fa fa-tag"></i> Vue</a><a href="/tags/Nuxt/" rel="tag"><i class="fa fa-tag"></i> Nuxt</a><a href="/tags/%E5%89%8D%E7%AB%AF/" rel="tag"><i class="fa fa-tag"></i> 前端</a></div><div class="post-nav"><div class="post-nav-item"><a href="/2022/04/25/%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92-%E6%89%8B%E5%86%99%E5%AD%97%E7%AC%A6%E8%AF%86%E5%88%AB/" rel="prev" title="逻辑回归-手写字符识别"><i class="fa fa-chevron-left"></i> 逻辑回归-手写字符识别</a></div><div class="post-nav-item"> <a href="/2022/05/14/%E4%BD%BF%E7%94%A8python%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%88%86%E7%A0%B4%E6%95%B0%E5%AD%97%E5%AF%86%E7%A0%81/" rel="next" title="使用python多线程爆破数字密码">使用python多线程爆破数字密码<i class="fa fa-chevron-right"></i></a></div></div></footer></article><div><div><div style="text-align:center;color:#ccc;font-size:14px">------ 文章结束------</div></div></div></div></div><div class="comments" id="valine-comments"></div><script>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico">
+  <link rel="mask-icon" href="/images/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yalexin.gitee.io","root":"/","scheme":"Gemini","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":true},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="前言是的，没错，我又来对我的博客系统下手了！回想起2020年，第一次使用hexo搭建的静态博客，那是我对博客系统的初体验，当时搭建完毕后，到处找插件，找主题，心情也很激动，因为这是我的第一个网站，当时熬夜搭建网站的激动现在仍然可以体会得到！">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用Nuxt改造博客前端">
+<meta property="og:url" content="https://yalexin.gitee.io/2022/05/07/%E4%BD%BF%E7%94%A8Nuxt%E6%94%B9%E9%80%A0%E5%8D%9A%E5%AE%A2%E5%89%8D%E7%AB%AF/index.html">
+<meta property="og:site_name" content="黄阿信">
+<meta property="og:description" content="前言是的，没错，我又来对我的博客系统下手了！回想起2020年，第一次使用hexo搭建的静态博客，那是我对博客系统的初体验，当时搭建完毕后，到处找插件，找主题，心情也很激动，因为这是我的第一个网站，当时熬夜搭建网站的激动现在仍然可以体会得到！">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-05-07T07:42:34.000Z">
+<meta property="article:modified_time" content="2022-05-07T16:22:08.127Z">
+<meta property="article:author" content="YaleXin">
+<meta property="article:tag" content="Vue">
+<meta property="article:tag" content="Nuxt">
+<meta property="article:tag" content="前端">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://yalexin.gitee.io/2022/05/07/%E4%BD%BF%E7%94%A8Nuxt%E6%94%B9%E9%80%A0%E5%8D%9A%E5%AE%A2%E5%89%8D%E7%AB%AF/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>使用Nuxt改造博客前端 | 黄阿信</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">黄阿信</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">要么改变世界，要么适应世界。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">99</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">14</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">101</span></a>
+
+  </li>
+        <li class="menu-item menu-item-guestbook">
+
+    <a href="/guestbook/" rel="section"><i class="fa fa-fw fa-book"></i>留言板</a>
+
+  </li>
+        <li class="menu-item menu-item-links">
+
+    <a href="/links/" rel="section"><i class="fa fa-fw fa-link"></i>友链</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yalexin.gitee.io/2022/05/07/%E4%BD%BF%E7%94%A8Nuxt%E6%94%B9%E9%80%A0%E5%8D%9A%E5%AE%A2%E5%89%8D%E7%AB%AF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/cat_mouse.jpg">
+      <meta itemprop="name" content="YaleXin">
+      <meta itemprop="description" content="学渣一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="黄阿信">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          使用Nuxt改造博客前端
+        </h1>
+
+        <div class="post-meta">
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-05-07 15:42:34" itemprop="dateCreated datePublished" datetime="2022-05-07T15:42:34+08:00">2022-05-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-05-08 00:22:08" itemprop="dateModified" datetime="2022-05-08T00:22:08+08:00">2022-05-08</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2022/05/07/%E4%BD%BF%E7%94%A8Nuxt%E6%94%B9%E9%80%A0%E5%8D%9A%E5%AE%A2%E5%89%8D%E7%AB%AF/" class="post-meta-item leancloud_visitors" data-flag-title="使用Nuxt改造博客前端" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">评论：</span>
+    
+    <a title="valine" href="/2022/05/07/%E4%BD%BF%E7%94%A8Nuxt%E6%94%B9%E9%80%A0%E5%8D%9A%E5%AE%A2%E5%89%8D%E7%AB%AF/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/05/07/%E4%BD%BF%E7%94%A8Nuxt%E6%94%B9%E9%80%A0%E5%8D%9A%E5%AE%A2%E5%89%8D%E7%AB%AF/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>是的，没错，我又来对我的博客系统下手了！回想起2020年，第一次使用<a href="https://hexo.io/zh-cn/index.html" target="_blank" rel="noopener">hexo</a>搭建的静态博客，那是我对博客系统的初体验，当时搭建完毕后，到处找插件，找主题，心情也很激动，因为这是我的第一个网站，当时熬夜搭建网站的激动现在仍然可以体会得到！</p>
+<a id="more"></a>
+
+<p>后来慢慢地接触到了动态博客的概念，进一步了解到了<a href="http://typecho.org/" target="_blank" rel="noopener">typecho</a>，为了搭建它，我自己开始租借服务器，开启了玩转服务器之旅。</p>
+<p>使用了<code>typecho</code>大概半年以后，逐渐感受到许多不便，特别是该博客使用的是<code>PHP</code>语言开发的，我没有接触过，也暂时不想接触，想要实现某些自定义功能的时候，无从下手。</p>
+<p>于是，出于程序员的理念：</p>
+<blockquote>
+<p>当你觉得某个东西不好用的时候，那你就自己造它。</p>
+</blockquote>
+<p>我决定自己开干！自己编写一个博客系统！</p>
+<p>口号喊得虽然很响，但是激情过后就是无尽的迷茫，自己根本无从下手，但是自己立下的誓言含泪也要完成吧！然后自己在在网上找了很多搭建博客的教程，但是要么就是没有文档，要么就是就给了截图，源码都不提供。不过我也能理解，几乎没有人愿意将从零搭建博客的过程全都记录下来吧，那样子太费时间了。</p>
+<p>直到后来，在哔哩哔哩上面找到了李仁密老师的<a href="https://www.bilibili.com/video/BV13t411T72J" target="_blank" rel="noopener">小而美的博客</a>教程，上面详细介绍了如何使用<code>SpringBoot</code>搭建个人博客，然后我就跟着作者一行一行地敲代码，不过到后面我逐渐明白了怎么搭建以后，有一些代码就跟作者不一样了，不过<code>90%</code>左右的代码还是和作者一样的。</p>
+<p>时间来到了21年年初，我又开始接触到了前后端分离的概念，觉得这玩意挺新奇的，我就萌发了改造博客的想法，不过要改的话，要改的地方有很多，主要是涉及前端页面的都要重新做，但是我的审美一直不在线，最后设计出来的页面差强人意。然后前端使用<code>Vue</code>和<code>Element-UI</code>,后端之前根据李仁密老师的教程，持久层使用的是<code>Hibernate</code>,然后我这次使用的是<code>Mybatis</code>,其他的思想沿用之前的想法。不过改完以后，有一个致命的弱点，那就是首页访问速度贼慢！而且如果我们尝试在浏览器中查看源码，我们获取到的就是只有一堆<code>js</code>文件，这样子就非常不利于搜索引擎，也就是说如果我不将我的博客链接发出去，那么就几乎不可能有人找得到我的博客。我原本写博客就是为了想分享一下自己的学习心得，或者和其他人一起交流，改造博客以后搜索引擎都不来我这了，这就违背了我的初衷，这也为我后面改造博客埋下伏笔。</p>
+<h2 id="改造之路"><a href="#改造之路" class="headerlink" title="改造之路"></a>改造之路</h2><p>经过一年的使用后，我渐渐觉得博客系统还是需要一定的访问量，不然不好意思说是博客系统，然后我就比对了一下<code>Vue</code>项目进行服务端渲染的方案，最终选定使用<code>Nuxt</code>改造。</p>
+<p>确定以后，就可以上手了，我之前编写的代码中，很多页面的请求数据都是放在<code>created()</code>函数中，但是在<code>Nuxt</code>框架下，该函数会在客户端和服务端各执行一次，这不是我想要的，因此主要工作是将请求数据的代码放在了<code>asyncData()</code>函数中。</p>
+<p>还好我之前写的前端都是按照模块化开发，很多功能都是按照组件来进行开发，如此一来，改造起来就快很多了。</p>
+<p>还好我之前使用的是前后端分离模式，后端就只需要提供接口，改造起来，后端一行代码也不需要更改。</p>
+<h2 id="遇到的坑"><a href="#遇到的坑" class="headerlink" title="遇到的坑"></a>遇到的坑</h2><p>虽然改造起来比较简单，但是有些代码也并不是一帆风顺，也到了很多坑，还好自己或多或少找到了解决方案。</p>
+<ul>
+<li><p>错误一：地址栏刷新<code>/home</code>的时候，后台控制台报<code>status</code> 未定义，但是刷新</p>
+<p><code>/</code>是可以的（我的之前代码逻辑是：输入<code>/</code>时候，路由直接跳转到<code>/home</code>）</p>
+<p>解决方案：设置跨域代理，即先安装好<code>axios</code>:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install @nuxtjs/axios -s</span><br></pre></td></tr></table></figure>
+
+<p>接着在项目的根目录下中<code>plugins</code>中新建<code>axios.js</code>文件，输入以下内容：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * @Author      : YaleXin</span></span><br><span class="line"><span class="comment"> * @Email       : me@yalexin.top</span></span><br><span class="line"><span class="comment"> * @LastEditors : YaleXin</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">import</span> &#123; Message &#125; <span class="keyword">from</span> <span class="string">"element-ui"</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; MessageBox &#125; <span class="keyword">from</span> <span class="string">"element-ui"</span>;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span> (<span class="params">&#123;store, route, redirect, $axios,req&#125;</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// Error拦截器：出现错误的时候被调用，根据状态码做对应判断并显示全局Message</span></span><br><span class="line">    $axios.onError(<span class="function">(<span class="params">error</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="comment">// console.log('erro statusr =', error.response.status);</span></span><br><span class="line">      <span class="keyword">switch</span> (<span class="built_in">parseInt</span>(error.response.status)) &#123;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">400</span>: Message(&#123;</span><br><span class="line">					showClose: <span class="literal">true</span>,</span><br><span class="line">					message: <span class="string">'发送数据错误'</span>,</span><br><span class="line">					type: <span class="string">"error"</span></span><br><span class="line">        &#125;);</span><br><span class="line">          <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">402</span>: Message(&#123;</span><br><span class="line">					showClose: <span class="literal">true</span>,</span><br><span class="line">					message: <span class="string">'江湖中查无此人！'</span>,</span><br><span class="line">					type: <span class="string">"error"</span></span><br><span class="line">        &#125;);</span><br><span class="line">          <span class="keyword">break</span>;</span><br><span class="line">          <span class="comment">// 密码错误</span></span><br><span class="line">				<span class="keyword">case</span> <span class="number">403</span>: Message(&#123;</span><br><span class="line">					showClose: <span class="literal">true</span>,</span><br><span class="line">					message: <span class="string">'密令错误！'</span>,</span><br><span class="line">					type: <span class="string">"error"</span></span><br><span class="line">				&#125;);</span><br><span class="line">					<span class="keyword">break</span>;</span><br><span class="line">            <span class="comment">// 密码错误</span></span><br><span class="line">				<span class="keyword">case</span> <span class="number">405</span>: Message(&#123;</span><br><span class="line">					showClose: <span class="literal">true</span>,</span><br><span class="line">					message: <span class="string">'口令错误！'</span>,</span><br><span class="line">					type: <span class="string">"error"</span></span><br><span class="line">				&#125;);</span><br><span class="line">					<span class="keyword">break</span>;</span><br><span class="line">				<span class="keyword">case</span> <span class="number">480</span>: <span class="comment">// 未登录</span></span><br><span class="line">          <span class="built_in">console</span>.log(<span class="string">'480!!'</span>);</span><br><span class="line">          redirect(redirectURL(route,req))</span><br><span class="line">					<span class="keyword">break</span>;</span><br><span class="line">				<span class="keyword">case</span> <span class="number">500</span>: Message(&#123;</span><br><span class="line">					showClose: <span class="literal">true</span>,</span><br><span class="line">					message: <span class="string">'后端出错'</span>,</span><br><span class="line">					type: <span class="string">"error"</span></span><br><span class="line">				&#125;); <span class="keyword">break</span>;</span><br><span class="line">			&#125;</span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="comment">// Response拦截器：对正常返回的数据进行处理</span></span><br><span class="line">    $axios.onResponse(<span class="function">(<span class="params">response</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> response.data </span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 获取重定向地址</span></span><br><span class="line"><span class="keyword">const</span> redirectURL = <span class="function">(<span class="params">route,req</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="comment">// 客户端</span></span><br><span class="line">  <span class="keyword">if</span>(process.client) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="string">'/admin/login'</span></span><br><span class="line">  &#125; <span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">'/admin/login'</span></span><br><span class="line">  &#125;</span><br><span class="line"> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后在<code>nuxt.config.js</code>中配置<code>axios</code></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"> plugins: [</span><br><span class="line">   &#123;</span><br><span class="line">     src: <span class="string">'~/plugins/axios'</span>,</span><br><span class="line">     <span class="string">'ssr'</span>: <span class="literal">true</span> <span class="comment">// 服务端渲染</span></span><br><span class="line">  &#125;,</span><br><span class="line"> buildModules: [</span><br><span class="line">   <span class="string">'@nuxtjs/axios'</span>,</span><br><span class="line"> ],</span><br><span class="line"> modules: [</span><br><span class="line">   <span class="string">'@nuxtjs/axios'</span>,</span><br><span class="line">   <span class="string">'@nuxtjs/proxy'</span>,</span><br><span class="line"> ],</span><br><span class="line"> axios: &#123;</span><br><span class="line">   <span class="comment">// Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308</span></span><br><span class="line">   proxy: <span class="literal">true</span>, <span class="comment">// 开启跨域行为</span></span><br><span class="line">   prefix: <span class="string">'/api'</span>, <span class="comment">// 配置基本得url地址</span></span><br><span class="line">   credentials: <span class="literal">true</span></span><br><span class="line"> &#125;,</span><br><span class="line">     <span class="comment">// 配置代理</span></span><br><span class="line"> proxy: &#123;</span><br><span class="line">   <span class="string">'/api'</span>: &#123;</span><br><span class="line">       target: <span class="string">'http://localhost:8080/api/'</span>,</span><br><span class="line">       ws: <span class="literal">false</span>,</span><br><span class="line">       changeOrigin: <span class="literal">true</span>,</span><br><span class="line">       pathRewrite: &#123;</span><br><span class="line">           <span class="string">'^/api'</span>: <span class="string">''</span>,</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;,</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>我的项目中用了<code>echarts</code>，但是我就仅仅用来热力图组件，不想把整个<code>echarts</code>项目安装进我的项目，就想着怎么按需引入。后来在某个地方找到官方定制的<a href="https://echarts.apache.org/zh/builder.html" target="_blank" rel="noopener">网站</a>，在上面的网站选后组件以后，直接下载<code>js</code>文件，然后就按照文档教程，在需要引入的地方引入：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">// .vue 文件中：</span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript"><span class="keyword">import</span> echarts <span class="keyword">from</span> <span class="string">"~/assets/js/echarts.min.js"</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="javascript"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span></span><br><span class="line">    mounted()&#123;</span><br><span class="line">        echarts.init(...);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>有的时候<code>node</code>服务端报<code>window is not defined</code></p>
+<p>解决方案：有些代码会在服务端和客户端中都执行一遍，但是在服务端中，是没有<code>window</code>这个对象的，因此要在代码中加一个判断是在哪个端的语句：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 如果是客户端</span></span><br><span class="line"> <span class="keyword">if</span> (process.client) &#123;</span><br><span class="line">  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在组件中引用自定义的<code>css</code>文件总是失效。</p>
+<p>解决方法：原先按照<code>vue</code>的方式，引用方式为：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">@<span class="keyword">import</span> <span class="string">"~/assets/css/blog.css"</span></span><br></pre></td></tr></table></figure>
+
+<p>这个方法似乎在<code>Nuxt</code>框架下不行，要换成以下方式引用：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript">    <span class="keyword">export</span> <span class="keyword">default</span> &#123;</span></span><br><span class="line">        head()&#123;</span><br><span class="line"><span class="actionscript">    		<span class="keyword">return</span>&#123;</span></span><br><span class="line">      			link: [</span><br><span class="line"><span class="javascript">        			&#123;<span class="attr">rel</span>: <span class="string">'stylesheet'</span>, <span class="attr">href</span>: 									<span class="built_in">require</span>(<span class="string">'~/assets/css/blog.css'</span>)&#125;</span></span><br><span class="line">      			]</span><br><span class="line">    		&#125;</span><br><span class="line">  		&#125;,</span><br><span class="line">    &#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>总得来说，改造起来困难不是很大，加上<code>vue</code>的生态的确很好，很多问题都可以找得到解决方案，目前改造后的系统：</p>
+</li>
+<li><input checked disabled type="checkbox"> <p>支持页面动画，改善用户体验</p>
+</li>
+<li><input checked disabled type="checkbox"> <p>全站的站内链接均使用<code>nuxt-link</code>方式，加快页面切换以及避免相同路由切换时报错，而且还有利于<code>SEO</code></p>
+</li>
+<li><input checked disabled type="checkbox"> <p>后台登陆支持验证码，增加安全性，之前的是输入正确的用户名和密码以后就可以登录了，安全性不是很大（==虽然验证码也没有加多少安全性==）</p>
+</li>
+<li><input checked disabled type="checkbox"> <p>后台markdown解析增加高亮语法、删除线语法，<del>就是这样子</del>，这个插件官方没有，应该是太简单做了，我对照着原有的插件就做出来了。</p>
+</li>
+<li><input checked disabled type="checkbox"> <p>支持公式：如这是西塔$\theta$,下面是公式<br>$$<br>y=\sum_{i=0}^{n}x_i<br>$$</p>
+</li>
+<li></li>
+</ul>
+<p>未来<strong>可能</strong>进一步完善的方向：</p>
+<ul>
+<li><input disabled type="checkbox"> 恢复文章下的评论组件，为什么叫恢复呢，因为之前的是支持的，但是我改造以后，回复按钮的绑定事件一直不触发，当时调了一天都没有调出来，调到自闭。</li>
+<li><input disabled type="checkbox"> 支持夜间模式，这个好像挺难的，不好实现，有可能最终不实现了，哈哈哈哈哈哈哈哈哈。</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>假如对您有所帮助，那就请我喝咖啡吧~~</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/WeChat.png" alt="YaleXin 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/Alipay.jpg" alt="YaleXin 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Vue/" rel="tag"><i class="fa fa-tag"></i> Vue</a>
+              <a href="/tags/Nuxt/" rel="tag"><i class="fa fa-tag"></i> Nuxt</a>
+              <a href="/tags/%E5%89%8D%E7%AB%AF/" rel="tag"><i class="fa fa-tag"></i> 前端</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/04/25/%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92-%E6%89%8B%E5%86%99%E5%AD%97%E7%AC%A6%E8%AF%86%E5%88%AB/" rel="prev" title="逻辑回归-手写字符识别">
+      <i class="fa fa-chevron-left"></i> 逻辑回归-手写字符识别
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/05/14/%E4%BD%BF%E7%94%A8python%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%88%86%E7%A0%B4%E6%95%B0%E5%AD%97%E5%AF%86%E7%A0%81/" rel="next" title="使用python多线程爆破数字密码">
+      使用python多线程爆破数字密码 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+
+
+<div>
+    
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">------ 文章结束------</div>
+    
+</div>
+
+    
+ </div>
+
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
   window.addEventListener('tabs:register', () => {
     let activeClass = CONFIG.comments.activeClass;
     if (CONFIG.comments.storage) {
@@ -18,7 +421,157 @@
       localStorage.setItem('comments_active', commentClass);
     });
   }
-</script></div><div class="toggle sidebar-toggle"><span class="toggle-line toggle-line-first"></span><span class="toggle-line toggle-line-middle"></span><span class="toggle-line toggle-line-last"></span></div><aside class="sidebar"><div class="sidebar-inner"><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc"> 文章目录</li><li class="sidebar-nav-overview"> 站点概览</li></ul><div class="post-toc-wrap sidebar-panel"><div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#改造之路"><span class="nav-number">2.</span> <span class="nav-text">改造之路</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#遇到的坑"><span class="nav-number">3.</span> <span class="nav-text">遇到的坑</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person"> <img class="site-author-image" itemprop="image" alt="YaleXin" src="/uploads/cat_mouse.jpg"><p class="site-author-name" itemprop="name">YaleXin</p><div class="site-description" itemprop="description">学渣一枚</div></div><div class="site-state-wrap motion-element"><nav class="site-state"><div class="site-state-item site-state-posts"> <a href="/archives/"><span class="site-state-item-count">95</span> <span class="site-state-item-name">日志</span></a></div><div class="site-state-item site-state-categories"> <a href="/categories/"><span class="site-state-item-count">14</span> <span class="site-state-item-name">分类</span></a></div><div class="site-state-item site-state-tags"> <a href="/tags/"><span class="site-state-item-count">93</span> <span class="site-state-item-name">标签</span></a></div></nav></div></div></div></aside><div id="sidebar-dimmer"></div></div></main><footer class="footer"><div class="footer-inner"><div class="copyright"> &copy; 2020 – <span itemprop="copyrightYear">2022</span><span class="with-love"><i class="fa fa-fas fa-heartbeat"></i></span> <span class="author" itemprop="copyrightHolder">YaleXin</span> <span class="post-meta-divider">|</span><span class="post-meta-item-icon"><i class="fa fa-area-chart"></i></span> <span title="站点总字数">233k</span> <span class="post-meta-divider">|</span><span class="post-meta-item-icon"><i class="fa fa-coffee"></i></span> <span title="站点阅读时长">3:32</span></div> <span>本站已在此等候您 <span id="dnum" style="color:#35b8ff">0</span> 天</span> <span><span id="hnum" style="color:#35b8ff">0</span> 小时 <span id="mnum" style="color:#35b8ff">0</span> 分 <span id="snum" style="color:#35b8ff">0</span> 秒</span><script>var now=new Date;function createtime(){var n=new Date("02/21/2020 11:30:00");now.setTime(now.getTime()+250),days=(now-n)/1e3/60/60/24,dnum=Math.floor(days),hours=(now-n)/1e3/60/60-24*dnum,hnum=Math.floor(hours),1==String(hnum).length&&(hnum="0"+hnum),minutes=(now-n)/1e3/60-1440*dnum-60*hnum,mnum=Math.floor(minutes),1==String(mnum).length&&(mnum="0"+mnum),seconds=(now-n)/1e3-86400*dnum-3600*hnum-60*mnum,snum=Math.round(seconds),1==String(snum).length&&(snum="0"+snum),document.getElementById("dnum").innerHTML=dnum,document.getElementById("hnum").innerHTML=hnum,document.getElementById("mnum").innerHTML=mnum,document.getElementById("snum").innerHTML=snum}setInterval("createtime()",250)</script><div class="powered-by"> <span>powered by</span> <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a></div><div class="busuanzi-count"><script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span class="post-meta-item" id="busuanzi_container_site_uv" style="display:none"><span class="post-meta-item-icon"><i class="fa fa-user"></i></span> <span class="site-uv" title="总访客量"><span>总访客量：</span><span id="busuanzi_value_site_uv"></span></span></span> <span class="post-meta-divider">|</span><span class="post-meta-item" id="busuanzi_container_site_pv" style="display:none"><span class="post-meta-item-icon"><i class="fa fa-eye"></i></span> <span class="site-pv" title="总访问量"><span>总访问量：</span><span id="busuanzi_value_site_pv"></span></span></span></div><script>
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#改造之路"><span class="nav-number">2.</span> <span class="nav-text">改造之路</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#遇到的坑"><span class="nav-number">3.</span> <span class="nav-text">遇到的坑</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="YaleXin"
+      src="/uploads/cat_mouse.jpg">
+  <p class="site-author-name" itemprop="name">YaleXin</p>
+  <div class="site-description" itemprop="description">学渣一枚</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">101</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">99</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-fas fa-heartbeat"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">YaleXin</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    <span title="站点总字数">258k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">3:55</span>
+</div>
+
+
+<span >本站已在此等候您 <span id="dnum" style="color:#35B8FF">0</span> 天 </span>
+<span><span id="hnum" style="color:#35B8FF">0</span> 小时 <span id="mnum" style="color:#35B8FF">0</span> 分 <span id="snum" style="color:#35B8FF">0</span> 秒</span>
+<script>
+    var now = new Date(); 
+    function createtime() { 
+        var grt= new Date("02/21/2020 11:30:00");
+        now.setTime(now.getTime()+250); 
+        days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); 
+        hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); 
+        if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); 
+        mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} 
+        seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); 
+        snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} 
+        document.getElementById("dnum").innerHTML = dnum;
+        document.getElementById("hnum").innerHTML = hnum;
+        document.getElementById("mnum").innerHTML = mnum;
+        document.getElementById("snum").innerHTML = snum;
+        
+    } 
+setInterval("createtime()",250);
+</script>
+  <div class="powered-by">
+    <span>powered by </span><a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span>总访客量：</span>
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span>总访问量：</span>
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+  <script>
   function leancloudSelector(url) {
     url = encodeURI(url);
     return document.getElementById(url).querySelector('.leancloud-visitors-count');
@@ -111,7 +664,64 @@
         showTime(Counter);
       }
     });
-  </script></div></footer></div><script src="/lib/anime.min.js"></script><script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script><script src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script><script src="/lib/velocity/velocity.min.js"></script><script src="/lib/velocity/velocity.ui.min.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/pisces.js"></script><script src="/js/next-boot.js"></script><script>!function(){var t=document.createElement("script"),e=window.location.protocol.split(":")[0];t.src="https"===e?"https://zz.bdstatic.com/linksubmit/push.js":"http://push.zhanzhang.baidu.com/push.js";var s=document.getElementsByTagName("script")[0];s.parentNode.insertBefore(t,s)}()</script><script>
+  </script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
   if (typeof MathJax === 'undefined') {
     window.MathJax = {
       tex: {
@@ -153,7 +763,14 @@
     MathJax.texReset();
     MathJax.typeset();
   }
-</script><script>
+</script>
+
+    
+
+  
+
+
+<script>
 NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
   NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
     var GUEST = ['nick', 'mail', 'link'];
@@ -179,7 +796,14 @@ NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
     });
   }, window.Valine);
 });
-</script><script src="./valine.js"></script><script type="text/javascript">
+</script>
+
+
+
+  
+  <script src="./valine.js"></script>
+
+  <script type="text/javascript">
     var GUEST = ['nick','mail','link'];
     var guest = 'nick,mail,link';
     guest = guest.split(',').filter(item=>{
@@ -197,4 +821,7 @@ NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
         pageSize:'10' || 10,
         avatar_cdn:'',
 });
-  </script></body></html>
+  </script>
+
+</body>
+</html>

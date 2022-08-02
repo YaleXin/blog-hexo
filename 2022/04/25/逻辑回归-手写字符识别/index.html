@@ -1,4 +1,394 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=2"><meta name="theme-color" content="#222"><meta name="generator" content="Hexo 4.2.0"><link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.ico"><link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico"><link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico"><link rel="mask-icon" href="/images/favicon.ico" color="#222"><link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css"><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css"><script id="hexo-configurations">var NexT=window.NexT||{},CONFIG={hostname:"yalexin.gitee.io",root:"/",scheme:"Gemini",version:"7.7.1",exturl:!1,sidebar:{position:"left",display:"post",padding:18,offset:12,onmobile:!0},copycode:{enable:!0,show_result:!0,style:"mac"},back2top:{enable:!0,sidebar:!1,scrollpercent:!0},bookmark:{enable:!1,color:"#222",save:"auto"},fancybox:!0,mediumzoom:!1,lazyload:!1,pangu:!1,comments:{style:"tabs",active:null,storage:!0,lazyload:!1,nav:null},algolia:{hits:{per_page:10},labels:{input_placeholder:"Search for Posts",hits_empty:"We didn't find any results for the search: ${query}",hits_stats:"${hits} results found in ${time} ms"}},localsearch:{enable:!1,trigger:"auto",top_n_per_article:1,unescape:!1,preload:!1},motion:{enable:!0,async:!1,transition:{post_block:"fadeIn",post_header:"slideDownIn",post_body:"slideDownIn",coll_header:"slideLeftIn",sidebar:"slideUpIn"}},path:"search.xml"}</script><meta name="description" content="前言逻辑回归虽然在名字里边带了逻辑，但是经常被用于分类问题，而且常和线性回归相结合，本文将利用MNIST数据集，完成多分类问题，带你一窥逻辑回归背后的原理。"><meta property="og:type" content="article"><meta property="og:title" content="逻辑回归-手写字符识别"><meta property="og:url" content="https://yalexin.gitee.io/2022/04/25/%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92-%E6%89%8B%E5%86%99%E5%AD%97%E7%AC%A6%E8%AF%86%E5%88%AB/index.html"><meta property="og:site_name" content="黄阿信"><meta property="og:description" content="前言逻辑回归虽然在名字里边带了逻辑，但是经常被用于分类问题，而且常和线性回归相结合，本文将利用MNIST数据集，完成多分类问题，带你一窥逻辑回归背后的原理。"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://qiniu.yalexin.top/QQ%E6%88%AA%E5%9B%BE20220425125449.png"><meta property="og:image" content="https://qiniu.yalexin.top/QQ%E6%88%AA%E5%9B%BE20220425125914.png"><meta property="og:image" content="https://qiniu.yalexin.top/QQ%E6%88%AA%E5%9B%BE20220425130418.png"><meta property="og:image" content="https://qiniu.yalexin.top/QQ%E6%88%AA%E5%9B%BE20220425130720.png"><meta property="og:image" content="https://qiniu.yalexin.top/QQ%E6%88%AA%E5%9B%BE20220425131534.png"><meta property="og:image" content="https://qiniu.yalexin.top/QQ%E6%88%AA%E5%9B%BE20220425133102.png"><meta property="og:image" content="https://qiniu.yalexin.top/QQ%E6%88%AA%E5%9B%BE20220425135143.png"><meta property="og:image" content="https://qiniu.yalexin.top/QQ%E6%88%AA%E5%9B%BE20220425135445.png"><meta property="og:image" content="https://qiniu.yalexin.top/QQ%E6%88%AA%E5%9B%BE20220425135716.png"><meta property="og:image" content="https://qiniu.yalexin.top/QQ%E6%88%AA%E5%9B%BE20220425140306.png"><meta property="og:image" content="https://qiniu.yalexin.top/QQ%E6%88%AA%E5%9B%BE20220425143942.png"><meta property="og:image" content="https://qiniu.yalexin.top/QQ%E6%88%AA%E5%9B%BE20220425144719.png"><meta property="article:published_time" content="2022-04-25T04:31:07.000Z"><meta property="article:modified_time" content="2022-05-07T07:30:55.670Z"><meta property="article:author" content="YaleXin"><meta property="article:tag" content="逻辑回归"><meta property="article:tag" content="MNIST"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://qiniu.yalexin.top/QQ%E6%88%AA%E5%9B%BE20220425125449.png"><link rel="canonical" href="https://yalexin.gitee.io/2022/04/25/%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92-%E6%89%8B%E5%86%99%E5%AD%97%E7%AC%A6%E8%AF%86%E5%88%AB/"><script id="page-configurations">CONFIG.page={sidebar:"",isHome:!1,isPost:!0}</script><title>逻辑回归-手写字符识别 | 黄阿信</title><noscript><style>.sidebar-inner,.use-motion .brand,.use-motion .collection-header,.use-motion .comments,.use-motion .menu-item,.use-motion .pagination,.use-motion .post-block,.use-motion .post-body,.use-motion .post-header{opacity:initial}.use-motion .site-subtitle,.use-motion .site-title{opacity:initial;top:initial}.use-motion .logo-line-before i{left:initial}.use-motion .logo-line-after i{right:initial}</style></noscript></head><body itemscope itemtype="http://schema.org/WebPage"><div class="container use-motion"><div class="headband"></div><header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="header-inner"><div class="site-brand-container"><div class="site-nav-toggle"><div class="toggle" aria-label="切换导航栏"><span class="toggle-line toggle-line-first"></span><span class="toggle-line toggle-line-middle"></span><span class="toggle-line toggle-line-last"></span></div></div><div class="site-meta"><div><a href="/" class="brand" rel="start"><span class="logo-line-before"><i></i></span> <span class="site-title">黄阿信</span><span class="logo-line-after"><i></i></span></a></div><p class="site-subtitle">要么改变世界，要么适应世界。</p></div><div class="site-nav-right"><div class="toggle popup-trigger"></div></div></div><nav class="site-nav"><ul id="menu" class="menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-fw fa-home"></i> 首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i> 标签<span class="badge">93</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i> 分类<span class="badge">14</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i> 归档<span class="badge">95</span></a></li><li class="menu-item menu-item-guestbook"><a href="/guestbook/" rel="section"><i class="fa fa-fw fa-book"></i> 留言板</a></li><li class="menu-item menu-item-links"><a href="/links/" rel="section"><i class="fa fa-fw fa-link"></i> 友链</a></li></ul></nav></div></header><div class="back-to-top"><i class="fa fa-arrow-up"></i> <span>0%</span></div><div class="reading-progress-bar"></div><main class="main"><div class="main-inner"><div class="content-wrap"><div class="content"><div class="posts-expand"><article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN"><link itemprop="mainEntityOfPage" href="https://yalexin.gitee.io/2022/04/25/%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92-%E6%89%8B%E5%86%99%E5%AD%97%E7%AC%A6%E8%AF%86%E5%88%AB/"><span hidden itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="image" content="/uploads/cat_mouse.jpg"><meta itemprop="name" content="YaleXin"><meta itemprop="description" content="学渣一枚"></span><span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><meta itemprop="name" content="黄阿信"></span><header class="post-header"><h1 class="post-title" itemprop="name headline"> 逻辑回归-手写字符识别</h1><div class="post-meta"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-calendar-o"></i></span> <span class="post-meta-item-text">发表于</span> <time title="创建时间：2022-04-25 12:31:07" itemprop="dateCreated datePublished" datetime="2022-04-25T12:31:07+08:00">2022-04-25</time></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-calendar-check-o"></i></span> <span class="post-meta-item-text">更新于</span> <time title="修改时间：2022-05-07 15:30:55" itemprop="dateModified" datetime="2022-05-07T15:30:55+08:00">2022-05-07</time></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-folder-o"></i></span> <span class="post-meta-item-text">分类于</span> <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a></span></span><span id="/2022/04/25/%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92-%E6%89%8B%E5%86%99%E5%AD%97%E7%AC%A6%E8%AF%86%E5%88%AB/" class="post-meta-item leancloud_visitors" data-flag-title="逻辑回归-手写字符识别" title="阅读次数"><span class="post-meta-item-icon"><i class="fa fa-eye"></i></span> <span class="post-meta-item-text">阅读次数：</span><span class="leancloud-visitors-count"></span></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-comment-o"></i></span> <span class="post-meta-item-text">评论：</span><a title="valine" href="/2022/04/25/%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92-%E6%89%8B%E5%86%99%E5%AD%97%E7%AC%A6%E8%AF%86%E5%88%AB/#valine-comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/2022/04/25/%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92-%E6%89%8B%E5%86%99%E5%AD%97%E7%AC%A6%E8%AF%86%E5%88%AB/" itemprop="commentCount"></span></a></span><br><span class="post-meta-item" title="本文字数"><span class="post-meta-item-icon"><i class="fa fa-file-word-o"></i></span> <span class="post-meta-item-text">本文字数：</span> <span>6.9k</span></span><span class="post-meta-item" title="阅读时长"><span class="post-meta-item-icon"><i class="fa fa-clock-o"></i></span> <span class="post-meta-item-text">阅读时长 &asymp;</span> <span>6 分钟</span></span></div></header><div class="post-body" itemprop="articleBody"><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>逻辑回归虽然在名字里边带了逻辑，但是经常被用于分类问题，而且常和线性回归相结合，本文将利用<code>MNIST</code>数据集，完成多分类问题，带你一窥逻辑回归背后的原理。</p><a id="more"></a><h2 id="相关原理"><a href="#相关原理" class="headerlink" title="相关原理"></a>相关原理</h2><h3 id="数据集获取"><a href="#数据集获取" class="headerlink" title="数据集获取"></a>数据集获取</h3><p><a href="http://yann.lecun.com/exdb/mnist/" target="_blank" rel="noopener">下载地址</a></p><p>该数据集中包含了6万个训练集样本、1万个测试集样本，每个样本都是<code>28*28</code>的字符图片，标签为该字符对应的字符类别，下图为某一个样本：</p><p><img src="https://qiniu.yalexin.top/QQ%E6%88%AA%E5%9B%BE20220425125449.png" alt></p><p>获取数据集以后，我们还要将图片降维，使之变为长度<code>784</code>的向量，意味着我们有<code>784</code>个特征，虽然提取特征有更好的方法，但是我们这里仍然使用线性回归的方法。</p><p>此外，每份样本的标签值是该样本的类别，还应该进行<a href="https://baike.baidu.com/item/%E7%8B%AC%E7%83%AD%E7%BC%96%E7%A0%81/9717350?fr=aladdin" target="_blank" rel="noopener">独热编码</a>，将其转为每个类别的概率。</p><h3 id="sigmoid函数"><a href="#sigmoid函数" class="headerlink" title="sigmoid函数"></a>sigmoid函数</h3><p>该函数也称为逻辑函数，函数定义如下：</p><p> <img src="https://qiniu.yalexin.top/QQ%E6%88%AA%E5%9B%BE20220425125914.png" alt="g(z)=\frac{1}{1+e^{-z}} "></p><p>函数大概长这样：</p><p><img src="https://qiniu.yalexin.top/QQ%E6%88%AA%E5%9B%BE20220425130418.png" alt="g(z)=\frac{1}{1+e^{-z}} "></p><p>它很符合我们的直观感觉，在无穷大或者无穷小的时候，变化不大，要么趋于1要么趋于0，而在中间位置变化最为明显，我们也可以求得其导数：</p><p><img src="https://qiniu.yalexin.top/QQ%E6%88%AA%E5%9B%BE20220425130720.png" alt="g&#39;(z)=g(z)(1-g(z))"></p><h3 id="Forward-propagation（前向传播-）"><a href="#Forward-propagation（前向传播-）" class="headerlink" title="Forward propagation（前向传播 ）"></a>Forward propagation（前向传播 ）</h3><p>该过程是从输入到输出的过程，即从图片输入到计算其每一个类别概率的过程，如果是二分类问题，那么输出则是该图片属于该类别的概率，若是多分类，那么输出的个数应该与类别数量一致，其每一个输出对应类别的概率。</p><p><img src="https://qiniu.yalexin.top/QQ%E6%88%AA%E5%9B%BE20220425131534.png" alt="\widehat{y}_{i}=g(z)=g\left(\mathrm{w}^{T} x+b\right)=\frac{1}{1+e^{-\mathrm{w}^{T} x-b}}"></p><blockquote><p>这里的 <code>w</code>就是我们图片每一个像素对应的权重，故长度也为784</p></blockquote><h3 id="Back-propagation-（反向传播）"><a href="#Back-propagation-（反向传播）" class="headerlink" title="Back propagation （反向传播）"></a>Back propagation （反向传播）</h3><p>反向传播指的是从根据输出，计算梯度，更新参数的过程，这里使用的仍然是梯度下降分析法。不过我们先介绍一下交叉熵的概念，这个一般用于衡量两个概率分布的距离，也可以说用来判断两个模型之间有多“像”，该函数定义如下：</p><p><img src="https://qiniu.yalexin.top/QQ%E6%88%AA%E5%9B%BE20220425133102.png" alt></p><p>我们也是用该函数作为我们的损失函数。</p><p>该函数对<code>z</code>求导为：</p><p><img src="https://qiniu.yalexin.top/QQ%E6%88%AA%E5%9B%BE20220425135143.png" alt="\frac{\mathrm{d}L}{\mathrm{d}z}=\frac{-y_i}{g\left(z\right)}g\left(z\right)\left(1-g\left(z\right)\right)+\frac{1-y_i}{1-g\left(z\right)}g\left(z\right)\left(1-g\left(z\right)\right)=g\left(z\right)-y_i"></p><p>进一步地，对参数<code>w</code>求导</p><p><img src="https://qiniu.yalexin.top/QQ%E6%88%AA%E5%9B%BE20220425135445.png" alt="\frac{\partial L}{\partial w}=\frac{\mathrm{d} L}{\mathrm{d}z}\frac{\partial z}{\partial w}=\frac{\mathrm{d} L}{\mathrm{d}z}x=\left(g\left(z\right)-y\right)x"></p><p>同理，对<code>b</code>求导</p><p><img src="https://qiniu.yalexin.top/QQ%E6%88%AA%E5%9B%BE20220425135716.png" alt="\frac{\partial L}{\partial b}=\frac{\mathrm{d} L}{\mathrm{d}z}\frac{\partial z}{\partial b}=\frac{\mathrm{d} L}{\mathrm{d}z}=g\left(z\right)-y"></p><h3 id="softmax-函数"><a href="#softmax-函数" class="headerlink" title="softmax 函数"></a>softmax 函数</h3><p>由于我们的输出有多个，具体来说，输出个数<code>k</code>等于类别数，本数据集而言，有<code>10</code>个，这样就势必带来一个问题，所有的概率加起来和可能不为<code>1</code>，这显然违背常理，因此要进一步处理输出，我们使用<code>softmax</code>函数，该函数定义如下：</p><p><img src="https://qiniu.yalexin.top/QQ%E6%88%AA%E5%9B%BE20220425140306.png" alt="softmax\left(o_j\right)=softmax\left(g\left(z_j\right)\right)=\frac{e^{o_j}}{\sum_{i=0}^{k}e^{o_i}}"></p><h2 id="训练代码"><a href="#训练代码" class="headerlink" title="训练代码"></a>训练代码</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> gzip</span><br><span class="line"><span class="keyword">import</span> pickle</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LogicTrain</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">start_tain</span><span class="params">(self, epoch, learning_rate)</span>:</span></span><br><span class="line">        </span><br><span class="line">        fig = plt.figure()</span><br><span class="line">        cost_ax = fig.add_subplot(<span class="number">1</span>, <span class="number">2</span>, <span class="number">1</span>)</span><br><span class="line">        cost_ax.set_title(<span class="string">"Loss change process"</span>)</span><br><span class="line">        accuracy_ax = fig.add_subplot(<span class="number">1</span>, <span class="number">2</span>, <span class="number">2</span>)</span><br><span class="line">        accuracy_ax.set_title(<span class="string">"accuracy"</span>)</span><br><span class="line"></span><br><span class="line">        training_inputs, training_labels, validation_inputs, validation_labels, test_inputs, test_labels = self.load_binary_data()</span><br><span class="line">        <span class="comment"># feature_num 是 784，即每一张图片拉成一维的向量的长度</span></span><br><span class="line">        n, feature_num = training_inputs.shape</span><br><span class="line">        k = <span class="number">10</span></span><br><span class="line"></span><br><span class="line">        accuracy_x, accuracy_y = [], []</span><br><span class="line">        w, b = self.init_parameter(feature_num, k)</span><br><span class="line"></span><br><span class="line">        cost_x, cost_y = [], []</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(epoch):</span><br><span class="line">            y_hat = self.forward(training_inputs, w, b)</span><br><span class="line">            w, b = self.backward(training_inputs, w, b, training_labels, y_hat, learning_rate)</span><br><span class="line">            crs_etr = self.cross_entropy(training_labels, y_hat)</span><br><span class="line">            loss = np.sum(crs_etr) / n / k</span><br><span class="line">            print(<span class="string">' epoch = '</span>, i, <span class="string">' loss = '</span>, loss)</span><br><span class="line">            cost_x.append(i)</span><br><span class="line">            cost_y.append(loss)</span><br><span class="line">        <span class="comment"># 计算预测验证集的准确性</span></span><br><span class="line">        vl_hat = self.forward(validation_inputs, w, b)</span><br><span class="line">        vl_predict = self.softmax(vl_hat)</span><br><span class="line">        <span class="comment"># 找出概率最大的下标，即最可能的字符</span></span><br><span class="line">        predict_label = np.argmax(vl_predict, axis=<span class="number">1</span>)</span><br><span class="line">        predict_right_number = np.sum((predict_label == validation_labels).astype(np.int))</span><br><span class="line">        m = validation_labels.shape[<span class="number">0</span>]</span><br><span class="line">        accuracy = predict_right_number / m</span><br><span class="line">        print(<span class="string">'The accuracy rate is:'</span>, accuracy)</span><br><span class="line">        cost_ax.plot(cost_x, cost_y)</span><br><span class="line">        accuracy_x.append(<span class="string">'lr='</span> + str(learning_rate) + <span class="string">'&amp;epoch='</span> + str(epoch))</span><br><span class="line">        accuracy_y.append(accuracy)</span><br><span class="line">        </span><br><span class="line">        self.save_model(w, b)</span><br><span class="line">        accuracy_ax.bar(accuracy_x, accuracy_y)</span><br><span class="line">        plt.show()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">load_binary_data</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="comment"># 该数据集已经将图片转为行向量  即每一张图片都被拉成一维向量了</span></span><br><span class="line">        f = gzip.open(<span class="string">'mnist.pkl.gz'</span>, <span class="string">'rb'</span>)</span><br><span class="line">        training_data, validation_data, test_data = pickle.load(f, encoding=<span class="string">'bytes'</span>)</span><br><span class="line">        f.close()</span><br><span class="line"></span><br><span class="line">        training_inputs, training_labels = training_data</span><br><span class="line">        validation_inputs, validation_labels = validation_data</span><br><span class="line">        test_inputs, test_labels = test_data</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 实际上字符识别，模型可能更关心该点像素是不是属于字符中的一部分</span></span><br><span class="line">        <span class="comment"># 因此可以将像素二值化，将灰度值信息去掉，直接 0 或者 1</span></span><br><span class="line">        training_inputs[training_inputs &lt; <span class="number">0.01</span>] = <span class="number">0</span></span><br><span class="line">        training_inputs[training_inputs &gt;= <span class="number">0.01</span>] = <span class="number">1</span></span><br><span class="line"></span><br><span class="line">        validation_inputs[validation_inputs &lt; <span class="number">0.01</span>] = <span class="number">0</span></span><br><span class="line">        validation_inputs[validation_inputs &gt;= <span class="number">0.01</span>] = <span class="number">1</span></span><br><span class="line"></span><br><span class="line">        test_inputs[test_inputs &lt; <span class="number">0.01</span>] = <span class="number">0</span></span><br><span class="line">        test_inputs[test_inputs &gt;= <span class="number">0.01</span>] = <span class="number">1</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># 10 分类问题</span></span><br><span class="line">        k = <span class="number">10</span></span><br><span class="line"></span><br><span class="line">        training_labels = self.one_hot_encoding(k, training_labels)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> (training_inputs, training_labels, validation_inputs, validation_labels, test_inputs, test_labels)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">one_hot_encoding</span><span class="params">(self, k, original_label)</span>:</span></span><br><span class="line">        label = np.eye(k)[original_label].reshape(<span class="number">-1</span>, k)</span><br><span class="line">        <span class="keyword">return</span> label</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">init_parameter</span><span class="params">(self, n, k)</span>:</span></span><br><span class="line">        w, b = np.random.randn(n, k), np.random.randn(<span class="number">1</span>, k)</span><br><span class="line">        <span class="keyword">return</span> w, b</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, x, w, b)</span>:</span></span><br><span class="line">        z = np.dot(x, w) + b</span><br><span class="line">        <span class="keyword">return</span> self.sigmoid(z)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">sigmoid</span><span class="params">(self, X)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">1.0</span> / (<span class="number">1.0</span> + np.exp(-X))</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">backward</span><span class="params">(self, x, w, b, y, y_hat, l_rate)</span>:</span></span><br><span class="line">        m = x.shape[<span class="number">0</span>]</span><br><span class="line">        dw = <span class="number">1.0</span> / m * np.dot(x.T, y_hat - y)</span><br><span class="line">        db = <span class="number">1.0</span> / m * np.sum(y_hat - y)</span><br><span class="line">        w = w - l_rate * dw</span><br><span class="line">        b = b - l_rate * db</span><br><span class="line">        <span class="keyword">return</span> w, b</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">cross_entropy</span><span class="params">(self, y, y_hat)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> -(y * np.log(y_hat + <span class="number">1e-10</span>) + (<span class="number">1</span> - y) * np.log(<span class="number">1</span> - y_hat + <span class="number">1e-10</span>))</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">softmax</span><span class="params">(self, x)</span>:</span></span><br><span class="line">        x_exp = np.exp(x)</span><br><span class="line">        partition = np.sum(x_exp, axis=<span class="number">1</span>).reshape(<span class="number">-1</span>, <span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span> x_exp / partition</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">save_model</span><span class="params">(self, w, b)</span>:</span></span><br><span class="line">        model = np.vstack((w, b))</span><br><span class="line">        np.save(<span class="string">'params-binarization.npy'</span>, model)</span><br><span class="line">        </span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    l = LogicTrain()</span><br><span class="line">    l.start_tain(<span class="number">500</span>, <span class="number">0.5</span>)</span><br></pre></td></tr></table></figure><p>训练结果：</p><p><img src="https://qiniu.yalexin.top/QQ%E6%88%AA%E5%9B%BE20220425143942.png" alt></p><h2 id="应用模型"><a href="#应用模型" class="headerlink" title="应用模型"></a>应用模型</h2><p>训练结束以后，我们将学习得到的参数<code>w</code>和<code>b</code>保存，接下来我们就可以测试我们模型的性能了，使用之前先将参数导入，然后再使用，这里借助<code>OpenCV</code>和<code>PyQt</code>，主要是获取鼠标的轨迹，然后转为图片，并放到我们的模型中计算每一个类别的概率，再选择最大的作为输出即可。</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> gzip</span><br><span class="line"><span class="keyword">import</span> pickle</span><br><span class="line"><span class="keyword">import</span> cv2</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> QMessageBox</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LogicApplication</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">start</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="comment"># 初始化全局参数</span></span><br><span class="line">        self.drawing = <span class="literal">False</span></span><br><span class="line">        self.ix, self.iy = <span class="number">-1</span>, <span class="number">-1</span></span><br><span class="line">        self.image = np.zeros((<span class="number">512</span>, <span class="number">512</span>, <span class="number">3</span>), np.uint8)</span><br><span class="line"></span><br><span class="line">        window = cv2.namedWindow(<span class="string">'write your number'</span>)</span><br><span class="line">        cv2.setMouseCallback(<span class="string">'write your number'</span>, self.draw_circle)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 大小是 785 * 10</span></span><br><span class="line">        param = self.load_model()</span><br><span class="line"></span><br><span class="line">        w, b = param[<span class="number">0</span>:<span class="number">784</span>, :], param[<span class="number">-1</span>, :]</span><br><span class="line"></span><br><span class="line">        ENTER, SPACE, ESC = <span class="number">13</span>, <span class="number">32</span>, <span class="number">27</span></span><br><span class="line">        <span class="keyword">while</span> (<span class="number">1</span>):</span><br><span class="line">            cv2.imshow(<span class="string">'write your number'</span>, self.image)</span><br><span class="line">            k = cv2.waitKey(<span class="number">50</span>) &amp; <span class="number">0xFF</span></span><br><span class="line">            <span class="comment"># 按下 enter 键，识别当前画布上的数字</span></span><br><span class="line">            <span class="keyword">if</span> k == ENTER:</span><br><span class="line">                print(<span class="string">'enter'</span>)</span><br><span class="line"></span><br><span class="line">                img_new = cv2.cvtColor(self.image, cv2.COLOR_BGR2GRAY)</span><br><span class="line">                cv2.imwrite(<span class="string">"write.jpg"</span>, self.image)</span><br><span class="line">                x = self.handle_img(self.image)</span><br><span class="line">                predict_y = self.softmax(np.dot(x.reshape(<span class="number">1</span>, <span class="number">-1</span>), w) + b)</span><br><span class="line">                <span class="comment"># 找出概率最大的下标，即最可能的字符</span></span><br><span class="line">                predict_label = np.argmax(predict_y, axis=<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">                self.show_message(predict_label, predict_y)</span><br><span class="line"></span><br><span class="line">                print(<span class="string">'you wirte : '</span>, predict_label)</span><br><span class="line">                print(<span class="string">'Each probability is '</span>.join(str(i) <span class="keyword">for</span> i <span class="keyword">in</span> np.round(predict_y, <span class="number">2</span>)))</span><br><span class="line">            <span class="comment"># 按下 space 键，清空当前图像，还原成黑色画布</span></span><br><span class="line">            <span class="keyword">elif</span> k == SPACE:</span><br><span class="line">                self.image = np.zeros((<span class="number">512</span>, <span class="number">512</span>, <span class="number">3</span>), np.uint8)  <span class="comment"># 清空</span></span><br><span class="line">            <span class="comment"># 按下 “ESC” 键，退出程序</span></span><br><span class="line">            <span class="keyword">elif</span> k == ESC:</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">        cv2.destroyWindow(<span class="string">'write your number'</span>)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">load_model</span><span class="params">(self)</span>:</span></span><br><span class="line">        param = np.load(<span class="string">'params-binarization.npy'</span>)</span><br><span class="line">        <span class="keyword">return</span> param</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">handle_img</span><span class="params">(self, img)</span>:</span></span><br><span class="line">        <span class="comment"># 将图像等比例缩小至28x28大小</span></span><br><span class="line">        img = cv2.resize(img, (<span class="number">28</span>, <span class="number">28</span>))</span><br><span class="line">        <span class="comment"># 转化为灰度图</span></span><br><span class="line">        im_arr = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)</span><br><span class="line">        <span class="comment"># 把图像矩阵转化为一维向量</span></span><br><span class="line">        x = im_arr.reshape(<span class="number">-1</span>, <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">        x[x &lt; <span class="number">128</span>] = <span class="number">0</span></span><br><span class="line">        x[x &gt;= <span class="number">128</span>] = <span class="number">1</span></span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 鼠标手写数字</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">draw_circle</span><span class="params">(self, event, x, y, s, a)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> event == cv2.EVENT_LBUTTONDOWN:</span><br><span class="line">            self.drawing = <span class="literal">True</span></span><br><span class="line">            self.ix, self.iy = x, y</span><br><span class="line">        <span class="keyword">elif</span> event == cv2.EVENT_MOUSEMOVE:</span><br><span class="line">            <span class="keyword">if</span> self.drawing == <span class="literal">True</span>:</span><br><span class="line">                <span class="comment"># 圆半径（笔画粗细）设置为25是为了和mnist数据集中的数字尽可能粗细相似</span></span><br><span class="line">                cv2.circle(self.image, (x, y), <span class="number">25</span>, (<span class="number">255</span>, <span class="number">255</span>, <span class="number">255</span>), <span class="number">-1</span>)  <span class="comment"># 画笔颜色为白色</span></span><br><span class="line">        <span class="keyword">elif</span> event == cv2.EVENT_LBUTTONUP:</span><br><span class="line">            self.drawing = <span class="literal">False</span></span><br><span class="line">            cv2.circle(self.image, (x, y), <span class="number">25</span>, (<span class="number">255</span>, <span class="number">255</span>, <span class="number">255</span>), <span class="number">-1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">softmax</span><span class="params">(self, x)</span>:</span></span><br><span class="line">        x_exp = np.exp(x)</span><br><span class="line">        partition = np.sum(x_exp, axis=<span class="number">1</span>).reshape(<span class="number">-1</span>, <span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span> x_exp / partition</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">show_message</span><span class="params">(self, predict_label, predict_y)</span>:</span></span><br><span class="line">        message_body = <span class="string">"预测您输入的字符为："</span> + str(predict_label) + <span class="string">"，其中，各个字符的预测概率为：\n"</span></span><br><span class="line">        <span class="keyword">for</span> index, probability <span class="keyword">in</span> enumerate(predict_y[<span class="number">0</span>]):</span><br><span class="line">            message_body += str(index) + <span class="string">"："</span>+str(round(probability, <span class="number">3</span>)) + <span class="string">"，"</span></span><br><span class="line">        message_body += <span class="string">"\n结果仅供参考"</span></span><br><span class="line"></span><br><span class="line">        messageBox = QMessageBox()</span><br><span class="line">        messageBox.setWindowTitle(<span class="string">'预测结果'</span>)</span><br><span class="line">        messageBox.setText(message_body)</span><br><span class="line">        messageBox.setStandardButtons(QMessageBox.Yes | QMessageBox.No)</span><br><span class="line">        buttonY = messageBox.button(QMessageBox.Yes)</span><br><span class="line">        buttonY.setText(<span class="string">'好的（并清空笔记）'</span>)</span><br><span class="line">        buttonN = messageBox.button(QMessageBox.No)</span><br><span class="line">        buttonN.setText(<span class="string">'好的'</span>)</span><br><span class="line">        messageBox.setStyleSheet(<span class="string">"QPushButton:hover&#123;background-color: rgb(255, 93, 52);&#125; QLabel&#123;font: 14pt \"微软雅黑\"; min-width: 900px;&#125;"</span>)</span><br><span class="line">        messageBox.exec_()</span><br><span class="line">        <span class="keyword">if</span> messageBox.clickedButton() == buttonY:</span><br><span class="line">            self.image = np.zeros((<span class="number">512</span>, <span class="number">512</span>, <span class="number">3</span>), np.uint8)  <span class="comment"># 清空</span></span><br><span class="line">        </span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    <span class="comment"># l = LogicTrain()</span></span><br><span class="line">    <span class="comment"># l.start_tain(500, 0.5)</span></span><br><span class="line">    a = LogicApplication()</span><br><span class="line">    a.start()</span><br></pre></td></tr></table></figure><p>效果如图</p><p><img src="https://qiniu.yalexin.top/QQ%E6%88%AA%E5%9B%BE20220425144719.png" alt></p></div><div class="reward-container"><div>假如对您有所帮助，那就请我喝咖啡吧~~</div> <button onclick='var qr=document.getElementById("qr");qr.style.display="none"===qr.style.display?"block":"none"'> 打赏</button><div id="qr" style="display:none"><div style="display:inline-block"> <img src="/images/WeChat.png" alt="YaleXin 微信支付"><p>微信支付</p></div><div style="display:inline-block"> <img src="/images/Alipay.jpg" alt="YaleXin 支付宝"><p>支付宝</p></div></div></div><footer class="post-footer"><div class="post-tags"><a href="/tags/%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92/" rel="tag"><i class="fa fa-tag"></i> 逻辑回归</a><a href="/tags/MNIST/" rel="tag"><i class="fa fa-tag"></i> MNIST</a></div><div class="post-nav"><div class="post-nav-item"><a href="/2022/04/11/numpy%E5%AE%9E%E7%8E%B0%E5%A4%9A%E9%A1%B9%E5%BC%8F%E5%9B%9E%E5%BD%92%E6%A8%A1%E5%9E%8B/" rel="prev" title="numpy实现多项式回归模型"><i class="fa fa-chevron-left"></i> numpy实现多项式回归模型</a></div><div class="post-nav-item"> <a href="/2022/05/07/%E4%BD%BF%E7%94%A8Nuxt%E6%94%B9%E9%80%A0%E5%8D%9A%E5%AE%A2%E5%89%8D%E7%AB%AF/" rel="next" title="使用Nuxt改造博客前端">使用Nuxt改造博客前端<i class="fa fa-chevron-right"></i></a></div></div></footer></article><div><div><div style="text-align:center;color:#ccc;font-size:14px">------ 文章结束------</div></div></div></div></div><div class="comments" id="valine-comments"></div><script>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico">
+  <link rel="mask-icon" href="/images/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yalexin.gitee.io","root":"/","scheme":"Gemini","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":true},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="前言逻辑回归虽然在名字里边带了逻辑，但是经常被用于分类问题，而且常和线性回归相结合，本文将利用MNIST数据集，完成多分类问题，带你一窥逻辑回归背后的原理。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="逻辑回归-手写字符识别">
+<meta property="og:url" content="https://yalexin.gitee.io/2022/04/25/%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92-%E6%89%8B%E5%86%99%E5%AD%97%E7%AC%A6%E8%AF%86%E5%88%AB/index.html">
+<meta property="og:site_name" content="黄阿信">
+<meta property="og:description" content="前言逻辑回归虽然在名字里边带了逻辑，但是经常被用于分类问题，而且常和线性回归相结合，本文将利用MNIST数据集，完成多分类问题，带你一窥逻辑回归背后的原理。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://qiniu.yalexin.top/QQ%E6%88%AA%E5%9B%BE20220425125449.png">
+<meta property="og:image" content="https://qiniu.yalexin.top/QQ%E6%88%AA%E5%9B%BE20220425125914.png">
+<meta property="og:image" content="https://qiniu.yalexin.top/QQ%E6%88%AA%E5%9B%BE20220425130418.png">
+<meta property="og:image" content="https://qiniu.yalexin.top/QQ%E6%88%AA%E5%9B%BE20220425130720.png">
+<meta property="og:image" content="https://qiniu.yalexin.top/QQ%E6%88%AA%E5%9B%BE20220425131534.png">
+<meta property="og:image" content="https://qiniu.yalexin.top/QQ%E6%88%AA%E5%9B%BE20220425133102.png">
+<meta property="og:image" content="https://qiniu.yalexin.top/QQ%E6%88%AA%E5%9B%BE20220425135143.png">
+<meta property="og:image" content="https://qiniu.yalexin.top/QQ%E6%88%AA%E5%9B%BE20220425135445.png">
+<meta property="og:image" content="https://qiniu.yalexin.top/QQ%E6%88%AA%E5%9B%BE20220425135716.png">
+<meta property="og:image" content="https://qiniu.yalexin.top/QQ%E6%88%AA%E5%9B%BE20220425140306.png">
+<meta property="og:image" content="https://qiniu.yalexin.top/QQ%E6%88%AA%E5%9B%BE20220425143942.png">
+<meta property="og:image" content="https://qiniu.yalexin.top/QQ%E6%88%AA%E5%9B%BE20220425144719.png">
+<meta property="article:published_time" content="2022-04-25T04:31:07.000Z">
+<meta property="article:modified_time" content="2022-05-07T07:30:55.670Z">
+<meta property="article:author" content="YaleXin">
+<meta property="article:tag" content="逻辑回归">
+<meta property="article:tag" content="MNIST">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://qiniu.yalexin.top/QQ%E6%88%AA%E5%9B%BE20220425125449.png">
+
+<link rel="canonical" href="https://yalexin.gitee.io/2022/04/25/%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92-%E6%89%8B%E5%86%99%E5%AD%97%E7%AC%A6%E8%AF%86%E5%88%AB/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>逻辑回归-手写字符识别 | 黄阿信</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">黄阿信</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">要么改变世界，要么适应世界。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">99</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">14</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">101</span></a>
+
+  </li>
+        <li class="menu-item menu-item-guestbook">
+
+    <a href="/guestbook/" rel="section"><i class="fa fa-fw fa-book"></i>留言板</a>
+
+  </li>
+        <li class="menu-item menu-item-links">
+
+    <a href="/links/" rel="section"><i class="fa fa-fw fa-link"></i>友链</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yalexin.gitee.io/2022/04/25/%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92-%E6%89%8B%E5%86%99%E5%AD%97%E7%AC%A6%E8%AF%86%E5%88%AB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/cat_mouse.jpg">
+      <meta itemprop="name" content="YaleXin">
+      <meta itemprop="description" content="学渣一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="黄阿信">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          逻辑回归-手写字符识别
+        </h1>
+
+        <div class="post-meta">
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-04-25 12:31:07" itemprop="dateCreated datePublished" datetime="2022-04-25T12:31:07+08:00">2022-04-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-05-07 15:30:55" itemprop="dateModified" datetime="2022-05-07T15:30:55+08:00">2022-05-07</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2022/04/25/%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92-%E6%89%8B%E5%86%99%E5%AD%97%E7%AC%A6%E8%AF%86%E5%88%AB/" class="post-meta-item leancloud_visitors" data-flag-title="逻辑回归-手写字符识别" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">评论：</span>
+    
+    <a title="valine" href="/2022/04/25/%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92-%E6%89%8B%E5%86%99%E5%AD%97%E7%AC%A6%E8%AF%86%E5%88%AB/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/04/25/%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92-%E6%89%8B%E5%86%99%E5%AD%97%E7%AC%A6%E8%AF%86%E5%88%AB/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>6.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>6 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>逻辑回归虽然在名字里边带了逻辑，但是经常被用于分类问题，而且常和线性回归相结合，本文将利用<code>MNIST</code>数据集，完成多分类问题，带你一窥逻辑回归背后的原理。</p>
+<a id="more"></a>
+
+<h2 id="相关原理"><a href="#相关原理" class="headerlink" title="相关原理"></a>相关原理</h2><h3 id="数据集获取"><a href="#数据集获取" class="headerlink" title="数据集获取"></a>数据集获取</h3><p><a href="http://yann.lecun.com/exdb/mnist/" target="_blank" rel="noopener">下载地址</a></p>
+<p>该数据集中包含了6万个训练集样本、1万个测试集样本，每个样本都是<code>28*28</code>的字符图片，标签为该字符对应的字符类别，下图为某一个样本：</p>
+<p><img src="https://qiniu.yalexin.top/QQ%E6%88%AA%E5%9B%BE20220425125449.png" alt></p>
+<p>获取数据集以后，我们还要将图片降维，使之变为长度<code>784</code>的向量，意味着我们有<code>784</code>个特征，虽然提取特征有更好的方法，但是我们这里仍然使用线性回归的方法。</p>
+<p>此外，每份样本的标签值是该样本的类别，还应该进行<a href="https://baike.baidu.com/item/%E7%8B%AC%E7%83%AD%E7%BC%96%E7%A0%81/9717350?fr=aladdin" target="_blank" rel="noopener">独热编码</a>，将其转为每个类别的概率。</p>
+<h3 id="sigmoid函数"><a href="#sigmoid函数" class="headerlink" title="sigmoid函数"></a>sigmoid函数</h3><p>该函数也称为逻辑函数，函数定义如下：</p>
+<p>  <img src="https://qiniu.yalexin.top/QQ%E6%88%AA%E5%9B%BE20220425125914.png" alt="g(z)=\frac{1}{1+e^{-z}} "></p>
+<p>函数大概长这样：</p>
+<p><img src="https://qiniu.yalexin.top/QQ%E6%88%AA%E5%9B%BE20220425130418.png" alt="g(z)=\frac{1}{1+e^{-z}} "></p>
+<p>它很符合我们的直观感觉，在无穷大或者无穷小的时候，变化不大，要么趋于1要么趋于0，而在中间位置变化最为明显，我们也可以求得其导数：</p>
+<p><img src="https://qiniu.yalexin.top/QQ%E6%88%AA%E5%9B%BE20220425130720.png" alt="g&#39;(z)=g(z)(1-g(z))"></p>
+<h3 id="Forward-propagation（前向传播-）"><a href="#Forward-propagation（前向传播-）" class="headerlink" title="Forward propagation（前向传播 ）"></a>Forward propagation（前向传播 ）</h3><p>该过程是从输入到输出的过程，即从图片输入到计算其每一个类别概率的过程，如果是二分类问题，那么输出则是该图片属于该类别的概率，若是多分类，那么输出的个数应该与类别数量一致，其每一个输出对应类别的概率。</p>
+<p><img src="https://qiniu.yalexin.top/QQ%E6%88%AA%E5%9B%BE20220425131534.png" alt="\widehat{y}_{i}=g(z)=g\left(\mathrm{w}^{T} x+b\right)=\frac{1}{1+e^{-\mathrm{w}^{T} x-b}}"></p>
+<blockquote>
+<p>这里的 <code>w</code>就是我们图片每一个像素对应的权重，故长度也为784</p>
+</blockquote>
+<h3 id="Back-propagation-（反向传播）"><a href="#Back-propagation-（反向传播）" class="headerlink" title="Back propagation （反向传播）"></a>Back propagation （反向传播）</h3><p>反向传播指的是从根据输出，计算梯度，更新参数的过程，这里使用的仍然是梯度下降分析法。不过我们先介绍一下交叉熵的概念，这个一般用于衡量两个概率分布的距离，也可以说用来判断两个模型之间有多“像”，该函数定义如下：</p>
+<p><img src="https://qiniu.yalexin.top/QQ%E6%88%AA%E5%9B%BE20220425133102.png" alt></p>
+<p>我们也是用该函数作为我们的损失函数。</p>
+<p>该函数对<code>z</code>求导为：</p>
+<p><img src="https://qiniu.yalexin.top/QQ%E6%88%AA%E5%9B%BE20220425135143.png" alt="\frac{\mathrm{d}L}{\mathrm{d}z}=\frac{-y_i}{g\left(z\right)}g\left(z\right)\left(1-g\left(z\right)\right)+\frac{1-y_i}{1-g\left(z\right)}g\left(z\right)\left(1-g\left(z\right)\right)=g\left(z\right)-y_i"></p>
+<p>进一步地，对参数<code>w</code>求导</p>
+<p><img src="https://qiniu.yalexin.top/QQ%E6%88%AA%E5%9B%BE20220425135445.png" alt="\frac{\partial L}{\partial w}=\frac{\mathrm{d} L}{\mathrm{d}z}\frac{\partial z}{\partial w}=\frac{\mathrm{d} L}{\mathrm{d}z}x=\left(g\left(z\right)-y\right)x"></p>
+<p>同理，对<code>b</code>求导</p>
+<p><img src="https://qiniu.yalexin.top/QQ%E6%88%AA%E5%9B%BE20220425135716.png" alt="\frac{\partial L}{\partial b}=\frac{\mathrm{d} L}{\mathrm{d}z}\frac{\partial z}{\partial b}=\frac{\mathrm{d} L}{\mathrm{d}z}=g\left(z\right)-y"></p>
+<h3 id="softmax-函数"><a href="#softmax-函数" class="headerlink" title="softmax 函数"></a>softmax 函数</h3><p>由于我们的输出有多个，具体来说，输出个数<code>k</code>等于类别数，本数据集而言，有<code>10</code>个，这样就势必带来一个问题，所有的概率加起来和可能不为<code>1</code>，这显然违背常理，因此要进一步处理输出，我们使用<code>softmax</code>函数，该函数定义如下：</p>
+<p><img src="https://qiniu.yalexin.top/QQ%E6%88%AA%E5%9B%BE20220425140306.png" alt="softmax\left(o_j\right)=softmax\left(g\left(z_j\right)\right)=\frac{e^{o_j}}{\sum_{i=0}^{k}e^{o_i}}"></p>
+<h2 id="训练代码"><a href="#训练代码" class="headerlink" title="训练代码"></a>训练代码</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> gzip</span><br><span class="line"><span class="keyword">import</span> pickle</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LogicTrain</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">start_tain</span><span class="params">(self, epoch, learning_rate)</span>:</span></span><br><span class="line">        </span><br><span class="line">        fig = plt.figure()</span><br><span class="line">        cost_ax = fig.add_subplot(<span class="number">1</span>, <span class="number">2</span>, <span class="number">1</span>)</span><br><span class="line">        cost_ax.set_title(<span class="string">"Loss change process"</span>)</span><br><span class="line">        accuracy_ax = fig.add_subplot(<span class="number">1</span>, <span class="number">2</span>, <span class="number">2</span>)</span><br><span class="line">        accuracy_ax.set_title(<span class="string">"accuracy"</span>)</span><br><span class="line"></span><br><span class="line">        training_inputs, training_labels, validation_inputs, validation_labels, test_inputs, test_labels = self.load_binary_data()</span><br><span class="line">        <span class="comment"># feature_num 是 784，即每一张图片拉成一维的向量的长度</span></span><br><span class="line">        n, feature_num = training_inputs.shape</span><br><span class="line">        k = <span class="number">10</span></span><br><span class="line"></span><br><span class="line">        accuracy_x, accuracy_y = [], []</span><br><span class="line">        w, b = self.init_parameter(feature_num, k)</span><br><span class="line"></span><br><span class="line">        cost_x, cost_y = [], []</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(epoch):</span><br><span class="line">            y_hat = self.forward(training_inputs, w, b)</span><br><span class="line">            w, b = self.backward(training_inputs, w, b, training_labels, y_hat, learning_rate)</span><br><span class="line">            crs_etr = self.cross_entropy(training_labels, y_hat)</span><br><span class="line">            loss = np.sum(crs_etr) / n / k</span><br><span class="line">            print(<span class="string">' epoch = '</span>, i, <span class="string">' loss = '</span>, loss)</span><br><span class="line">            cost_x.append(i)</span><br><span class="line">            cost_y.append(loss)</span><br><span class="line">        <span class="comment"># 计算预测验证集的准确性</span></span><br><span class="line">        vl_hat = self.forward(validation_inputs, w, b)</span><br><span class="line">        vl_predict = self.softmax(vl_hat)</span><br><span class="line">        <span class="comment"># 找出概率最大的下标，即最可能的字符</span></span><br><span class="line">        predict_label = np.argmax(vl_predict, axis=<span class="number">1</span>)</span><br><span class="line">        predict_right_number = np.sum((predict_label == validation_labels).astype(np.int))</span><br><span class="line">        m = validation_labels.shape[<span class="number">0</span>]</span><br><span class="line">        accuracy = predict_right_number / m</span><br><span class="line">        print(<span class="string">'The accuracy rate is:'</span>, accuracy)</span><br><span class="line">        cost_ax.plot(cost_x, cost_y)</span><br><span class="line">        accuracy_x.append(<span class="string">'lr='</span> + str(learning_rate) + <span class="string">'&amp;epoch='</span> + str(epoch))</span><br><span class="line">        accuracy_y.append(accuracy)</span><br><span class="line">        </span><br><span class="line">        self.save_model(w, b)</span><br><span class="line">        accuracy_ax.bar(accuracy_x, accuracy_y)</span><br><span class="line">        plt.show()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">load_binary_data</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="comment"># 该数据集已经将图片转为行向量  即每一张图片都被拉成一维向量了</span></span><br><span class="line">        f = gzip.open(<span class="string">'mnist.pkl.gz'</span>, <span class="string">'rb'</span>)</span><br><span class="line">        training_data, validation_data, test_data = pickle.load(f, encoding=<span class="string">'bytes'</span>)</span><br><span class="line">        f.close()</span><br><span class="line"></span><br><span class="line">        training_inputs, training_labels = training_data</span><br><span class="line">        validation_inputs, validation_labels = validation_data</span><br><span class="line">        test_inputs, test_labels = test_data</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 实际上字符识别，模型可能更关心该点像素是不是属于字符中的一部分</span></span><br><span class="line">        <span class="comment"># 因此可以将像素二值化，将灰度值信息去掉，直接 0 或者 1</span></span><br><span class="line">        training_inputs[training_inputs &lt; <span class="number">0.01</span>] = <span class="number">0</span></span><br><span class="line">        training_inputs[training_inputs &gt;= <span class="number">0.01</span>] = <span class="number">1</span></span><br><span class="line"></span><br><span class="line">        validation_inputs[validation_inputs &lt; <span class="number">0.01</span>] = <span class="number">0</span></span><br><span class="line">        validation_inputs[validation_inputs &gt;= <span class="number">0.01</span>] = <span class="number">1</span></span><br><span class="line"></span><br><span class="line">        test_inputs[test_inputs &lt; <span class="number">0.01</span>] = <span class="number">0</span></span><br><span class="line">        test_inputs[test_inputs &gt;= <span class="number">0.01</span>] = <span class="number">1</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># 10 分类问题</span></span><br><span class="line">        k = <span class="number">10</span></span><br><span class="line"></span><br><span class="line">        training_labels = self.one_hot_encoding(k, training_labels)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> (training_inputs, training_labels, validation_inputs, validation_labels, test_inputs, test_labels)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">one_hot_encoding</span><span class="params">(self, k, original_label)</span>:</span></span><br><span class="line">        label = np.eye(k)[original_label].reshape(<span class="number">-1</span>, k)</span><br><span class="line">        <span class="keyword">return</span> label</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">init_parameter</span><span class="params">(self, n, k)</span>:</span></span><br><span class="line">        w, b = np.random.randn(n, k), np.random.randn(<span class="number">1</span>, k)</span><br><span class="line">        <span class="keyword">return</span> w, b</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, x, w, b)</span>:</span></span><br><span class="line">        z = np.dot(x, w) + b</span><br><span class="line">        <span class="keyword">return</span> self.sigmoid(z)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">sigmoid</span><span class="params">(self, X)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">1.0</span> / (<span class="number">1.0</span> + np.exp(-X))</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">backward</span><span class="params">(self, x, w, b, y, y_hat, l_rate)</span>:</span></span><br><span class="line">        m = x.shape[<span class="number">0</span>]</span><br><span class="line">        dw = <span class="number">1.0</span> / m * np.dot(x.T, y_hat - y)</span><br><span class="line">        db = <span class="number">1.0</span> / m * np.sum(y_hat - y)</span><br><span class="line">        w = w - l_rate * dw</span><br><span class="line">        b = b - l_rate * db</span><br><span class="line">        <span class="keyword">return</span> w, b</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">cross_entropy</span><span class="params">(self, y, y_hat)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> -(y * np.log(y_hat + <span class="number">1e-10</span>) + (<span class="number">1</span> - y) * np.log(<span class="number">1</span> - y_hat + <span class="number">1e-10</span>))</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">softmax</span><span class="params">(self, x)</span>:</span></span><br><span class="line">        x_exp = np.exp(x)</span><br><span class="line">        partition = np.sum(x_exp, axis=<span class="number">1</span>).reshape(<span class="number">-1</span>, <span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span> x_exp / partition</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">save_model</span><span class="params">(self, w, b)</span>:</span></span><br><span class="line">        model = np.vstack((w, b))</span><br><span class="line">        np.save(<span class="string">'params-binarization.npy'</span>, model)</span><br><span class="line">        </span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    l = LogicTrain()</span><br><span class="line">    l.start_tain(<span class="number">500</span>, <span class="number">0.5</span>)</span><br></pre></td></tr></table></figure>
+
+<p>训练结果：</p>
+<p><img src="https://qiniu.yalexin.top/QQ%E6%88%AA%E5%9B%BE20220425143942.png" alt></p>
+<h2 id="应用模型"><a href="#应用模型" class="headerlink" title="应用模型"></a>应用模型</h2><p>训练结束以后，我们将学习得到的参数<code>w</code>和<code>b</code>保存，接下来我们就可以测试我们模型的性能了，使用之前先将参数导入，然后再使用，这里借助<code>OpenCV</code>和<code>PyQt</code>，主要是获取鼠标的轨迹，然后转为图片，并放到我们的模型中计算每一个类别的概率，再选择最大的作为输出即可。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> gzip</span><br><span class="line"><span class="keyword">import</span> pickle</span><br><span class="line"><span class="keyword">import</span> cv2</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> QMessageBox</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LogicApplication</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">start</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="comment"># 初始化全局参数</span></span><br><span class="line">        self.drawing = <span class="literal">False</span></span><br><span class="line">        self.ix, self.iy = <span class="number">-1</span>, <span class="number">-1</span></span><br><span class="line">        self.image = np.zeros((<span class="number">512</span>, <span class="number">512</span>, <span class="number">3</span>), np.uint8)</span><br><span class="line"></span><br><span class="line">        window = cv2.namedWindow(<span class="string">'write your number'</span>)</span><br><span class="line">        cv2.setMouseCallback(<span class="string">'write your number'</span>, self.draw_circle)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 大小是 785 * 10</span></span><br><span class="line">        param = self.load_model()</span><br><span class="line"></span><br><span class="line">        w, b = param[<span class="number">0</span>:<span class="number">784</span>, :], param[<span class="number">-1</span>, :]</span><br><span class="line"></span><br><span class="line">        ENTER, SPACE, ESC = <span class="number">13</span>, <span class="number">32</span>, <span class="number">27</span></span><br><span class="line">        <span class="keyword">while</span> (<span class="number">1</span>):</span><br><span class="line">            cv2.imshow(<span class="string">'write your number'</span>, self.image)</span><br><span class="line">            k = cv2.waitKey(<span class="number">50</span>) &amp; <span class="number">0xFF</span></span><br><span class="line">            <span class="comment"># 按下 enter 键，识别当前画布上的数字</span></span><br><span class="line">            <span class="keyword">if</span> k == ENTER:</span><br><span class="line">                print(<span class="string">'enter'</span>)</span><br><span class="line"></span><br><span class="line">                img_new = cv2.cvtColor(self.image, cv2.COLOR_BGR2GRAY)</span><br><span class="line">                cv2.imwrite(<span class="string">"write.jpg"</span>, self.image)</span><br><span class="line">                x = self.handle_img(self.image)</span><br><span class="line">                predict_y = self.softmax(np.dot(x.reshape(<span class="number">1</span>, <span class="number">-1</span>), w) + b)</span><br><span class="line">                <span class="comment"># 找出概率最大的下标，即最可能的字符</span></span><br><span class="line">                predict_label = np.argmax(predict_y, axis=<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">                self.show_message(predict_label, predict_y)</span><br><span class="line"></span><br><span class="line">                print(<span class="string">'you wirte : '</span>, predict_label)</span><br><span class="line">                print(<span class="string">'Each probability is '</span>.join(str(i) <span class="keyword">for</span> i <span class="keyword">in</span> np.round(predict_y, <span class="number">2</span>)))</span><br><span class="line">            <span class="comment"># 按下 space 键，清空当前图像，还原成黑色画布</span></span><br><span class="line">            <span class="keyword">elif</span> k == SPACE:</span><br><span class="line">                self.image = np.zeros((<span class="number">512</span>, <span class="number">512</span>, <span class="number">3</span>), np.uint8)  <span class="comment"># 清空</span></span><br><span class="line">            <span class="comment"># 按下 “ESC” 键，退出程序</span></span><br><span class="line">            <span class="keyword">elif</span> k == ESC:</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">        cv2.destroyWindow(<span class="string">'write your number'</span>)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">load_model</span><span class="params">(self)</span>:</span></span><br><span class="line">        param = np.load(<span class="string">'params-binarization.npy'</span>)</span><br><span class="line">        <span class="keyword">return</span> param</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">handle_img</span><span class="params">(self, img)</span>:</span></span><br><span class="line">        <span class="comment"># 将图像等比例缩小至28x28大小</span></span><br><span class="line">        img = cv2.resize(img, (<span class="number">28</span>, <span class="number">28</span>))</span><br><span class="line">        <span class="comment"># 转化为灰度图</span></span><br><span class="line">        im_arr = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)</span><br><span class="line">        <span class="comment"># 把图像矩阵转化为一维向量</span></span><br><span class="line">        x = im_arr.reshape(<span class="number">-1</span>, <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">        x[x &lt; <span class="number">128</span>] = <span class="number">0</span></span><br><span class="line">        x[x &gt;= <span class="number">128</span>] = <span class="number">1</span></span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 鼠标手写数字</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">draw_circle</span><span class="params">(self, event, x, y, s, a)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> event == cv2.EVENT_LBUTTONDOWN:</span><br><span class="line">            self.drawing = <span class="literal">True</span></span><br><span class="line">            self.ix, self.iy = x, y</span><br><span class="line">        <span class="keyword">elif</span> event == cv2.EVENT_MOUSEMOVE:</span><br><span class="line">            <span class="keyword">if</span> self.drawing == <span class="literal">True</span>:</span><br><span class="line">                <span class="comment"># 圆半径（笔画粗细）设置为25是为了和mnist数据集中的数字尽可能粗细相似</span></span><br><span class="line">                cv2.circle(self.image, (x, y), <span class="number">25</span>, (<span class="number">255</span>, <span class="number">255</span>, <span class="number">255</span>), <span class="number">-1</span>)  <span class="comment"># 画笔颜色为白色</span></span><br><span class="line">        <span class="keyword">elif</span> event == cv2.EVENT_LBUTTONUP:</span><br><span class="line">            self.drawing = <span class="literal">False</span></span><br><span class="line">            cv2.circle(self.image, (x, y), <span class="number">25</span>, (<span class="number">255</span>, <span class="number">255</span>, <span class="number">255</span>), <span class="number">-1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">softmax</span><span class="params">(self, x)</span>:</span></span><br><span class="line">        x_exp = np.exp(x)</span><br><span class="line">        partition = np.sum(x_exp, axis=<span class="number">1</span>).reshape(<span class="number">-1</span>, <span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span> x_exp / partition</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">show_message</span><span class="params">(self, predict_label, predict_y)</span>:</span></span><br><span class="line">        message_body = <span class="string">"预测您输入的字符为："</span> + str(predict_label) + <span class="string">"，其中，各个字符的预测概率为：\n"</span></span><br><span class="line">        <span class="keyword">for</span> index, probability <span class="keyword">in</span> enumerate(predict_y[<span class="number">0</span>]):</span><br><span class="line">            message_body += str(index) + <span class="string">"："</span>+str(round(probability, <span class="number">3</span>)) + <span class="string">"，"</span></span><br><span class="line">        message_body += <span class="string">"\n结果仅供参考"</span></span><br><span class="line"></span><br><span class="line">        messageBox = QMessageBox()</span><br><span class="line">        messageBox.setWindowTitle(<span class="string">'预测结果'</span>)</span><br><span class="line">        messageBox.setText(message_body)</span><br><span class="line">        messageBox.setStandardButtons(QMessageBox.Yes | QMessageBox.No)</span><br><span class="line">        buttonY = messageBox.button(QMessageBox.Yes)</span><br><span class="line">        buttonY.setText(<span class="string">'好的（并清空笔记）'</span>)</span><br><span class="line">        buttonN = messageBox.button(QMessageBox.No)</span><br><span class="line">        buttonN.setText(<span class="string">'好的'</span>)</span><br><span class="line">        messageBox.setStyleSheet(<span class="string">"QPushButton:hover&#123;background-color: rgb(255, 93, 52);&#125; QLabel&#123;font: 14pt \"微软雅黑\"; min-width: 900px;&#125;"</span>)</span><br><span class="line">        messageBox.exec_()</span><br><span class="line">        <span class="keyword">if</span> messageBox.clickedButton() == buttonY:</span><br><span class="line">            self.image = np.zeros((<span class="number">512</span>, <span class="number">512</span>, <span class="number">3</span>), np.uint8)  <span class="comment"># 清空</span></span><br><span class="line">        </span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    <span class="comment"># l = LogicTrain()</span></span><br><span class="line">    <span class="comment"># l.start_tain(500, 0.5)</span></span><br><span class="line">    a = LogicApplication()</span><br><span class="line">    a.start()</span><br></pre></td></tr></table></figure>
+
+<p>效果如图</p>
+<p><img src="https://qiniu.yalexin.top/QQ%E6%88%AA%E5%9B%BE20220425144719.png" alt></p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>假如对您有所帮助，那就请我喝咖啡吧~~</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/WeChat.png" alt="YaleXin 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/Alipay.jpg" alt="YaleXin 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92/" rel="tag"><i class="fa fa-tag"></i> 逻辑回归</a>
+              <a href="/tags/MNIST/" rel="tag"><i class="fa fa-tag"></i> MNIST</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/04/11/numpy%E5%AE%9E%E7%8E%B0%E5%A4%9A%E9%A1%B9%E5%BC%8F%E5%9B%9E%E5%BD%92%E6%A8%A1%E5%9E%8B/" rel="prev" title="numpy实现多项式回归模型">
+      <i class="fa fa-chevron-left"></i> numpy实现多项式回归模型
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/05/07/%E4%BD%BF%E7%94%A8Nuxt%E6%94%B9%E9%80%A0%E5%8D%9A%E5%AE%A2%E5%89%8D%E7%AB%AF/" rel="next" title="使用Nuxt改造博客前端">
+      使用Nuxt改造博客前端 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+
+
+<div>
+    
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">------ 文章结束------</div>
+    
+</div>
+
+    
+ </div>
+
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
   window.addEventListener('tabs:register', () => {
     let activeClass = CONFIG.comments.activeClass;
     if (CONFIG.comments.storage) {
@@ -18,7 +408,157 @@
       localStorage.setItem('comments_active', commentClass);
     });
   }
-</script></div><div class="toggle sidebar-toggle"><span class="toggle-line toggle-line-first"></span><span class="toggle-line toggle-line-middle"></span><span class="toggle-line toggle-line-last"></span></div><aside class="sidebar"><div class="sidebar-inner"><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc"> 文章目录</li><li class="sidebar-nav-overview"> 站点概览</li></ul><div class="post-toc-wrap sidebar-panel"><div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#相关原理"><span class="nav-number">2.</span> <span class="nav-text">相关原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据集获取"><span class="nav-number">2.1.</span> <span class="nav-text">数据集获取</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sigmoid函数"><span class="nav-number">2.2.</span> <span class="nav-text">sigmoid函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Forward-propagation（前向传播-）"><span class="nav-number">2.3.</span> <span class="nav-text">Forward propagation（前向传播 ）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Back-propagation-（反向传播）"><span class="nav-number">2.4.</span> <span class="nav-text">Back propagation （反向传播）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#softmax-函数"><span class="nav-number">2.5.</span> <span class="nav-text">softmax 函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#训练代码"><span class="nav-number">3.</span> <span class="nav-text">训练代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#应用模型"><span class="nav-number">4.</span> <span class="nav-text">应用模型</span></a></li></ol></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person"> <img class="site-author-image" itemprop="image" alt="YaleXin" src="/uploads/cat_mouse.jpg"><p class="site-author-name" itemprop="name">YaleXin</p><div class="site-description" itemprop="description">学渣一枚</div></div><div class="site-state-wrap motion-element"><nav class="site-state"><div class="site-state-item site-state-posts"> <a href="/archives/"><span class="site-state-item-count">95</span> <span class="site-state-item-name">日志</span></a></div><div class="site-state-item site-state-categories"> <a href="/categories/"><span class="site-state-item-count">14</span> <span class="site-state-item-name">分类</span></a></div><div class="site-state-item site-state-tags"> <a href="/tags/"><span class="site-state-item-count">93</span> <span class="site-state-item-name">标签</span></a></div></nav></div></div></div></aside><div id="sidebar-dimmer"></div></div></main><footer class="footer"><div class="footer-inner"><div class="copyright"> &copy; 2020 – <span itemprop="copyrightYear">2022</span><span class="with-love"><i class="fa fa-fas fa-heartbeat"></i></span> <span class="author" itemprop="copyrightHolder">YaleXin</span> <span class="post-meta-divider">|</span><span class="post-meta-item-icon"><i class="fa fa-area-chart"></i></span> <span title="站点总字数">233k</span> <span class="post-meta-divider">|</span><span class="post-meta-item-icon"><i class="fa fa-coffee"></i></span> <span title="站点阅读时长">3:32</span></div> <span>本站已在此等候您 <span id="dnum" style="color:#35b8ff">0</span> 天</span> <span><span id="hnum" style="color:#35b8ff">0</span> 小时 <span id="mnum" style="color:#35b8ff">0</span> 分 <span id="snum" style="color:#35b8ff">0</span> 秒</span><script>var now=new Date;function createtime(){var n=new Date("02/21/2020 11:30:00");now.setTime(now.getTime()+250),days=(now-n)/1e3/60/60/24,dnum=Math.floor(days),hours=(now-n)/1e3/60/60-24*dnum,hnum=Math.floor(hours),1==String(hnum).length&&(hnum="0"+hnum),minutes=(now-n)/1e3/60-1440*dnum-60*hnum,mnum=Math.floor(minutes),1==String(mnum).length&&(mnum="0"+mnum),seconds=(now-n)/1e3-86400*dnum-3600*hnum-60*mnum,snum=Math.round(seconds),1==String(snum).length&&(snum="0"+snum),document.getElementById("dnum").innerHTML=dnum,document.getElementById("hnum").innerHTML=hnum,document.getElementById("mnum").innerHTML=mnum,document.getElementById("snum").innerHTML=snum}setInterval("createtime()",250)</script><div class="powered-by"> <span>powered by</span> <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a></div><div class="busuanzi-count"><script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span class="post-meta-item" id="busuanzi_container_site_uv" style="display:none"><span class="post-meta-item-icon"><i class="fa fa-user"></i></span> <span class="site-uv" title="总访客量"><span>总访客量：</span><span id="busuanzi_value_site_uv"></span></span></span> <span class="post-meta-divider">|</span><span class="post-meta-item" id="busuanzi_container_site_pv" style="display:none"><span class="post-meta-item-icon"><i class="fa fa-eye"></i></span> <span class="site-pv" title="总访问量"><span>总访问量：</span><span id="busuanzi_value_site_pv"></span></span></span></div><script>
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#相关原理"><span class="nav-number">2.</span> <span class="nav-text">相关原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据集获取"><span class="nav-number">2.1.</span> <span class="nav-text">数据集获取</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sigmoid函数"><span class="nav-number">2.2.</span> <span class="nav-text">sigmoid函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Forward-propagation（前向传播-）"><span class="nav-number">2.3.</span> <span class="nav-text">Forward propagation（前向传播 ）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Back-propagation-（反向传播）"><span class="nav-number">2.4.</span> <span class="nav-text">Back propagation （反向传播）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#softmax-函数"><span class="nav-number">2.5.</span> <span class="nav-text">softmax 函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#训练代码"><span class="nav-number">3.</span> <span class="nav-text">训练代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#应用模型"><span class="nav-number">4.</span> <span class="nav-text">应用模型</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="YaleXin"
+      src="/uploads/cat_mouse.jpg">
+  <p class="site-author-name" itemprop="name">YaleXin</p>
+  <div class="site-description" itemprop="description">学渣一枚</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">101</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">99</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-fas fa-heartbeat"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">YaleXin</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    <span title="站点总字数">258k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">3:55</span>
+</div>
+
+
+<span >本站已在此等候您 <span id="dnum" style="color:#35B8FF">0</span> 天 </span>
+<span><span id="hnum" style="color:#35B8FF">0</span> 小时 <span id="mnum" style="color:#35B8FF">0</span> 分 <span id="snum" style="color:#35B8FF">0</span> 秒</span>
+<script>
+    var now = new Date(); 
+    function createtime() { 
+        var grt= new Date("02/21/2020 11:30:00");
+        now.setTime(now.getTime()+250); 
+        days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); 
+        hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); 
+        if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); 
+        mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} 
+        seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); 
+        snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} 
+        document.getElementById("dnum").innerHTML = dnum;
+        document.getElementById("hnum").innerHTML = hnum;
+        document.getElementById("mnum").innerHTML = mnum;
+        document.getElementById("snum").innerHTML = snum;
+        
+    } 
+setInterval("createtime()",250);
+</script>
+  <div class="powered-by">
+    <span>powered by </span><a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span>总访客量：</span>
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span>总访问量：</span>
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+  <script>
   function leancloudSelector(url) {
     url = encodeURI(url);
     return document.getElementById(url).querySelector('.leancloud-visitors-count');
@@ -111,7 +651,66 @@
         showTime(Counter);
       }
     });
-  </script></div></footer></div><script src="/lib/anime.min.js"></script><script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script><script src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script><script src="/lib/velocity/velocity.min.js"></script><script src="/lib/velocity/velocity.ui.min.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/pisces.js"></script><script src="/js/next-boot.js"></script><script>!function(){var t=document.createElement("script"),e=window.location.protocol.split(":")[0];t.src="https"===e?"https://zz.bdstatic.com/linksubmit/push.js":"http://push.zhanzhang.baidu.com/push.js";var s=document.getElementsByTagName("script")[0];s.parentNode.insertBefore(t,s)}()</script><script>
+  </script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
 NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
   NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
     var GUEST = ['nick', 'mail', 'link'];
@@ -137,7 +736,14 @@ NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
     });
   }, window.Valine);
 });
-</script><script src="./valine.js"></script><script type="text/javascript">
+</script>
+
+
+
+  
+  <script src="./valine.js"></script>
+
+  <script type="text/javascript">
     var GUEST = ['nick','mail','link'];
     var guest = 'nick,mail,link';
     guest = guest.split(',').filter(item=>{
@@ -155,4 +761,7 @@ NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
         pageSize:'10' || 10,
         avatar_cdn:'',
 });
-  </script></body></html>
+  </script>
+
+</body>
+</html>

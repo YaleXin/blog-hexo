@@ -1,4 +1,1422 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=2"><meta name="theme-color" content="#222"><meta name="generator" content="Hexo 4.2.0"><link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.ico"><link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico"><link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico"><link rel="mask-icon" href="/images/favicon.ico" color="#222"><link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css"><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css"><script id="hexo-configurations">var NexT=window.NexT||{},CONFIG={hostname:"yalexin.gitee.io",root:"/",scheme:"Gemini",version:"7.7.1",exturl:!1,sidebar:{position:"left",display:"post",padding:18,offset:12,onmobile:!0},copycode:{enable:!0,show_result:!0,style:"mac"},back2top:{enable:!0,sidebar:!1,scrollpercent:!0},bookmark:{enable:!1,color:"#222",save:"auto"},fancybox:!0,mediumzoom:!1,lazyload:!1,pangu:!1,comments:{style:"tabs",active:null,storage:!0,lazyload:!1,nav:null},algolia:{hits:{per_page:10},labels:{input_placeholder:"Search for Posts",hits_empty:"We didn't find any results for the search: ${query}",hits_stats:"${hits} results found in ${time} ms"}},localsearch:{enable:!1,trigger:"auto",top_n_per_article:1,unescape:!1,preload:!1},motion:{enable:!0,async:!1,transition:{post_block:"fadeIn",post_header:"slideDownIn",post_body:"slideDownIn",coll_header:"slideLeftIn",sidebar:"slideUpIn"}},path:"search.xml"}</script><meta name="description" content="学渣一枚"><meta property="og:type" content="website"><meta property="og:title" content="黄阿信"><meta property="og:url" content="https://yalexin.gitee.io/page/3/index.html"><meta property="og:site_name" content="黄阿信"><meta property="og:description" content="学渣一枚"><meta property="og:locale" content="zh_CN"><meta property="article:author" content="YaleXin"><meta name="twitter:card" content="summary"><link rel="canonical" href="https://yalexin.gitee.io/page/3/"><script id="page-configurations">CONFIG.page={sidebar:"",isHome:!0,isPost:!1}</script><title>黄阿信</title><noscript><style>.sidebar-inner,.use-motion .brand,.use-motion .collection-header,.use-motion .comments,.use-motion .menu-item,.use-motion .pagination,.use-motion .post-block,.use-motion .post-body,.use-motion .post-header{opacity:initial}.use-motion .site-subtitle,.use-motion .site-title{opacity:initial;top:initial}.use-motion .logo-line-before i{left:initial}.use-motion .logo-line-after i{right:initial}</style></noscript></head><body itemscope itemtype="http://schema.org/WebPage"><div class="container use-motion"><div class="headband"></div><header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="header-inner"><div class="site-brand-container"><div class="site-nav-toggle"><div class="toggle" aria-label="切换导航栏"><span class="toggle-line toggle-line-first"></span><span class="toggle-line toggle-line-middle"></span><span class="toggle-line toggle-line-last"></span></div></div><div class="site-meta"><div><a href="/" class="brand" rel="start"><span class="logo-line-before"><i></i></span> <span class="site-title">黄阿信</span><span class="logo-line-after"><i></i></span></a></div><p class="site-subtitle">要么改变世界，要么适应世界。</p></div><div class="site-nav-right"><div class="toggle popup-trigger"></div></div></div><nav class="site-nav"><ul id="menu" class="menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-fw fa-home"></i> 首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i> 标签<span class="badge">93</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i> 分类<span class="badge">14</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i> 归档<span class="badge">95</span></a></li><li class="menu-item menu-item-guestbook"><a href="/guestbook/" rel="section"><i class="fa fa-fw fa-book"></i> 留言板</a></li><li class="menu-item menu-item-links"><a href="/links/" rel="section"><i class="fa fa-fw fa-link"></i> 友链</a></li></ul></nav></div></header><div class="back-to-top"><i class="fa fa-arrow-up"></i> <span>0%</span></div><div class="reading-progress-bar"></div><main class="main"><div class="main-inner"><div class="content-wrap"><div class="content"><div class="posts-expand"><article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN"><link itemprop="mainEntityOfPage" href="https://yalexin.gitee.io/2021/04/28/RMQ%E9%97%AE%E9%A2%98%E4%B9%8BST%E8%A1%A8/"><span hidden itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="image" content="/uploads/cat_mouse.jpg"><meta itemprop="name" content="YaleXin"><meta itemprop="description" content="学渣一枚"></span><span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><meta itemprop="name" content="黄阿信"></span><header class="post-header"><h1 class="post-title" itemprop="name headline"> <a href="/2021/04/28/RMQ%E9%97%AE%E9%A2%98%E4%B9%8BST%E8%A1%A8/" class="post-title-link" itemprop="url">RMQ问题之ST表</a></h1><div class="post-meta"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-calendar-o"></i></span> <span class="post-meta-item-text">发表于</span> <time title="创建时间：2021-04-28 19:30:05" itemprop="dateCreated datePublished" datetime="2021-04-28T19:30:05+08:00">2021-04-28</time></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-calendar-check-o"></i></span> <span class="post-meta-item-text">更新于</span> <time title="修改时间：2022-05-07 15:30:55" itemprop="dateModified" datetime="2022-05-07T15:30:55+08:00">2022-05-07</time></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-folder-o"></i></span> <span class="post-meta-item-text">分类于</span> <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">算法</span></a></span></span><span id="/2021/04/28/RMQ%E9%97%AE%E9%A2%98%E4%B9%8BST%E8%A1%A8/" class="post-meta-item leancloud_visitors" data-flag-title="RMQ问题之ST表" title="阅读次数"><span class="post-meta-item-icon"><i class="fa fa-eye"></i></span> <span class="post-meta-item-text">阅读次数：</span><span class="leancloud-visitors-count"></span></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-comment-o"></i></span> <span class="post-meta-item-text">评论：</span><a title="valine" href="/2021/04/28/RMQ%E9%97%AE%E9%A2%98%E4%B9%8BST%E8%A1%A8/#valine-comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/2021/04/28/RMQ%E9%97%AE%E9%A2%98%E4%B9%8BST%E8%A1%A8/" itemprop="commentCount"></span></a></span><br><span class="post-meta-item" title="本文字数"><span class="post-meta-item-icon"><i class="fa fa-file-word-o"></i></span> <span class="post-meta-item-text">本文字数：</span> <span>2.3k</span></span><span class="post-meta-item" title="阅读时长"><span class="post-meta-item-icon"><i class="fa fa-clock-o"></i></span> <span class="post-meta-item-text">阅读时长 &asymp;</span> <span>2 分钟</span></span></div></header><div class="post-body" itemprop="articleBody"><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p><code>ST</code>表和线段树类似，用于快速求解区间问题，二者的建立时间都是<code>O(nlogn)</code>，但是<code>ST</code>表查询的时间达到了<code>O(1)</code>，虽然说不支持区间更新，线段树支持更新，更新花费时间<code>O(logn)</code>，查询花费<code>O(logn)</code></p><div class="post-button"> <a class="btn" href="/2021/04/28/RMQ%E9%97%AE%E9%A2%98%E4%B9%8BST%E8%A1%A8/#more" rel="contents">阅读全文 &raquo;</a></div></div><footer class="post-footer"><div class="post-eof"></div></footer></article><div></div><article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN"><link itemprop="mainEntityOfPage" href="https://yalexin.gitee.io/2021/04/25/%E5%9B%BE%E8%AE%BA%E4%B9%8B%E6%AC%A7%E6%8B%89%E8%B7%AF/"><span hidden itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="image" content="/uploads/cat_mouse.jpg"><meta itemprop="name" content="YaleXin"><meta itemprop="description" content="学渣一枚"></span><span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><meta itemprop="name" content="黄阿信"></span><header class="post-header"><h1 class="post-title" itemprop="name headline"> <a href="/2021/04/25/%E5%9B%BE%E8%AE%BA%E4%B9%8B%E6%AC%A7%E6%8B%89%E8%B7%AF/" class="post-title-link" itemprop="url">图论之欧拉路</a></h1><div class="post-meta"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-calendar-o"></i></span> <span class="post-meta-item-text">发表于</span> <time title="创建时间：2021-04-25 12:00:34" itemprop="dateCreated datePublished" datetime="2021-04-25T12:00:34+08:00">2021-04-25</time></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-calendar-check-o"></i></span> <span class="post-meta-item-text">更新于</span> <time title="修改时间：2022-05-07 15:30:55" itemprop="dateModified" datetime="2022-05-07T15:30:55+08:00">2022-05-07</time></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-folder-o"></i></span> <span class="post-meta-item-text">分类于</span> <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">算法</span></a></span></span><span id="/2021/04/25/%E5%9B%BE%E8%AE%BA%E4%B9%8B%E6%AC%A7%E6%8B%89%E8%B7%AF/" class="post-meta-item leancloud_visitors" data-flag-title="图论之欧拉路" title="阅读次数"><span class="post-meta-item-icon"><i class="fa fa-eye"></i></span> <span class="post-meta-item-text">阅读次数：</span><span class="leancloud-visitors-count"></span></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-comment-o"></i></span> <span class="post-meta-item-text">评论：</span><a title="valine" href="/2021/04/25/%E5%9B%BE%E8%AE%BA%E4%B9%8B%E6%AC%A7%E6%8B%89%E8%B7%AF/#valine-comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/2021/04/25/%E5%9B%BE%E8%AE%BA%E4%B9%8B%E6%AC%A7%E6%8B%89%E8%B7%AF/" itemprop="commentCount"></span></a></span><br><span class="post-meta-item" title="本文字数"><span class="post-meta-item-icon"><i class="fa fa-file-word-o"></i></span> <span class="post-meta-item-text">本文字数：</span> <span>335</span></span><span class="post-meta-item" title="阅读时长"><span class="post-meta-item-icon"><i class="fa fa-clock-o"></i></span> <span class="post-meta-item-text">阅读时长 &asymp;</span> <span>1 分钟</span></span></div></header><div class="post-body" itemprop="articleBody"><h2 id="欧拉路"><a href="#欧拉路" class="headerlink" title="欧拉路"></a>欧拉路</h2><blockquote><p>给定无孤立节点图<code>G</code>，若存在一条路，经过图中的每一条边一次且仅一次，那么该条路称为欧拉路，如果这条路的起点和终点相同，则该路称为欧拉回路，否则称为欧拉通路。</p></blockquote><div class="post-button"> <a class="btn" href="/2021/04/25/%E5%9B%BE%E8%AE%BA%E4%B9%8B%E6%AC%A7%E6%8B%89%E8%B7%AF/#more" rel="contents">阅读全文 &raquo;</a></div></div><footer class="post-footer"><div class="post-eof"></div></footer></article><div></div><article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN"><link itemprop="mainEntityOfPage" href="https://yalexin.gitee.io/2021/04/24/Bellman-Ford%E7%AE%97%E6%B3%95%E6%A8%A1%E6%9D%BF/"><span hidden itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="image" content="/uploads/cat_mouse.jpg"><meta itemprop="name" content="YaleXin"><meta itemprop="description" content="学渣一枚"></span><span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><meta itemprop="name" content="黄阿信"></span><header class="post-header"><h1 class="post-title" itemprop="name headline"> <a href="/2021/04/24/Bellman-Ford%E7%AE%97%E6%B3%95%E6%A8%A1%E6%9D%BF/" class="post-title-link" itemprop="url">Bellman-Ford算法模板</a></h1><div class="post-meta"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-calendar-o"></i></span> <span class="post-meta-item-text">发表于</span> <time title="创建时间：2021-04-24 17:51:54" itemprop="dateCreated datePublished" datetime="2021-04-24T17:51:54+08:00">2021-04-24</time></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-calendar-check-o"></i></span> <span class="post-meta-item-text">更新于</span> <time title="修改时间：2022-05-07 15:30:55" itemprop="dateModified" datetime="2022-05-07T15:30:55+08:00">2022-05-07</time></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-folder-o"></i></span> <span class="post-meta-item-text">分类于</span> <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">算法</span></a></span></span><span id="/2021/04/24/Bellman-Ford%E7%AE%97%E6%B3%95%E6%A8%A1%E6%9D%BF/" class="post-meta-item leancloud_visitors" data-flag-title="Bellman-Ford算法模板" title="阅读次数"><span class="post-meta-item-icon"><i class="fa fa-eye"></i></span> <span class="post-meta-item-text">阅读次数：</span><span class="leancloud-visitors-count"></span></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-comment-o"></i></span> <span class="post-meta-item-text">评论：</span><a title="valine" href="/2021/04/24/Bellman-Ford%E7%AE%97%E6%B3%95%E6%A8%A1%E6%9D%BF/#valine-comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/2021/04/24/Bellman-Ford%E7%AE%97%E6%B3%95%E6%A8%A1%E6%9D%BF/" itemprop="commentCount"></span></a></span><br><span class="post-meta-item" title="本文字数"><span class="post-meta-item-icon"><i class="fa fa-file-word-o"></i></span> <span class="post-meta-item-text">本文字数：</span> <span>2.3k</span></span><span class="post-meta-item" title="阅读时长"><span class="post-meta-item-icon"><i class="fa fa-clock-o"></i></span> <span class="post-meta-item-text">阅读时长 &asymp;</span> <span>2 分钟</span></span></div></header><div class="post-body" itemprop="articleBody"><p><code>Bellman-Ford</code>与 <code>Dijkstra</code>算法一样，也是用于求带权图的最短路，不过与后者相比，前者可以解决边权为负数的情况，适应性较强；</p><p>算法主要的流程是对每一个点根据边进行松弛操作，最终求得最优解的过程。</p><p>算法的时间复杂度是<code>O（V*E）</code></p><div class="post-button"> <a class="btn" href="/2021/04/24/Bellman-Ford%E7%AE%97%E6%B3%95%E6%A8%A1%E6%9D%BF/#more" rel="contents">阅读全文 &raquo;</a></div></div><footer class="post-footer"><div class="post-eof"></div></footer></article><div></div><article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN"><link itemprop="mainEntityOfPage" href="https://yalexin.gitee.io/2021/04/18/%E6%A0%91%E7%9A%84%E9%87%8D%E5%BF%83/"><span hidden itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="image" content="/uploads/cat_mouse.jpg"><meta itemprop="name" content="YaleXin"><meta itemprop="description" content="学渣一枚"></span><span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><meta itemprop="name" content="黄阿信"></span><header class="post-header"><h1 class="post-title" itemprop="name headline"> <a href="/2021/04/18/%E6%A0%91%E7%9A%84%E9%87%8D%E5%BF%83/" class="post-title-link" itemprop="url">树的重心</a></h1><div class="post-meta"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-calendar-o"></i></span> <span class="post-meta-item-text">发表于</span> <time title="创建时间：2021-04-18 16:05:35" itemprop="dateCreated datePublished" datetime="2021-04-18T16:05:35+08:00">2021-04-18</time></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-calendar-check-o"></i></span> <span class="post-meta-item-text">更新于</span> <time title="修改时间：2022-05-07 15:30:55" itemprop="dateModified" datetime="2022-05-07T15:30:55+08:00">2022-05-07</time></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-folder-o"></i></span> <span class="post-meta-item-text">分类于</span> <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">算法</span></a></span></span><span id="/2021/04/18/%E6%A0%91%E7%9A%84%E9%87%8D%E5%BF%83/" class="post-meta-item leancloud_visitors" data-flag-title="树的重心" title="阅读次数"><span class="post-meta-item-icon"><i class="fa fa-eye"></i></span> <span class="post-meta-item-text">阅读次数：</span><span class="leancloud-visitors-count"></span></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-comment-o"></i></span> <span class="post-meta-item-text">评论：</span><a title="valine" href="/2021/04/18/%E6%A0%91%E7%9A%84%E9%87%8D%E5%BF%83/#valine-comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/2021/04/18/%E6%A0%91%E7%9A%84%E9%87%8D%E5%BF%83/" itemprop="commentCount"></span></a></span><br><span class="post-meta-item" title="本文字数"><span class="post-meta-item-icon"><i class="fa fa-file-word-o"></i></span> <span class="post-meta-item-text">本文字数：</span> <span>3.3k</span></span><span class="post-meta-item" title="阅读时长"><span class="post-meta-item-icon"><i class="fa fa-clock-o"></i></span> <span class="post-meta-item-text">阅读时长 &asymp;</span> <span>3 分钟</span></span></div></header><div class="post-body" itemprop="articleBody"><blockquote><p>本文参考洛谷对于<a href="https://www.luogu.com.cn/problem/solution/P1364" target="_blank" rel="noopener">P1364</a>的题解</p></blockquote><h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><p> 对于树上的每一个点，计算其所有子树中最大的子树节点数，这个值最小的点就是这棵树的重心。</p><div class="post-button"> <a class="btn" href="/2021/04/18/%E6%A0%91%E7%9A%84%E9%87%8D%E5%BF%83/#more" rel="contents">阅读全文 &raquo;</a></div></div><footer class="post-footer"><div class="post-eof"></div></footer></article><div></div><article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN"><link itemprop="mainEntityOfPage" href="https://yalexin.gitee.io/2021/04/11/%E6%9C%80%E5%A4%A7%E5%AD%90%E7%9F%A9%E9%98%B5%E5%92%8C/"><span hidden itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="image" content="/uploads/cat_mouse.jpg"><meta itemprop="name" content="YaleXin"><meta itemprop="description" content="学渣一枚"></span><span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><meta itemprop="name" content="黄阿信"></span><header class="post-header"><h1 class="post-title" itemprop="name headline"> <a href="/2021/04/11/%E6%9C%80%E5%A4%A7%E5%AD%90%E7%9F%A9%E9%98%B5%E5%92%8C/" class="post-title-link" itemprop="url">最大子矩阵和</a></h1><div class="post-meta"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-calendar-o"></i></span> <span class="post-meta-item-text">发表于</span> <time title="创建时间：2021-04-11 19:32:16" itemprop="dateCreated datePublished" datetime="2021-04-11T19:32:16+08:00">2021-04-11</time></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-calendar-check-o"></i></span> <span class="post-meta-item-text">更新于</span> <time title="修改时间：2022-05-07 15:30:55" itemprop="dateModified" datetime="2022-05-07T15:30:55+08:00">2022-05-07</time></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-folder-o"></i></span> <span class="post-meta-item-text">分类于</span> <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">算法</span></a></span></span><span id="/2021/04/11/%E6%9C%80%E5%A4%A7%E5%AD%90%E7%9F%A9%E9%98%B5%E5%92%8C/" class="post-meta-item leancloud_visitors" data-flag-title="最大子矩阵和" title="阅读次数"><span class="post-meta-item-icon"><i class="fa fa-eye"></i></span> <span class="post-meta-item-text">阅读次数：</span><span class="leancloud-visitors-count"></span></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-comment-o"></i></span> <span class="post-meta-item-text">评论：</span><a title="valine" href="/2021/04/11/%E6%9C%80%E5%A4%A7%E5%AD%90%E7%9F%A9%E9%98%B5%E5%92%8C/#valine-comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/2021/04/11/%E6%9C%80%E5%A4%A7%E5%AD%90%E7%9F%A9%E9%98%B5%E5%92%8C/" itemprop="commentCount"></span></a></span><br><span class="post-meta-item" title="本文字数"><span class="post-meta-item-icon"><i class="fa fa-file-word-o"></i></span> <span class="post-meta-item-text">本文字数：</span> <span>1k</span></span><span class="post-meta-item" title="阅读时长"><span class="post-meta-item-icon"><i class="fa fa-clock-o"></i></span> <span class="post-meta-item-text">阅读时长 &asymp;</span> <span>1 分钟</span></span></div></header><div class="post-body" itemprop="articleBody"><p>最大子矩阵和，可以使用动态规划的思想</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * @Author      : YaleXin</span></span><br><span class="line"><span class="comment"> * @Email       : me@yalexin.top</span></span><br><span class="line"><span class="comment"> * @LastEditors : YaleXin</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cstdio&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="keyword">int</span> num[<span class="number">101</span>][<span class="number">101</span>], sums[<span class="number">101</span>][<span class="number">101</span>], temp[<span class="number">101</span>];</span><br><span class="line"><span class="keyword">int</span> n;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">oneMatMaxSum</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> nowSum = <span class="number">0</span>, maxSum = <span class="number">-128</span> * <span class="number">100</span> - <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n;i++)&#123;</span><br><span class="line">        <span class="keyword">if</span> (nowSum &gt; <span class="number">0</span>)nowSum += temp[i];</span><br><span class="line">        <span class="keyword">else</span> nowSum = temp[i];</span><br><span class="line">        maxSum = <span class="built_in">max</span>(maxSum, nowSum);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> maxSum;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 给出一个方针  求最大子矩阵和</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    ios::sync_with_stdio(<span class="literal">false</span>);</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">"%d"</span>, &amp;n);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; i++)</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; n; j++) &#123;</span><br><span class="line">            <span class="built_in">scanf</span>(<span class="string">"%d"</span>, &amp;num[i][j]);</span><br><span class="line">            sums[i][j] = num[i][j];</span><br><span class="line">        &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; n; i++) </span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; n; j++)</span><br><span class="line">            sums[i][j] += sums[i - <span class="number">1</span>][j];</span><br><span class="line">    <span class="keyword">int</span> maxSum = <span class="number">-128</span>, nowSum;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; i++)&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = i; j &lt; n; j++)&#123;</span><br><span class="line">            <span class="comment">// temp 保存的是从 第 i 行到 第 j 行所对应的矩阵每一列的和</span></span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> k  = <span class="number">0</span>; k &lt; n;k++)&#123;</span><br><span class="line">                <span class="keyword">if</span> (i == <span class="number">0</span>)temp[k] = sums[j][k];</span><br><span class="line">                <span class="keyword">else</span> temp[k] = sums[j][k] - sums[i - <span class="number">1</span>][k];</span><br><span class="line">            &#125;</span><br><span class="line">            nowSum = oneMatMaxSum();</span><br><span class="line">            maxSum = <span class="built_in">max</span>(nowSum, maxSum);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; maxSum &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div><footer class="post-footer"><div class="post-eof"></div></footer></article><div></div><article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN"><link itemprop="mainEntityOfPage" href="https://yalexin.gitee.io/2021/04/10/%E4%BD%BF%E7%94%A8C-%E7%9A%84%E4%BC%98%E5%85%88%E9%98%9F%E5%88%97%E6%97%B6%E8%87%AA%E5%AE%9A%E4%B9%89%E6%AF%94%E8%BE%83%E5%87%BD%E6%95%B0/"><span hidden itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="image" content="/uploads/cat_mouse.jpg"><meta itemprop="name" content="YaleXin"><meta itemprop="description" content="学渣一枚"></span><span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><meta itemprop="name" content="黄阿信"></span><header class="post-header"><h1 class="post-title" itemprop="name headline"> <a href="/2021/04/10/%E4%BD%BF%E7%94%A8C-%E7%9A%84%E4%BC%98%E5%85%88%E9%98%9F%E5%88%97%E6%97%B6%E8%87%AA%E5%AE%9A%E4%B9%89%E6%AF%94%E8%BE%83%E5%87%BD%E6%95%B0/" class="post-title-link" itemprop="url">使用C++的优先队列时自定义比较函数</a></h1><div class="post-meta"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-calendar-o"></i></span> <span class="post-meta-item-text">发表于</span> <time title="创建时间：2021-04-10 21:28:17" itemprop="dateCreated datePublished" datetime="2021-04-10T21:28:17+08:00">2021-04-10</time></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-calendar-check-o"></i></span> <span class="post-meta-item-text">更新于</span> <time title="修改时间：2022-05-07 15:30:55" itemprop="dateModified" datetime="2022-05-07T15:30:55+08:00">2022-05-07</time></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-folder-o"></i></span> <span class="post-meta-item-text">分类于</span> <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">算法</span></a></span></span><span id="/2021/04/10/%E4%BD%BF%E7%94%A8C-%E7%9A%84%E4%BC%98%E5%85%88%E9%98%9F%E5%88%97%E6%97%B6%E8%87%AA%E5%AE%9A%E4%B9%89%E6%AF%94%E8%BE%83%E5%87%BD%E6%95%B0/" class="post-meta-item leancloud_visitors" data-flag-title="使用C++的优先队列时自定义比较函数" title="阅读次数"><span class="post-meta-item-icon"><i class="fa fa-eye"></i></span> <span class="post-meta-item-text">阅读次数：</span><span class="leancloud-visitors-count"></span></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-comment-o"></i></span> <span class="post-meta-item-text">评论：</span><a title="valine" href="/2021/04/10/%E4%BD%BF%E7%94%A8C-%E7%9A%84%E4%BC%98%E5%85%88%E9%98%9F%E5%88%97%E6%97%B6%E8%87%AA%E5%AE%9A%E4%B9%89%E6%AF%94%E8%BE%83%E5%87%BD%E6%95%B0/#valine-comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/2021/04/10/%E4%BD%BF%E7%94%A8C-%E7%9A%84%E4%BC%98%E5%85%88%E9%98%9F%E5%88%97%E6%97%B6%E8%87%AA%E5%AE%9A%E4%B9%89%E6%AF%94%E8%BE%83%E5%87%BD%E6%95%B0/" itemprop="commentCount"></span></a></span><br><span class="post-meta-item" title="本文字数"><span class="post-meta-item-icon"><i class="fa fa-file-word-o"></i></span> <span class="post-meta-item-text">本文字数：</span> <span>2.3k</span></span><span class="post-meta-item" title="阅读时长"><span class="post-meta-item-icon"><i class="fa fa-clock-o"></i></span> <span class="post-meta-item-text">阅读时长 &asymp;</span> <span>2 分钟</span></span></div></header><div class="post-body" itemprop="articleBody"><p>在<code>C++</code>中，优先队列是一种底层使用堆实现的数据结构，位于队首的元素总是目前所有元素中最优的；</p><div class="post-button"> <a class="btn" href="/2021/04/10/%E4%BD%BF%E7%94%A8C-%E7%9A%84%E4%BC%98%E5%85%88%E9%98%9F%E5%88%97%E6%97%B6%E8%87%AA%E5%AE%9A%E4%B9%89%E6%AF%94%E8%BE%83%E5%87%BD%E6%95%B0/#more" rel="contents">阅读全文 &raquo;</a></div></div><footer class="post-footer"><div class="post-eof"></div></footer></article><div></div><article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN"><link itemprop="mainEntityOfPage" href="https://yalexin.gitee.io/2021/04/10/%E5%BA%8F%E5%88%97%E8%87%AA%E5%8A%A8%E6%9C%BA%E6%A8%A1%E6%9D%BF/"><span hidden itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="image" content="/uploads/cat_mouse.jpg"><meta itemprop="name" content="YaleXin"><meta itemprop="description" content="学渣一枚"></span><span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><meta itemprop="name" content="黄阿信"></span><header class="post-header"><h1 class="post-title" itemprop="name headline"> <a href="/2021/04/10/%E5%BA%8F%E5%88%97%E8%87%AA%E5%8A%A8%E6%9C%BA%E6%A8%A1%E6%9D%BF/" class="post-title-link" itemprop="url">序列自动机模板</a></h1><div class="post-meta"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-calendar-o"></i></span> <span class="post-meta-item-text">发表于</span> <time title="创建时间：2021-04-10 21:28:17" itemprop="dateCreated datePublished" datetime="2021-04-10T21:28:17+08:00">2021-04-10</time></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-calendar-check-o"></i></span> <span class="post-meta-item-text">更新于</span> <time title="修改时间：2022-05-07 15:30:55" itemprop="dateModified" datetime="2022-05-07T15:30:55+08:00">2022-05-07</time></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-folder-o"></i></span> <span class="post-meta-item-text">分类于</span> <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">算法</span></a></span></span><span id="/2021/04/10/%E5%BA%8F%E5%88%97%E8%87%AA%E5%8A%A8%E6%9C%BA%E6%A8%A1%E6%9D%BF/" class="post-meta-item leancloud_visitors" data-flag-title="序列自动机模板" title="阅读次数"><span class="post-meta-item-icon"><i class="fa fa-eye"></i></span> <span class="post-meta-item-text">阅读次数：</span><span class="leancloud-visitors-count"></span></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-comment-o"></i></span> <span class="post-meta-item-text">评论：</span><a title="valine" href="/2021/04/10/%E5%BA%8F%E5%88%97%E8%87%AA%E5%8A%A8%E6%9C%BA%E6%A8%A1%E6%9D%BF/#valine-comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/2021/04/10/%E5%BA%8F%E5%88%97%E8%87%AA%E5%8A%A8%E6%9C%BA%E6%A8%A1%E6%9D%BF/" itemprop="commentCount"></span></a></span><br><span class="post-meta-item" title="本文字数"><span class="post-meta-item-icon"><i class="fa fa-file-word-o"></i></span> <span class="post-meta-item-text">本文字数：</span> <span>373</span></span><span class="post-meta-item" title="阅读时长"><span class="post-meta-item-icon"><i class="fa fa-clock-o"></i></span> <span class="post-meta-item-text">阅读时长 &asymp;</span> <span>1 分钟</span></span></div></header><div class="post-body" itemprop="articleBody"><h2 id="算法背景"><a href="#算法背景" class="headerlink" title="算法背景"></a>算法背景</h2><p>子序列的匹配，当然如果只是少量的模式串，直接使用双指针进行模拟即可，如果遇到大量模式串需要进行匹配，那么可以为主串维护一个DFA，对每一个模式串匹配时间复杂度都是<code>O(n)</code>.</p><p>算法的大致思想是为每一个主串的字符节点创建一个下一个字符的索引节点，方便状态快速转换。</p><div class="post-button"> <a class="btn" href="/2021/04/10/%E5%BA%8F%E5%88%97%E8%87%AA%E5%8A%A8%E6%9C%BA%E6%A8%A1%E6%9D%BF/#more" rel="contents">阅读全文 &raquo;</a></div></div><footer class="post-footer"><div class="post-eof"></div></footer></article><div></div><article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN"><link itemprop="mainEntityOfPage" href="https://yalexin.gitee.io/2021/03/04/%E9%A9%AC%E6%8B%89%E8%BD%A6%E7%AE%97%E6%B3%95%E6%A8%A1%E6%9D%BF/"><span hidden itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="image" content="/uploads/cat_mouse.jpg"><meta itemprop="name" content="YaleXin"><meta itemprop="description" content="学渣一枚"></span><span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><meta itemprop="name" content="黄阿信"></span><header class="post-header"><h1 class="post-title" itemprop="name headline"> <a href="/2021/03/04/%E9%A9%AC%E6%8B%89%E8%BD%A6%E7%AE%97%E6%B3%95%E6%A8%A1%E6%9D%BF/" class="post-title-link" itemprop="url">马拉车算法模板</a></h1><div class="post-meta"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-calendar-o"></i></span> <span class="post-meta-item-text">发表于</span> <time title="创建时间：2021-03-04 11:21:21" itemprop="dateCreated datePublished" datetime="2021-03-04T11:21:21+08:00">2021-03-04</time></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-calendar-check-o"></i></span> <span class="post-meta-item-text">更新于</span> <time title="修改时间：2022-05-07 15:30:55" itemprop="dateModified" datetime="2022-05-07T15:30:55+08:00">2022-05-07</time></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-folder-o"></i></span> <span class="post-meta-item-text">分类于</span> <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">算法</span></a></span></span><span id="/2021/03/04/%E9%A9%AC%E6%8B%89%E8%BD%A6%E7%AE%97%E6%B3%95%E6%A8%A1%E6%9D%BF/" class="post-meta-item leancloud_visitors" data-flag-title="马拉车算法模板" title="阅读次数"><span class="post-meta-item-icon"><i class="fa fa-eye"></i></span> <span class="post-meta-item-text">阅读次数：</span><span class="leancloud-visitors-count"></span></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-comment-o"></i></span> <span class="post-meta-item-text">评论：</span><a title="valine" href="/2021/03/04/%E9%A9%AC%E6%8B%89%E8%BD%A6%E7%AE%97%E6%B3%95%E6%A8%A1%E6%9D%BF/#valine-comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/2021/03/04/%E9%A9%AC%E6%8B%89%E8%BD%A6%E7%AE%97%E6%B3%95%E6%A8%A1%E6%9D%BF/" itemprop="commentCount"></span></a></span><br><span class="post-meta-item" title="本文字数"><span class="post-meta-item-icon"><i class="fa fa-file-word-o"></i></span> <span class="post-meta-item-text">本文字数：</span> <span>1.1k</span></span><span class="post-meta-item" title="阅读时长"><span class="post-meta-item-icon"><i class="fa fa-clock-o"></i></span> <span class="post-meta-item-text">阅读时长 &asymp;</span> <span>1 分钟</span></span></div></header><div class="post-body" itemprop="articleBody"><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>马拉车算法是Manacher算法，它是一位名叫Manacher的人在1975年提出的一种算法，用于在线性时间内解决回文串问题。</p><div class="post-button"> <a class="btn" href="/2021/03/04/%E9%A9%AC%E6%8B%89%E8%BD%A6%E7%AE%97%E6%B3%95%E6%A8%A1%E6%9D%BF/#more" rel="contents">阅读全文 &raquo;</a></div></div><footer class="post-footer"><div class="post-eof"></div></footer></article><div></div><article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN"><link itemprop="mainEntityOfPage" href="https://yalexin.gitee.io/2021/03/01/%E4%BA%8C%E7%BA%A7%E8%AF%84%E8%AE%BA%E5%B1%95%E7%A4%BA%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%B3%95/"><span hidden itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="image" content="/uploads/cat_mouse.jpg"><meta itemprop="name" content="YaleXin"><meta itemprop="description" content="学渣一枚"></span><span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><meta itemprop="name" content="黄阿信"></span><header class="post-header"><h1 class="post-title" itemprop="name headline"> <a href="/2021/03/01/%E4%BA%8C%E7%BA%A7%E8%AF%84%E8%AE%BA%E5%B1%95%E7%A4%BA%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%B3%95/" class="post-title-link" itemprop="url">二级评论展示的实现方法</a></h1><div class="post-meta"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-calendar-o"></i></span> <span class="post-meta-item-text">发表于</span> <time title="创建时间：2021-03-01 20:09:07" itemprop="dateCreated datePublished" datetime="2021-03-01T20:09:07+08:00">2021-03-01</time></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-calendar-check-o"></i></span> <span class="post-meta-item-text">更新于</span> <time title="修改时间：2022-05-07 15:30:55" itemprop="dateModified" datetime="2022-05-07T15:30:55+08:00">2022-05-07</time></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-folder-o"></i></span> <span class="post-meta-item-text">分类于</span> <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a></span></span><span id="/2021/03/01/%E4%BA%8C%E7%BA%A7%E8%AF%84%E8%AE%BA%E5%B1%95%E7%A4%BA%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%B3%95/" class="post-meta-item leancloud_visitors" data-flag-title="二级评论展示的实现方法" title="阅读次数"><span class="post-meta-item-icon"><i class="fa fa-eye"></i></span> <span class="post-meta-item-text">阅读次数：</span><span class="leancloud-visitors-count"></span></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-comment-o"></i></span> <span class="post-meta-item-text">评论：</span><a title="valine" href="/2021/03/01/%E4%BA%8C%E7%BA%A7%E8%AF%84%E8%AE%BA%E5%B1%95%E7%A4%BA%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%B3%95/#valine-comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/2021/03/01/%E4%BA%8C%E7%BA%A7%E8%AF%84%E8%AE%BA%E5%B1%95%E7%A4%BA%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%B3%95/" itemprop="commentCount"></span></a></span><br><span class="post-meta-item" title="本文字数"><span class="post-meta-item-icon"><i class="fa fa-file-word-o"></i></span> <span class="post-meta-item-text">本文字数：</span> <span>3.6k</span></span><span class="post-meta-item" title="阅读时长"><span class="post-meta-item-icon"><i class="fa fa-clock-o"></i></span> <span class="post-meta-item-text">阅读时长 &asymp;</span> <span>3 分钟</span></span></div></header><div class="post-body" itemprop="articleBody"><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>通常的博客评论展示有一级评论、二级评论、多级评论，不同的展示方法给用户的体验不一样。</p><div class="post-button"> <a class="btn" href="/2021/03/01/%E4%BA%8C%E7%BA%A7%E8%AF%84%E8%AE%BA%E5%B1%95%E7%A4%BA%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%B3%95/#more" rel="contents">阅读全文 &raquo;</a></div></div><footer class="post-footer"><div class="post-eof"></div></footer></article><div></div><article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN"><link itemprop="mainEntityOfPage" href="https://yalexin.gitee.io/2021/02/07/%E5%9F%BA%E4%BA%8EVue%E5%92%8CElement-UI%E6%90%AD%E5%BB%BA%E7%9A%84%E5%8D%9A%E5%AE%A2%E5%89%8D%E7%AB%AF%E7%95%8C%E9%9D%A2/"><span hidden itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="image" content="/uploads/cat_mouse.jpg"><meta itemprop="name" content="YaleXin"><meta itemprop="description" content="学渣一枚"></span><span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><meta itemprop="name" content="黄阿信"></span><header class="post-header"><h1 class="post-title" itemprop="name headline"> <a href="/2021/02/07/%E5%9F%BA%E4%BA%8EVue%E5%92%8CElement-UI%E6%90%AD%E5%BB%BA%E7%9A%84%E5%8D%9A%E5%AE%A2%E5%89%8D%E7%AB%AF%E7%95%8C%E9%9D%A2/" class="post-title-link" itemprop="url">基于Vue和Element UI搭建的博客前端界面</a></h1><div class="post-meta"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-calendar-o"></i></span> <span class="post-meta-item-text">发表于</span> <time title="创建时间：2021-02-07 09:17:53" itemprop="dateCreated datePublished" datetime="2021-02-07T09:17:53+08:00">2021-02-07</time></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-calendar-check-o"></i></span> <span class="post-meta-item-text">更新于</span> <time title="修改时间：2022-05-07 15:30:55" itemprop="dateModified" datetime="2022-05-07T15:30:55+08:00">2022-05-07</time></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-folder-o"></i></span> <span class="post-meta-item-text">分类于</span> <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a></span></span><span id="/2021/02/07/%E5%9F%BA%E4%BA%8EVue%E5%92%8CElement-UI%E6%90%AD%E5%BB%BA%E7%9A%84%E5%8D%9A%E5%AE%A2%E5%89%8D%E7%AB%AF%E7%95%8C%E9%9D%A2/" class="post-meta-item leancloud_visitors" data-flag-title="基于Vue和Element UI搭建的博客前端界面" title="阅读次数"><span class="post-meta-item-icon"><i class="fa fa-eye"></i></span> <span class="post-meta-item-text">阅读次数：</span><span class="leancloud-visitors-count"></span></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-comment-o"></i></span> <span class="post-meta-item-text">评论：</span><a title="valine" href="/2021/02/07/%E5%9F%BA%E4%BA%8EVue%E5%92%8CElement-UI%E6%90%AD%E5%BB%BA%E7%9A%84%E5%8D%9A%E5%AE%A2%E5%89%8D%E7%AB%AF%E7%95%8C%E9%9D%A2/#valine-comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/2021/02/07/%E5%9F%BA%E4%BA%8EVue%E5%92%8CElement-UI%E6%90%AD%E5%BB%BA%E7%9A%84%E5%8D%9A%E5%AE%A2%E5%89%8D%E7%AB%AF%E7%95%8C%E9%9D%A2/" itemprop="commentCount"></span></a></span><br><span class="post-meta-item" title="本文字数"><span class="post-meta-item-icon"><i class="fa fa-file-word-o"></i></span> <span class="post-meta-item-text">本文字数：</span> <span>1.8k</span></span><span class="post-meta-item" title="阅读时长"><span class="post-meta-item-icon"><i class="fa fa-clock-o"></i></span> <span class="post-meta-item-text">阅读时长 &asymp;</span> <span>2 分钟</span></span></div></header><div class="post-body" itemprop="articleBody"><p><a href="https://github.com/YaleXin/rblog/tree/relese-1.0" target="_blank" rel="noopener">项目地址</a></p><p><a href="https://yalexin.gitee.io/rblog-demo/index.html#">演示地址</a></p><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>之前我的<a href="https://www.yalexin.top/" target="_blank" rel="noopener">个人博客系统</a>是使用<code>SpringBoot</code>和<code>thymeleaf</code>模板引擎开发的，个人觉得还可以，最近突发奇想，何不借点时间，把博客重构一下，使用<code>Vue</code>作为前端，<code>SpringBoot</code>最为后端，前后端分离，继续夯实自己的实力。</p><div class="post-button"> <a class="btn" href="/2021/02/07/%E5%9F%BA%E4%BA%8EVue%E5%92%8CElement-UI%E6%90%AD%E5%BB%BA%E7%9A%84%E5%8D%9A%E5%AE%A2%E5%89%8D%E7%AB%AF%E7%95%8C%E9%9D%A2/#more" rel="contents">阅读全文 &raquo;</a></div></div><footer class="post-footer"><div class="post-eof"></div></footer></article><div></div></div><nav class="pagination"><a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left" aria-label="上一页"></i></a> <a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right" aria-label="下一页"></i></a></nav></div><script>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico">
+  <link rel="mask-icon" href="/images/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yalexin.gitee.io","root":"/","scheme":"Gemini","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":true},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="学渣一枚">
+<meta property="og:type" content="website">
+<meta property="og:title" content="黄阿信">
+<meta property="og:url" content="https://yalexin.gitee.io/page/3/index.html">
+<meta property="og:site_name" content="黄阿信">
+<meta property="og:description" content="学渣一枚">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:author" content="YaleXin">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://yalexin.gitee.io/page/3/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: true,
+    isPost: false
+  };
+</script>
+
+  <title>黄阿信</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">黄阿信</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">要么改变世界，要么适应世界。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">99</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">14</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">101</span></a>
+
+  </li>
+        <li class="menu-item menu-item-guestbook">
+
+    <a href="/guestbook/" rel="section"><i class="fa fa-fw fa-book"></i>留言板</a>
+
+  </li>
+        <li class="menu-item menu-item-links">
+
+    <a href="/links/" rel="section"><i class="fa fa-fw fa-link"></i>友链</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yalexin.gitee.io/2022/02/08/Git%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8BGit%E7%9A%84%E5%88%9D%E4%BD%93%E9%AA%8C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/cat_mouse.jpg">
+      <meta itemprop="name" content="YaleXin">
+      <meta itemprop="description" content="学渣一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="黄阿信">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/02/08/Git%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8BGit%E7%9A%84%E5%88%9D%E4%BD%93%E9%AA%8C/" class="post-title-link" itemprop="url">Git学习笔记之Git的初体验</a>
+        </h1>
+
+        <div class="post-meta">
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-02-08 12:56:45" itemprop="dateCreated datePublished" datetime="2022-02-08T12:56:45+08:00">2022-02-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-05-07 15:30:55" itemprop="dateModified" datetime="2022-05-07T15:30:55+08:00">2022-05-07</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">笔记</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2022/02/08/Git%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8BGit%E7%9A%84%E5%88%9D%E4%BD%93%E9%AA%8C/" class="post-meta-item leancloud_visitors" data-flag-title="Git学习笔记之Git的初体验" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">评论：</span>
+    
+    <a title="valine" href="/2022/02/08/Git%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8BGit%E7%9A%84%E5%88%9D%E4%BD%93%E9%AA%8C/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/02/08/Git%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8BGit%E7%9A%84%E5%88%9D%E4%BD%93%E9%AA%8C/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>说实话，我之前虽然经常接触和使用<code>Git</code>，但是实际上也只是经常使用<code>Git</code>的<code>add 、commit、push</code>功能，其他的基本没怎么接触过，算是某种意义上的零基础。在团队协作的背景下，版本控制是一个简化队员合作、提高效率的绕不开的难题，因此我觉得十分有必要学一下<code>Git</code>工具，当然了这个工具很强大，很多内容往深了很难掌握，大多数人也一般用不到，因此这部分我打算不学，以后需要用得到了再去翻翻文档应该也还来得及。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/02/08/Git%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8BGit%E7%9A%84%E5%88%9D%E4%BD%93%E9%AA%8C/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+
+
+<div>
+    
+ </div>
+
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yalexin.gitee.io/2022/01/25/%E5%8D%9A%E5%AE%A2%E7%B3%BB%E7%BB%9F%E5%BC%95%E5%85%A5ECharts%E7%9A%84%E6%97%A5%E5%8E%86%E7%83%AD%E5%8A%9B%E5%9B%BE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/cat_mouse.jpg">
+      <meta itemprop="name" content="YaleXin">
+      <meta itemprop="description" content="学渣一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="黄阿信">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/01/25/%E5%8D%9A%E5%AE%A2%E7%B3%BB%E7%BB%9F%E5%BC%95%E5%85%A5ECharts%E7%9A%84%E6%97%A5%E5%8E%86%E7%83%AD%E5%8A%9B%E5%9B%BE/" class="post-title-link" itemprop="url">博客系统引入ECharts的日历热力图</a>
+        </h1>
+
+        <div class="post-meta">
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-01-25 21:16:34" itemprop="dateCreated datePublished" datetime="2022-01-25T21:16:34+08:00">2022-01-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-05-07 15:30:55" itemprop="dateModified" datetime="2022-05-07T15:30:55+08:00">2022-05-07</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index"><span itemprop="name">博客</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2022/01/25/%E5%8D%9A%E5%AE%A2%E7%B3%BB%E7%BB%9F%E5%BC%95%E5%85%A5ECharts%E7%9A%84%E6%97%A5%E5%8E%86%E7%83%AD%E5%8A%9B%E5%9B%BE/" class="post-meta-item leancloud_visitors" data-flag-title="博客系统引入ECharts的日历热力图" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">评论：</span>
+    
+    <a title="valine" href="/2022/01/25/%E5%8D%9A%E5%AE%A2%E7%B3%BB%E7%BB%9F%E5%BC%95%E5%85%A5ECharts%E7%9A%84%E6%97%A5%E5%8E%86%E7%83%AD%E5%8A%9B%E5%9B%BE/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/01/25/%E5%8D%9A%E5%AE%A2%E7%B3%BB%E7%BB%9F%E5%BC%95%E5%85%A5ECharts%E7%9A%84%E6%97%A5%E5%8E%86%E7%83%AD%E5%8A%9B%E5%9B%BE/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>770</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>之前我一直中意于<code>Github</code>或者<code>Gitee</code>的个人主页中的提交记录的界面，一直想在博客系统中引入进来，奈何之前一直没空实现，而且不知道有哪些组件或者开源的项目适合借鉴；前不久无意看到<a href="https://echarts.apache.org/zh/index.html" target="_blank" rel="noopener"><code>Echarts</code></a>中的热力图很符合我的预期，就拿了过来。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/01/25/%E5%8D%9A%E5%AE%A2%E7%B3%BB%E7%BB%9F%E5%BC%95%E5%85%A5ECharts%E7%9A%84%E6%97%A5%E5%8E%86%E7%83%AD%E5%8A%9B%E5%9B%BE/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+
+
+<div>
+    
+ </div>
+
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yalexin.gitee.io/2022/01/21/%E5%80%9F%E5%8A%A9OpenCV%E6%8B%BC%E6%8E%A5%E7%89%B9%E5%AE%9A%E8%83%8C%E6%99%AF%E5%9B%BE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/cat_mouse.jpg">
+      <meta itemprop="name" content="YaleXin">
+      <meta itemprop="description" content="学渣一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="黄阿信">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/01/21/%E5%80%9F%E5%8A%A9OpenCV%E6%8B%BC%E6%8E%A5%E7%89%B9%E5%AE%9A%E8%83%8C%E6%99%AF%E5%9B%BE/" class="post-title-link" itemprop="url">借助OpenCV拼接特定背景图</a>
+        </h1>
+
+        <div class="post-meta">
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-01-21 10:25:22" itemprop="dateCreated datePublished" datetime="2022-01-21T10:25:22+08:00">2022-01-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-05-07 15:30:55" itemprop="dateModified" datetime="2022-05-07T15:30:55+08:00">2022-05-07</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">算法</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2022/01/21/%E5%80%9F%E5%8A%A9OpenCV%E6%8B%BC%E6%8E%A5%E7%89%B9%E5%AE%9A%E8%83%8C%E6%99%AF%E5%9B%BE/" class="post-meta-item leancloud_visitors" data-flag-title="借助OpenCV拼接特定背景图" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">评论：</span>
+    
+    <a title="valine" href="/2022/01/21/%E5%80%9F%E5%8A%A9OpenCV%E6%8B%BC%E6%8E%A5%E7%89%B9%E5%AE%9A%E8%83%8C%E6%99%AF%E5%9B%BE/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/01/21/%E5%80%9F%E5%8A%A9OpenCV%E6%8B%BC%E6%8E%A5%E7%89%B9%E5%AE%9A%E8%83%8C%E6%99%AF%E5%9B%BE/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>6.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>6 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>之前就一直有一个想法，提供大量图片以及一张背景图，然后将这些图片组成一个个小网格拼接起来，然后效果和原背景图差不多，简而言之就是将原背景图马赛克化，只不过每一个马赛克是用提供的图片组成，现在放寒假了终于有时间开干啦，哈哈哈哈哈。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/01/21/%E5%80%9F%E5%8A%A9OpenCV%E6%8B%BC%E6%8E%A5%E7%89%B9%E5%AE%9A%E8%83%8C%E6%99%AF%E5%9B%BE/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+
+
+<div>
+    
+ </div>
+
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yalexin.gitee.io/2021/12/31/%E5%85%B3%E4%BA%8E%E6%88%91%E7%9A%842021%E5%B9%B4%E7%9A%84%E9%82%A3%E4%BA%9B%E4%BA%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/cat_mouse.jpg">
+      <meta itemprop="name" content="YaleXin">
+      <meta itemprop="description" content="学渣一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="黄阿信">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/12/31/%E5%85%B3%E4%BA%8E%E6%88%91%E7%9A%842021%E5%B9%B4%E7%9A%84%E9%82%A3%E4%BA%9B%E4%BA%8B/" class="post-title-link" itemprop="url">关于我的2021年的那些事</a>
+        </h1>
+
+        <div class="post-meta">
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-12-31 18:23:08" itemprop="dateCreated datePublished" datetime="2021-12-31T18:23:08+08:00">2021-12-31</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-05-07 15:30:55" itemprop="dateModified" datetime="2022-05-07T15:30:55+08:00">2022-05-07</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%94%9F%E6%B4%BB%E6%83%85%E6%84%9F/" itemprop="url" rel="index"><span itemprop="name">生活情感</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2021/12/31/%E5%85%B3%E4%BA%8E%E6%88%91%E7%9A%842021%E5%B9%B4%E7%9A%84%E9%82%A3%E4%BA%9B%E4%BA%8B/" class="post-meta-item leancloud_visitors" data-flag-title="关于我的2021年的那些事" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">评论：</span>
+    
+    <a title="valine" href="/2021/12/31/%E5%85%B3%E4%BA%8E%E6%88%91%E7%9A%842021%E5%B9%B4%E7%9A%84%E9%82%A3%E4%BA%9B%E4%BA%8B/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/12/31/%E5%85%B3%E4%BA%8E%E6%88%91%E7%9A%842021%E5%B9%B4%E7%9A%84%E9%82%A3%E4%BA%9B%E4%BA%8B/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>转眼间，就到了今年的最后一天了， 每次回望过去，总感觉时间过得很快，想要做的事还没完成，想说的话还没说出口，总感觉时间老人再跟我开玩笑，一天只给我23小时，一个月只给我29天！emm，想一下这一年都干了啥吧。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/12/31/%E5%85%B3%E4%BA%8E%E6%88%91%E7%9A%842021%E5%B9%B4%E7%9A%84%E9%82%A3%E4%BA%9B%E4%BA%8B/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+
+
+<div>
+    
+ </div>
+
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yalexin.gitee.io/2021/05/27/%E5%88%A9%E7%94%A8%E5%80%8D%E5%A2%9E%E7%9A%84%E6%80%9D%E6%83%B3%E5%AE%9E%E7%8E%B0LCA%E7%AE%97%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/cat_mouse.jpg">
+      <meta itemprop="name" content="YaleXin">
+      <meta itemprop="description" content="学渣一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="黄阿信">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/05/27/%E5%88%A9%E7%94%A8%E5%80%8D%E5%A2%9E%E7%9A%84%E6%80%9D%E6%83%B3%E5%AE%9E%E7%8E%B0LCA%E7%AE%97%E6%B3%95/" class="post-title-link" itemprop="url">利用倍增的思想实现LCA算法</a>
+        </h1>
+
+        <div class="post-meta">
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-05-27 16:48:50" itemprop="dateCreated datePublished" datetime="2021-05-27T16:48:50+08:00">2021-05-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-05-07 15:30:55" itemprop="dateModified" datetime="2022-05-07T15:30:55+08:00">2022-05-07</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">算法</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2021/05/27/%E5%88%A9%E7%94%A8%E5%80%8D%E5%A2%9E%E7%9A%84%E6%80%9D%E6%83%B3%E5%AE%9E%E7%8E%B0LCA%E7%AE%97%E6%B3%95/" class="post-meta-item leancloud_visitors" data-flag-title="利用倍增的思想实现LCA算法" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">评论：</span>
+    
+    <a title="valine" href="/2021/05/27/%E5%88%A9%E7%94%A8%E5%80%8D%E5%A2%9E%E7%9A%84%E6%80%9D%E6%83%B3%E5%AE%9E%E7%8E%B0LCA%E7%AE%97%E6%B3%95/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/05/27/%E5%88%A9%E7%94%A8%E5%80%8D%E5%A2%9E%E7%9A%84%E6%80%9D%E6%83%B3%E5%AE%9E%E7%8E%B0LCA%E7%AE%97%E6%B3%95/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p><code>LCA</code>算法指的是最近公共祖先（<code>Lowest Common Ancestor</code>），这里的最近指的是给定的两个点中所有的公共祖先中，距离根节点最远的节点，而且这两点到最近公共祖先的距离只和也是这两点之间的最短路径。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/05/27/%E5%88%A9%E7%94%A8%E5%80%8D%E5%A2%9E%E7%9A%84%E6%80%9D%E6%83%B3%E5%AE%9E%E7%8E%B0LCA%E7%AE%97%E6%B3%95/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+
+
+<div>
+    
+ </div>
+
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yalexin.gitee.io/2021/05/06/%E9%AB%98%E7%B2%BE%E5%BA%A6%E8%BF%90%E7%AE%97/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/cat_mouse.jpg">
+      <meta itemprop="name" content="YaleXin">
+      <meta itemprop="description" content="学渣一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="黄阿信">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/05/06/%E9%AB%98%E7%B2%BE%E5%BA%A6%E8%BF%90%E7%AE%97/" class="post-title-link" itemprop="url">高精度运算</a>
+        </h1>
+
+        <div class="post-meta">
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-05-06 10:42:32" itemprop="dateCreated datePublished" datetime="2021-05-06T10:42:32+08:00">2021-05-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-05-07 15:30:55" itemprop="dateModified" datetime="2022-05-07T15:30:55+08:00">2022-05-07</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">算法</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2021/05/06/%E9%AB%98%E7%B2%BE%E5%BA%A6%E8%BF%90%E7%AE%97/" class="post-meta-item leancloud_visitors" data-flag-title="高精度运算" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">评论：</span>
+    
+    <a title="valine" href="/2021/05/06/%E9%AB%98%E7%B2%BE%E5%BA%A6%E8%BF%90%E7%AE%97/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/05/06/%E9%AB%98%E7%B2%BE%E5%BA%A6%E8%BF%90%E7%AE%97/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>7.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>7 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>本文所探讨的均为高精度数字对高精度数字进行的操作（除特殊说明外）、尚未讨论负数的情况、数字的最低位保存在数组下标<code>0</code>处、尚未进行压位操作（除特殊说明）</p>
+</blockquote>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/05/06/%E9%AB%98%E7%B2%BE%E5%BA%A6%E8%BF%90%E7%AE%97/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+
+
+<div>
+    
+ </div>
+
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yalexin.gitee.io/2021/04/28/RMQ%E9%97%AE%E9%A2%98%E4%B9%8BST%E8%A1%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/cat_mouse.jpg">
+      <meta itemprop="name" content="YaleXin">
+      <meta itemprop="description" content="学渣一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="黄阿信">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/04/28/RMQ%E9%97%AE%E9%A2%98%E4%B9%8BST%E8%A1%A8/" class="post-title-link" itemprop="url">RMQ问题之ST表</a>
+        </h1>
+
+        <div class="post-meta">
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-04-28 19:30:05" itemprop="dateCreated datePublished" datetime="2021-04-28T19:30:05+08:00">2021-04-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-05-07 15:30:55" itemprop="dateModified" datetime="2022-05-07T15:30:55+08:00">2022-05-07</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">算法</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2021/04/28/RMQ%E9%97%AE%E9%A2%98%E4%B9%8BST%E8%A1%A8/" class="post-meta-item leancloud_visitors" data-flag-title="RMQ问题之ST表" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">评论：</span>
+    
+    <a title="valine" href="/2021/04/28/RMQ%E9%97%AE%E9%A2%98%E4%B9%8BST%E8%A1%A8/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/04/28/RMQ%E9%97%AE%E9%A2%98%E4%B9%8BST%E8%A1%A8/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p><code>ST</code>表和线段树类似，用于快速求解区间问题，二者的建立时间都是<code>O(nlogn)</code>，但是<code>ST</code>表查询的时间达到了<code>O(1)</code>，虽然说不支持区间更新，线段树支持更新，更新花费时间<code>O(logn)</code>，查询花费<code>O(logn)</code></p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/04/28/RMQ%E9%97%AE%E9%A2%98%E4%B9%8BST%E8%A1%A8/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+
+
+<div>
+    
+ </div>
+
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yalexin.gitee.io/2021/04/25/%E5%9B%BE%E8%AE%BA%E4%B9%8B%E6%AC%A7%E6%8B%89%E8%B7%AF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/cat_mouse.jpg">
+      <meta itemprop="name" content="YaleXin">
+      <meta itemprop="description" content="学渣一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="黄阿信">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/04/25/%E5%9B%BE%E8%AE%BA%E4%B9%8B%E6%AC%A7%E6%8B%89%E8%B7%AF/" class="post-title-link" itemprop="url">图论之欧拉路</a>
+        </h1>
+
+        <div class="post-meta">
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-04-25 12:00:34" itemprop="dateCreated datePublished" datetime="2021-04-25T12:00:34+08:00">2021-04-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-05-07 15:30:55" itemprop="dateModified" datetime="2022-05-07T15:30:55+08:00">2022-05-07</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">算法</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2021/04/25/%E5%9B%BE%E8%AE%BA%E4%B9%8B%E6%AC%A7%E6%8B%89%E8%B7%AF/" class="post-meta-item leancloud_visitors" data-flag-title="图论之欧拉路" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">评论：</span>
+    
+    <a title="valine" href="/2021/04/25/%E5%9B%BE%E8%AE%BA%E4%B9%8B%E6%AC%A7%E6%8B%89%E8%B7%AF/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/04/25/%E5%9B%BE%E8%AE%BA%E4%B9%8B%E6%AC%A7%E6%8B%89%E8%B7%AF/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>335</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="欧拉路"><a href="#欧拉路" class="headerlink" title="欧拉路"></a>欧拉路</h2><blockquote>
+<p>给定无孤立节点图<code>G</code>，若存在一条路，经过图中的每一条边一次且仅一次，那么该条路称为欧拉路，如果这条路的起点和终点相同，则该路称为欧拉回路，否则称为欧拉通路。</p>
+</blockquote>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/04/25/%E5%9B%BE%E8%AE%BA%E4%B9%8B%E6%AC%A7%E6%8B%89%E8%B7%AF/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+
+
+<div>
+    
+ </div>
+
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yalexin.gitee.io/2021/04/24/Bellman-Ford%E7%AE%97%E6%B3%95%E6%A8%A1%E6%9D%BF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/cat_mouse.jpg">
+      <meta itemprop="name" content="YaleXin">
+      <meta itemprop="description" content="学渣一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="黄阿信">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/04/24/Bellman-Ford%E7%AE%97%E6%B3%95%E6%A8%A1%E6%9D%BF/" class="post-title-link" itemprop="url">Bellman-Ford算法模板</a>
+        </h1>
+
+        <div class="post-meta">
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-04-24 17:51:54" itemprop="dateCreated datePublished" datetime="2021-04-24T17:51:54+08:00">2021-04-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-05-07 15:30:55" itemprop="dateModified" datetime="2022-05-07T15:30:55+08:00">2022-05-07</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">算法</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2021/04/24/Bellman-Ford%E7%AE%97%E6%B3%95%E6%A8%A1%E6%9D%BF/" class="post-meta-item leancloud_visitors" data-flag-title="Bellman-Ford算法模板" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">评论：</span>
+    
+    <a title="valine" href="/2021/04/24/Bellman-Ford%E7%AE%97%E6%B3%95%E6%A8%A1%E6%9D%BF/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/04/24/Bellman-Ford%E7%AE%97%E6%B3%95%E6%A8%A1%E6%9D%BF/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><code>Bellman-Ford</code>与 <code>Dijkstra</code>算法一样，也是用于求带权图的最短路，不过与后者相比，前者可以解决边权为负数的情况，适应性较强；</p>
+<p>算法主要的流程是对每一个点根据边进行松弛操作，最终求得最优解的过程。</p>
+<p>算法的时间复杂度是<code>O（V*E）</code></p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/04/24/Bellman-Ford%E7%AE%97%E6%B3%95%E6%A8%A1%E6%9D%BF/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+
+
+<div>
+    
+ </div>
+
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yalexin.gitee.io/2021/04/18/%E6%A0%91%E7%9A%84%E9%87%8D%E5%BF%83/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/cat_mouse.jpg">
+      <meta itemprop="name" content="YaleXin">
+      <meta itemprop="description" content="学渣一枚">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="黄阿信">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/04/18/%E6%A0%91%E7%9A%84%E9%87%8D%E5%BF%83/" class="post-title-link" itemprop="url">树的重心</a>
+        </h1>
+
+        <div class="post-meta">
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-04-18 16:05:35" itemprop="dateCreated datePublished" datetime="2021-04-18T16:05:35+08:00">2021-04-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-05-07 15:30:55" itemprop="dateModified" datetime="2022-05-07T15:30:55+08:00">2022-05-07</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">算法</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2021/04/18/%E6%A0%91%E7%9A%84%E9%87%8D%E5%BF%83/" class="post-meta-item leancloud_visitors" data-flag-title="树的重心" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">评论：</span>
+    
+    <a title="valine" href="/2021/04/18/%E6%A0%91%E7%9A%84%E9%87%8D%E5%BF%83/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/04/18/%E6%A0%91%E7%9A%84%E9%87%8D%E5%BF%83/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>本文参考洛谷对于<a href="https://www.luogu.com.cn/problem/solution/P1364" target="_blank" rel="noopener">P1364</a>的题解</p>
+</blockquote>
+<h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><p> 对于树上的每一个点，计算其所有子树中最大的子树节点数，这个值最小的点就是这棵树的重心。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/04/18/%E6%A0%91%E7%9A%84%E9%87%8D%E5%BF%83/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+
+
+<div>
+    
+ </div>
+
+  
+  
+  
+
+  </div>
+
+  
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+  </nav>
+
+
+
+          </div>
+          
+
+<script>
   window.addEventListener('tabs:register', () => {
     let activeClass = CONFIG.comments.activeClass;
     if (CONFIG.comments.storage) {
@@ -18,7 +1436,156 @@
       localStorage.setItem('comments_active', commentClass);
     });
   }
-</script></div><div class="toggle sidebar-toggle"><span class="toggle-line toggle-line-first"></span><span class="toggle-line toggle-line-middle"></span><span class="toggle-line toggle-line-last"></span></div><aside class="sidebar"><div class="sidebar-inner"><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc"> 文章目录</li><li class="sidebar-nav-overview"> 站点概览</li></ul><div class="post-toc-wrap sidebar-panel"></div><div class="site-overview-wrap sidebar-panel"><div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person"> <img class="site-author-image" itemprop="image" alt="YaleXin" src="/uploads/cat_mouse.jpg"><p class="site-author-name" itemprop="name">YaleXin</p><div class="site-description" itemprop="description">学渣一枚</div></div><div class="site-state-wrap motion-element"><nav class="site-state"><div class="site-state-item site-state-posts"> <a href="/archives/"><span class="site-state-item-count">95</span> <span class="site-state-item-name">日志</span></a></div><div class="site-state-item site-state-categories"> <a href="/categories/"><span class="site-state-item-count">14</span> <span class="site-state-item-name">分类</span></a></div><div class="site-state-item site-state-tags"> <a href="/tags/"><span class="site-state-item-count">93</span> <span class="site-state-item-name">标签</span></a></div></nav></div></div></div></aside><div id="sidebar-dimmer"></div></div></main><footer class="footer"><div class="footer-inner"><div class="copyright"> &copy; 2020 – <span itemprop="copyrightYear">2022</span><span class="with-love"><i class="fa fa-fas fa-heartbeat"></i></span> <span class="author" itemprop="copyrightHolder">YaleXin</span> <span class="post-meta-divider">|</span><span class="post-meta-item-icon"><i class="fa fa-area-chart"></i></span> <span title="站点总字数">233k</span> <span class="post-meta-divider">|</span><span class="post-meta-item-icon"><i class="fa fa-coffee"></i></span> <span title="站点阅读时长">3:32</span></div> <span>本站已在此等候您 <span id="dnum" style="color:#35b8ff">0</span> 天</span> <span><span id="hnum" style="color:#35b8ff">0</span> 小时 <span id="mnum" style="color:#35b8ff">0</span> 分 <span id="snum" style="color:#35b8ff">0</span> 秒</span><script>var now=new Date;function createtime(){var n=new Date("02/21/2020 11:30:00");now.setTime(now.getTime()+250),days=(now-n)/1e3/60/60/24,dnum=Math.floor(days),hours=(now-n)/1e3/60/60-24*dnum,hnum=Math.floor(hours),1==String(hnum).length&&(hnum="0"+hnum),minutes=(now-n)/1e3/60-1440*dnum-60*hnum,mnum=Math.floor(minutes),1==String(mnum).length&&(mnum="0"+mnum),seconds=(now-n)/1e3-86400*dnum-3600*hnum-60*mnum,snum=Math.round(seconds),1==String(snum).length&&(snum="0"+snum),document.getElementById("dnum").innerHTML=dnum,document.getElementById("hnum").innerHTML=hnum,document.getElementById("mnum").innerHTML=mnum,document.getElementById("snum").innerHTML=snum}setInterval("createtime()",250)</script><div class="powered-by"> <span>powered by</span> <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a></div><div class="busuanzi-count"><script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span class="post-meta-item" id="busuanzi_container_site_uv" style="display:none"><span class="post-meta-item-icon"><i class="fa fa-user"></i></span> <span class="site-uv" title="总访客量"><span>总访客量：</span><span id="busuanzi_value_site_uv"></span></span></span> <span class="post-meta-divider">|</span><span class="post-meta-item" id="busuanzi_container_site_pv" style="display:none"><span class="post-meta-item-icon"><i class="fa fa-eye"></i></span> <span class="site-pv" title="总访问量"><span>总访问量：</span><span id="busuanzi_value_site_pv"></span></span></span></div><script>
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="YaleXin"
+      src="/uploads/cat_mouse.jpg">
+  <p class="site-author-name" itemprop="name">YaleXin</p>
+  <div class="site-description" itemprop="description">学渣一枚</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">101</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">99</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-fas fa-heartbeat"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">YaleXin</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    <span title="站点总字数">258k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">3:55</span>
+</div>
+
+
+<span >本站已在此等候您 <span id="dnum" style="color:#35B8FF">0</span> 天 </span>
+<span><span id="hnum" style="color:#35B8FF">0</span> 小时 <span id="mnum" style="color:#35B8FF">0</span> 分 <span id="snum" style="color:#35B8FF">0</span> 秒</span>
+<script>
+    var now = new Date(); 
+    function createtime() { 
+        var grt= new Date("02/21/2020 11:30:00");
+        now.setTime(now.getTime()+250); 
+        days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); 
+        hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); 
+        if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); 
+        mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} 
+        seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); 
+        snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} 
+        document.getElementById("dnum").innerHTML = dnum;
+        document.getElementById("hnum").innerHTML = hnum;
+        document.getElementById("mnum").innerHTML = mnum;
+        document.getElementById("snum").innerHTML = snum;
+        
+    } 
+setInterval("createtime()",250);
+</script>
+  <div class="powered-by">
+    <span>powered by </span><a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span>总访客量：</span>
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span>总访问量：</span>
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+  <script>
   function leancloudSelector(url) {
     url = encodeURI(url);
     return document.getElementById(url).querySelector('.leancloud-visitors-count');
@@ -111,7 +1678,66 @@
         showTime(Counter);
       }
     });
-  </script></div></footer></div><script src="/lib/anime.min.js"></script><script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script><script src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script><script src="/lib/velocity/velocity.min.js"></script><script src="/lib/velocity/velocity.ui.min.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/pisces.js"></script><script src="/js/next-boot.js"></script><script>!function(){var t=document.createElement("script"),e=window.location.protocol.split(":")[0];t.src="https"===e?"https://zz.bdstatic.com/linksubmit/push.js":"http://push.zhanzhang.baidu.com/push.js";var s=document.getElementsByTagName("script")[0];s.parentNode.insertBefore(t,s)}()</script><script>
+  </script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
 NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
   NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
     var GUEST = ['nick', 'mail', 'link'];
@@ -137,7 +1763,14 @@ NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
     });
   }, window.Valine);
 });
-</script><script src="./valine.js"></script><script type="text/javascript">
+</script>
+
+
+
+  
+  <script src="./valine.js"></script>
+
+  <script type="text/javascript">
     var GUEST = ['nick','mail','link'];
     var guest = 'nick,mail,link';
     guest = guest.split(',').filter(item=>{
@@ -155,4 +1788,7 @@ NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
         pageSize:'10' || 10,
         avatar_cdn:'',
 });
-  </script></body></html>
+  </script>
+
+</body>
+</html>
