@@ -1,6 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>关于二分算法中的边界问题的思考</title>
+    <url>/2023/05/04/%E5%85%B3%E4%BA%8E%E4%BA%8C%E5%88%86%E7%AE%97%E6%B3%95%E4%B8%AD%E7%9A%84%E8%BE%B9%E7%95%8C%E9%97%AE%E9%A2%98%E7%9A%84%E6%80%9D%E8%80%83/</url>
+    <content><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>关于二分算法，在理解方面不难理解，但是在实现的细节上面，我们往往要对边界处理过程要加以小心，否则有可能使得最终输出并不是问题的解，虽然二者极度相似，甚至在比较差的情况之下直接导致死循环。</p>
+<a id="more"></a>
+
+<h2 id="问题抽象建模"><a href="#问题抽象建模" class="headerlink" title="问题抽象建模"></a>问题抽象建模</h2><p>本文所说的二分算法，和二分查找算法有些区别，即在给定的一个区间，左边若干连续长度内是满足一定条件的，右边若干连续长度内都是不满足该条件的，<strong>我们要求出这个分界点</strong>。</p>
+<p>通过暴力法，我们可以直接简单地从区间的最小值进行迭代，该时间复杂度为$O(n*T)$，<code>n</code>是区间长度，$T$是判断指定数字是否满足条件的花销。</p>
+<p>然而，如果区间非常大，那么上述过程可能会变得非常慢。</p>
+<p>实际上，由于区间左部分是相同性质的，右边也是具有另一个性质，我们可以使用二分法，即每次使用区间的中间值去判断，如果中间值表现出和左边一致，则这个分界点一定在中间值的右边，即我们把要检查的区间长度将为原来的<strong>一半。</strong>这个过程时间复杂度可以降为$O(log(n)*T)$</p>
+<p><img src="https://cdn.yalexin.top/2fenp1.png" alt="2fenp1"></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">bool check(check_num):</span><br><span class="line">	&#x2F;&#x2F; 根据一定逻辑，判断 check_num 是在左区间还是右区间</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">&#x2F;&#x2F; 二分算法</span><br><span class="line">int bin()&#123;</span><br><span class="line">	left, right &#x3D; MIN,MAX</span><br><span class="line">	while 区间可分 do:</span><br><span class="line">		mid &#x3D; (left + right) &#x2F; 2</span><br><span class="line">		if check(mid) 更新左区间边界（或右区间边界）</span><br><span class="line">		else 更新右区间边界（或左区间边界）</span><br><span class="line">	</span><br><span class="line">	return left 或者 right	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>实际上，二分查找通常有三种细节略有不同的实现方式：左闭右闭、左闭右开和左开右闭，下面结合基本例子，分别讲述这三种情况下的实现方式。</p>
+<blockquote>
+<p>阿珍和阿强是一对情侣，他们在玩一个游戏，阿珍先在心里默念一个数字target，范围是1到2147483647，然后要阿强猜出这个数字是多少，每次阿强猜一个数字num的时候，阿珍只会回答num“小于等于”或者”大于”target，但是我们知道每个人的耐心是有限的，阿强能够在40次之间将这个数字猜中，从而他们今晚能够出去看月亮吗？</p>
+</blockquote>
+<h2 id="左闭右闭"><a href="#左闭右闭" class="headerlink" title="左闭右闭"></a>左闭右闭</h2><p>我们先将该问题抽象成之前的问题，即对于在<code>[1,target]</code>中的数字都是满足“小于等于target”条件的，<code>[target+1,INF]</code>中的数字都是不满足“小于等于target”条件的，<strong>而满足该条件的最大值</strong>，就是我们的目标值。</p>
+<p>关于二分求解，大致的程序如下：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">check</span><span class="params">(<span class="keyword">int</span> check_num)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(check_num &lt;= TARGET)<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">bin</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> left, right = MIN,MAX</span><br><span class="line">	<span class="keyword">while</span> (left &lt; right)&#123;</span><br><span class="line">        <span class="keyword">int</span> mid = (left + right + <span class="number">1</span>) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (check(mid))&#123;</span><br><span class="line">            left = mid;</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            right = mid - <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">	<span class="keyword">return</span> left;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>由于我们定义<code>target</code> 是在一个在左闭右闭的区间里，也就是 <code>[left, right]</code>。那么就要满足：</p>
+<ul>
+<li><p>区间可分逻辑：<code>while(left &lt; right)</code></p>
+</li>
+<li><p>更新区间边界逻辑：如果<code>check(mid)</code>返回值是真，则<code>[left,mid]</code>中的所有元素也一定能够满足“小于等于target”条件，但是满足条件的最大值应该在<code>[mid,right]</code>中，不可能在<code>[left,mid-1]</code>中，因此<code>left = mid</code>；反之，如果其返回值是假，则说明满足条件的最大值不可能在<code>[mid,right]</code>中，因此<code>right = mid - 1</code>；</p>
+</li>
+<li><p>关于<code>mid</code>的计算方式：<code>mid</code>作用是不断减小区间长度，当区间长度不小的时候，向上取整和向下取整都是无关紧要的，我们只需要关注当区间只有两个元素时候，该如何计算<code>mid</code>？我们使用逆推的思想，由于我们更新区间的方式中，存在<code>left = mid</code>，假设我们是向下取整，left=2,right=3，那么mid是2，即mid=left，而left是一定满足check函数的条件，即将出现死循环！因此我们应该是向上取整。</p>
+</li>
+</ul>
+<p>假如我们要转换为<strong>满足条件的最小值</strong>，如何求解？即我们将条件转为“<strong>大于等于target</strong>”，实际上，也只需要将相应程序改为：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">check</span><span class="params">(<span class="keyword">int</span> check_num)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(check_num &gt;= TARGET)<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">bin</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> left = MIN, right = MAX;</span><br><span class="line">	<span class="keyword">while</span> (left &lt; right)&#123;</span><br><span class="line">        <span class="keyword">int</span> mid = (left + right ) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (check(mid))&#123;</span><br><span class="line">            right = mid;</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">	<span class="keyword">return</span> right;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>区间可分逻辑：<code>while(left &lt; right)</code></p>
+</li>
+<li><p>更新区间边界逻辑：如果<code>check(mid)</code>返回值是真，则<code>[mid,right]</code>中的所有元素也一定能够满足“大于等于target”条件，但是满足条件的最大值应该在<code>[left,mid]</code>中，不可能在<code>[mid + 1,right]</code>中，因此<code>right = mid</code>；反之，如果其返回值是假，则说明满足条件的最大值不可能在<code>[left,mid]</code>中，因此<code>left= mid + 1</code>；</p>
+</li>
+<li><p>关于<code>mid</code>的计算方式：我们使用逆推的思想，由于我们更新区间的方式中，存在<code>right = mid</code>，假设我们是向上取整，left=2,right=3，那么mid是2，即mid=left，而right是一定满足check函数的条件，即将出现死循环！因此我们应该是向下取整。</p>
+</li>
+</ul>
+<blockquote>
+<p>简单来说，更新区间时候，如果是left=mid，则向上取整，否则向下取整。</p>
+</blockquote>
+<h2 id="左闭右开"><a href="#左闭右开" class="headerlink" title="左闭右开"></a>左闭右开</h2><p>此时，我们的<code>target</code>定义在左闭右开，即<code>[left,right)</code>中，还是先以满足条件的最大值为例，测试条件为“小于等于target”，即<code>[left,right-1]</code>中的元素都满足条件，但是<code>right</code>不满足！<strong>明白这点很重要！</strong></p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">check</span><span class="params">(<span class="keyword">int</span> check_num)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(check_num &lt;= TARGET)<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">bin</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> left = MIN, right = MAX;</span><br><span class="line">	<span class="keyword">while</span> (left + <span class="number">1</span> &lt; right)&#123;</span><br><span class="line">        <span class="keyword">int</span> mid = (left + right) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (check(mid))&#123;</span><br><span class="line">            left = mid;</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            right = mid;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">	<span class="keyword">return</span> left;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>区间可分逻辑：<code>while(left + 1&lt; right)</code>，为什么呢？因为我们的区间是开区间，左边边界永远不会等于右边边界，最小差值为1.</li>
+<li>更新区间边界逻辑：如果<code>check(mid)</code>返回值是真，则<code>[left,mid]</code>中的所有元素也一定能够满足“小于等于target”条件，但是满足条件的最大值应该在<code>[mid,right]</code>中，不可能在<code>[left,mid-1]</code>中，因此<code>left = mid</code>；反之，如果其返回值是假，则说明满足条件的最大值不可能在<code>[mid,right]</code>中，因此<code>right = mid</code>；<strong>注意，我们新的区间仍然要满足开区间的定义！即右边节点不满足条件</strong></li>
+<li>关于<code>mid</code>的计算方式：由于是使用左闭右开的思想，即一旦满足<code>left + 1 == right</code>条件，此时就会跳出循环，因此向上取整和向下取整，都无关紧要了。</li>
+</ul>
+<h2 id="左开右闭"><a href="#左开右闭" class="headerlink" title="左开右闭"></a>左开右闭</h2><p>假如我们要转换为<strong>满足条件的最小值</strong>，即我们将条件转为“<strong>大于等于target</strong>”，即<code>[left+1,right]</code>中的元素都满足条件，但是<code>left</code>不满足，则更新代码如下：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"> <span class="keyword">int</span> TARGET = <span class="number">1024</span>;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> MIN = <span class="number">1</span>, MAX = <span class="number">999999</span>;</span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">check</span><span class="params">(<span class="keyword">int</span> check_num)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(check_num &gt;= TARGET)<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">bin</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> left = MIN, right = MAX;</span><br><span class="line">	<span class="keyword">while</span> (left + <span class="number">1</span> &lt; right)&#123;</span><br><span class="line">        <span class="keyword">int</span> mid = (left + right) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (check(mid))&#123;</span><br><span class="line">            right = mid;</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            left = mid;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">	<span class="keyword">return</span> right;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>更新区间边界逻辑：如果<code>check(mid)</code>返回值是真，则<code>[mid,right]</code>中的所有元素也一定能够满足“大于等于target”条件，但是满足条件的最小值应该在<code>[left,mid]</code>中，不可能在<code>[mid + 1,right]</code>中，因此<code>right = mid</code>；反之，如果其返回值是假，则说明满足条件的最大值不可能在<code>[left,mid]</code>中，因此<code>left= mid</code>；<strong>注意，我们新的区间仍然要满足开区间的定义！即左边节点不满足条件</strong></p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>二分法是个很好用的工具，但是依据不同情况，可以有不同的实现方法，相比之下，左闭右闭的方法通用性比较大。</p>
+]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+      <tags>
+        <tag>二分查找</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>【Ethernaut闯关录】下篇</title>
     <url>/2023/03/31/%E3%80%90Ethernaut%E9%97%AF%E5%85%B3%E5%BD%95%E3%80%91%E4%B8%8B%E7%AF%87/</url>
     <content><![CDATA[<p>原文再续，书接上回，本文继续闯关，本次我们来完成剩余所有关卡。<a id="more"></a></p>
