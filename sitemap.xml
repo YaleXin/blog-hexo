@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://yalexin.gitee.io/2023/07/31/CS-APP3e%E7%B3%BB%E5%88%97%E5%AE%9E%E9%AA%8C%E9%A2%84%E5%91%8A/</loc>
+    
+    <lastmod>2023-12-14T01:24:12.685Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://yalexin.gitee.io/2023/10/02/CS-APP-Architecture-Lab/</loc>
     
     <lastmod>2023-12-13T14:30:23.631Z</lastmod>
@@ -68,13 +75,6 @@
     <loc>https://yalexin.gitee.io/2023/07/31/CS-APP-Data-Lab/</loc>
     
     <lastmod>2023-07-31T14:55:03.964Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://yalexin.gitee.io/2023/07/31/CS-APP3e%E7%B3%BB%E5%88%97%E5%AE%9E%E9%AA%8C%E9%A2%84%E5%91%8A/</loc>
-    
-    <lastmod>2023-07-31T14:46:05.565Z</lastmod>
     
   </url>
   
@@ -296,14 +296,14 @@
   </url>
   
   <url>
-    <loc>https://yalexin.gitee.io/categories/index.html</loc>
+    <loc>https://yalexin.gitee.io/guestbook/index.html</loc>
     
     <lastmod>2022-05-07T07:30:55.675Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://yalexin.gitee.io/guestbook/index.html</loc>
+    <loc>https://yalexin.gitee.io/categories/index.html</loc>
     
     <lastmod>2022-05-07T07:30:55.675Z</lastmod>
     
