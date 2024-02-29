@@ -1,352 +1,114 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-    <head prefix="og: https://ogp.me/ns#">
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="color-scheme" content="light dark">
-  
-  <title>借助OpenCV拼接特定背景图 - 黄阿信</title>
-  
-    <link rel="shortcut icon" href="/favicon.png">
-  
-  
-    <link rel='manifest' href='/manifest.json'>
-  
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=2"><meta name="theme-color" content="#222"><meta name="generator" content="Hexo 4.2.0"><link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.ico"><link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico"><link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico"><link rel="mask-icon" href="/images/favicon.ico" color="#222"><link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css"><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css"><script id="hexo-configurations">var NexT=window.NexT||{},CONFIG={hostname:"yalexin.gitee.io",root:"/",scheme:"Gemini",version:"7.7.1",exturl:!1,sidebar:{position:"left",display:"post",padding:18,offset:12,onmobile:!0},copycode:{enable:!0,show_result:!0,style:"mac"},back2top:{enable:!0,sidebar:!1,scrollpercent:!0},bookmark:{enable:!1,color:"#222",save:"auto"},fancybox:!0,mediumzoom:!1,lazyload:!1,pangu:!1,comments:{style:"tabs",active:null,storage:!0,lazyload:!1,nav:null},algolia:{hits:{per_page:10},labels:{input_placeholder:"Search for Posts",hits_empty:"We didn't find any results for the search: ${query}",hits_stats:"${hits} results found in ${time} ms"}},localsearch:{enable:!1,trigger:"auto",top_n_per_article:1,unescape:!1,preload:!1},motion:{enable:!0,async:!1,transition:{post_block:"fadeIn",post_header:"slideDownIn",post_body:"slideDownIn",coll_header:"slideLeftIn",sidebar:"slideUpIn"}},path:"search.xml"}</script><meta name="description" content="前言之前就一直有一个想法，提供大量图片以及一张背景图，然后将这些图片组成一个个小网格拼接起来，然后效果和原背景图差不多，简而言之就是将原背景图马赛克化，只不过每一个马赛克是用提供的图片组成，现在放寒假了终于有时间开干啦，哈哈哈哈哈。"><meta property="og:type" content="article"><meta property="og:title" content="借助OpenCV拼接特定背景图"><meta property="og:url" content="https://yalexin.gitee.io/2022/01/21/%E5%80%9F%E5%8A%A9OpenCV%E6%8B%BC%E6%8E%A5%E7%89%B9%E5%AE%9A%E8%83%8C%E6%99%AF%E5%9B%BE/index.html"><meta property="og:site_name" content="黄阿信"><meta property="og:description" content="前言之前就一直有一个想法，提供大量图片以及一张背景图，然后将这些图片组成一个个小网格拼接起来，然后效果和原背景图差不多，简而言之就是将原背景图马赛克化，只不过每一个马赛克是用提供的图片组成，现在放寒假了终于有时间开干啦，哈哈哈哈哈。"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://qiniu.yalexin.top/bgr.jpg"><meta property="og:image" content="https://qiniu.yalexin.top/cat-mouse.png"><meta property="og:image" content="https://qiniu.yalexin.top/thumbnail.png"><meta property="article:published_time" content="2022-01-21T02:25:22.000Z"><meta property="article:modified_time" content="2022-05-07T07:30:55.456Z"><meta property="article:author" content="YaleXin"><meta property="article:tag" content="OpenCV"><meta property="article:tag" content="图像"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://qiniu.yalexin.top/bgr.jpg"><link rel="canonical" href="https://yalexin.gitee.io/2022/01/21/%E5%80%9F%E5%8A%A9OpenCV%E6%8B%BC%E6%8E%A5%E7%89%B9%E5%AE%9A%E8%83%8C%E6%99%AF%E5%9B%BE/"><script id="page-configurations">CONFIG.page={sidebar:"",isHome:!1,isPost:!0}</script><title>借助OpenCV拼接特定背景图 | 黄阿信</title><noscript><style>.sidebar-inner,.use-motion .brand,.use-motion .collection-header,.use-motion .comments,.use-motion .menu-item,.use-motion .pagination,.use-motion .post-block,.use-motion .post-body,.use-motion .post-header{opacity:initial}.use-motion .site-subtitle,.use-motion .site-title{opacity:initial;top:initial}.use-motion .logo-line-before i{left:initial}.use-motion .logo-line-after i{right:initial}</style></noscript></head><body itemscope itemtype="http://schema.org/WebPage"><div class="container use-motion"><div class="headband"></div><header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="header-inner"><div class="site-brand-container"><div class="site-nav-toggle"><div class="toggle" aria-label="切换导航栏"><span class="toggle-line toggle-line-first"></span><span class="toggle-line toggle-line-middle"></span><span class="toggle-line toggle-line-last"></span></div></div><div class="site-meta"><div><a href="/" class="brand" rel="start"><span class="logo-line-before"><i></i></span> <span class="site-title">黄阿信</span><span class="logo-line-after"><i></i></span></a></div><p class="site-subtitle">要么改变世界，要么适应世界。</p></div><div class="site-nav-right"><div class="toggle popup-trigger"></div></div></div><nav class="site-nav"><ul id="menu" class="menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-fw fa-home"></i> 首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i> 标签<span class="badge">120</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i> 分类<span class="badge">13</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i> 归档<span class="badge">127</span></a></li><li class="menu-item menu-item-guestbook"><a href="/guestbook/" rel="section"><i class="fa fa-fw fa-book"></i> 留言板</a></li><li class="menu-item menu-item-links"><a href="/links/" rel="section"><i class="fa fa-fw fa-link"></i> 友链</a></li></ul></nav></div></header><div class="back-to-top"><i class="fa fa-arrow-up"></i> <span>0%</span></div><div class="reading-progress-bar"></div><main class="main"><div class="main-inner"><div class="content-wrap"><div class="content"><div class="posts-expand"><article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN"><link itemprop="mainEntityOfPage" href="https://yalexin.gitee.io/2022/01/21/%E5%80%9F%E5%8A%A9OpenCV%E6%8B%BC%E6%8E%A5%E7%89%B9%E5%AE%9A%E8%83%8C%E6%99%AF%E5%9B%BE/"><span hidden itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="image" content="/uploads/cat_mouse.jpg"><meta itemprop="name" content="YaleXin"><meta itemprop="description" content="学渣一枚"></span><span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><meta itemprop="name" content="黄阿信"></span><header class="post-header"><h1 class="post-title" itemprop="name headline"> 借助OpenCV拼接特定背景图</h1><div class="post-meta"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-calendar-o"></i></span> <span class="post-meta-item-text">发表于</span> <time title="创建时间：2022-01-21 10:25:22" itemprop="dateCreated datePublished" datetime="2022-01-21T10:25:22+08:00">2022-01-21</time></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-calendar-check-o"></i></span> <span class="post-meta-item-text">更新于</span> <time title="修改时间：2022-05-07 15:30:55" itemprop="dateModified" datetime="2022-05-07T15:30:55+08:00">2022-05-07</time></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-folder-o"></i></span> <span class="post-meta-item-text">分类于</span> <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">算法</span></a></span></span><span id="/2022/01/21/%E5%80%9F%E5%8A%A9OpenCV%E6%8B%BC%E6%8E%A5%E7%89%B9%E5%AE%9A%E8%83%8C%E6%99%AF%E5%9B%BE/" class="post-meta-item leancloud_visitors" data-flag-title="借助OpenCV拼接特定背景图" title="阅读次数"><span class="post-meta-item-icon"><i class="fa fa-eye"></i></span> <span class="post-meta-item-text">阅读次数：</span><span class="leancloud-visitors-count"></span></span><br><span class="post-meta-item" title="本文字数"><span class="post-meta-item-icon"><i class="fa fa-file-word-o"></i></span> <span class="post-meta-item-text">本文字数：</span> <span>6.7k</span></span><span class="post-meta-item" title="阅读时长"><span class="post-meta-item-icon"><i class="fa fa-clock-o"></i></span> <span class="post-meta-item-text">阅读时长 &asymp;</span> <span>6 分钟</span></span></div></header><div class="post-body" itemprop="articleBody"><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>之前就一直有一个想法，提供大量图片以及一张背景图，然后将这些图片组成一个个小网格拼接起来，然后效果和原背景图差不多，简而言之就是将原背景图马赛克化，只不过每一个马赛克是用提供的图片组成，现在放寒假了终于有时间开干啦，哈哈哈哈哈。</p><a id="more"></a><p>先看下效果：</p><p>原背景图</p><p><img src="https://qiniu.yalexin.top/bgr.jpg" alt></p><p>拼接结果图</p><p><img src="https://qiniu.yalexin.top/cat-mouse.png" alt></p><p>emmm，勉强能看，有点抽象</p><p>只能看缩略图了</p><p><img src="https://qiniu.yalexin.top/thumbnail.png" alt></p><p><strong>不过只要你电脑配置够好，时间也充足，可以将图片分割成更多的小方格，效果也更佳。</strong></p><h2 id="基本原理"><a href="#基本原理" class="headerlink" title="基本原理"></a>基本原理</h2><p>基本原理其实很简单：就是首先计算每一张素材图片的颜色平均值，然后计算背景图中的每一个小方格的颜色平均值，然后两两匹配就行了。</p><p>下面说一下具体操作</p><p>对于素材，也就是上面所提到的“大量图片”，我觉得最快速的获取方式就是视频，毕竟一个视频里边每一帧都可以作为一张图片，如果视频是<code>24</code>帧每秒，一分钟就可以提供<code>24*60=1440</code>张图片，对于我这个一年拍的生活照都不超过200张的蓝人来说，<code>1440</code>难以想象。但是对于视频来说，每一帧都分析的话，花费时间太多，并且其实有一些邻近帧的平均颜色<strong>相差不多</strong>，为了加快分析可以取一定间隔进行分析，<code>OpenCV</code>也提供了提取指定位置的帧的方法：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cap.set(cv2.CAP_PROP_POS_FRAMES, idx)</span><br></pre></td></tr></table></figure><p>但是这个性能上面比较慢，我们可以顺序读取每一帧，然后根据间隔再分析：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 视频总帧数</span></span><br><span class="line">frameNum = cap.get(<span class="number">7</span>)</span><br><span class="line"><span class="comment"># 提取帧数的步长</span></span><br><span class="line">step = frameNum // needNum</span><br><span class="line">cnt, idx = <span class="number">0</span>, <span class="number">0</span></span><br><span class="line">imgList = []</span><br><span class="line"><span class="keyword">while</span> (<span class="literal">True</span>):</span><br><span class="line">    ret, frame = cap.read()</span><br><span class="line">    <span class="keyword">if</span> ret:</span><br><span class="line">        print(<span class="string">'\r'</span> + <span class="string">'-'</span> * (int(idx / frameNum * <span class="number">100</span>)) + str(int(idx / frameNum * <span class="number">100</span>)) + <span class="string">'%'</span>, end=<span class="string">''</span>, flush=<span class="literal">True</span>)</span><br><span class="line">        <span class="keyword">if</span> idx % step == <span class="number">0</span>:</span><br><span class="line">            aver = frame.mean(axis=<span class="number">0</span>).mean(axis=<span class="number">0</span>)</span><br><span class="line">            averHex = BGR2HEX(aver)</span><br><span class="line">            <span class="comment"># 先将暂存帧保存起来</span></span><br><span class="line">            cv2.imwrite(PICTURES_DIR + <span class="string">'cache-'</span> + str(cnt) + <span class="string">'.jpg'</span>, frame)</span><br><span class="line">            imgList.append([averHex, PICTURES_DIR + <span class="string">'cache-'</span> + str(cnt) + <span class="string">'.jpg'</span>])</span><br><span class="line">            cnt += <span class="number">1</span></span><br><span class="line">        idx += <span class="number">1</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">imgList.sort(key=<span class="keyword">lambda</span> x: x[<span class="number">0</span>])</span><br><span class="line"><span class="keyword">return</span> imgList</span><br></pre></td></tr></table></figure><p>经过实测，花费时间减少到原来方法的一半！</p><p>对<code>imgList</code>进行排序是方便后面匹配的时候使用二分查找。</p><p>程序也支持自己提供素材图片，不过自己能提供几千张图片以上估计很难吧？？</p><p>然后进行背景图的分割，理论上背景图分割得越精细越好，但是如此一来需要匹配的次数就越多，程序运行时间越多，而且拼接出来的图片也很大，但是分割数目太少，拼接出来的图片与原图相差甚远，因此要挑选好要切割的行数和列数。</p><p>匹配过程比较好理解，我们实现把背景图切割成<code>m*n</code>个小宫格，计算每一个小宫格的平均颜色，然后遍历每一个小宫格，在<code>imgList</code>中使用二分查找与之相近的图片，并拿到该图片的名字再读取进来（我们并不在<code>imgList</code>中保存每一张图片，因为如果我们可能有几千到上万的图片，如果每一张图都有<code>1MB</code>大小，那我们就需要好几个<code>GB</code>的内存，而现在我们<code>imgList</code>中每一个元素都是包含了该图片的名字和平均颜色值）， 而<code>OpenCV</code>读取的图片返回值是矩阵，图片的拼接也就是对应矩阵的拼接，不过要注意的是区分按列拼接和按行拼接。</p><p>当然了为了防止输出的文件过大，拼接过程还应该将素材图片进行缩放。</p><h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="string">Author      : YaleXin</span></span><br><span class="line"><span class="string">Email       :</span></span><br><span class="line"><span class="string">LastEditors : YaleXin</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> cv2</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> bisect</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="comment"># 视频链接</span></span><br><span class="line">VIDEO_URL = <span class="string">"data/mouseAndCat.mp4"</span></span><br><span class="line"><span class="comment"># 素材图片文件夹</span></span><br><span class="line">PICTURES_DIR = <span class="string">"materialPics/"</span></span><br><span class="line"><span class="comment"># 背景图</span></span><br><span class="line">BACKGROUND_URL = <span class="string">"bgr.jpg"</span></span><br><span class="line"><span class="comment"># 输出图片结果名</span></span><br><span class="line">OUTPUT_PICTURE = <span class="string">"result.jpg"</span></span><br><span class="line"><span class="comment"># 缩放比例</span></span><br><span class="line">ZOOM_FACTOR = <span class="number">4</span></span><br><span class="line"><span class="comment"># 切割图片的行数、列数</span></span><br><span class="line">ROW, COL = <span class="number">41</span>, <span class="number">41</span></span><br><span class="line">cap = cv2.VideoCapture(VIDEO_URL)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 将指定图片进行裁剪 m n 分别是行数列数</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">cutBackgroundImg</span><span class="params">(img, m=<span class="number">21</span>, n=<span class="number">21</span>)</span>:</span></span><br><span class="line">    <span class="comment"># 背景图片的高度和宽度</span></span><br><span class="line">    h, w = img.shape[<span class="number">0</span>], img.shape[<span class="number">1</span>]</span><br><span class="line">    grid_h = int(h * <span class="number">1.0</span> / (m - <span class="number">1</span>) + <span class="number">0.5</span>)</span><br><span class="line">    grid_w = int(w * <span class="number">1.0</span> / (n - <span class="number">1</span>) + <span class="number">0.5</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 满足整除关系时的高、宽</span></span><br><span class="line">    h = grid_h * (m - <span class="number">1</span>)</span><br><span class="line">    w = grid_w * (n - <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 图像缩放</span></span><br><span class="line">    img_re = cv2.resize(img, (w, h),</span><br><span class="line">                        cv2.INTER_LINEAR)  <span class="comment"># 也可以用img_re=skimage.transform.resize(img, (h,w)).astype(np.uint8)</span></span><br><span class="line">    gx, gy = np.meshgrid(np.linspace(<span class="number">0</span>, w, n), np.linspace(<span class="number">0</span>, h, m))</span><br><span class="line">    gx = gx.astype(np.int)</span><br><span class="line">    gy = gy.astype(np.int)</span><br><span class="line">    <span class="comment"># 前面两维代表位置 i行j列 后三维代表图片信息（像素位置、颜色信息）</span></span><br><span class="line">    divide_image = np.zeros([m - <span class="number">1</span>, n - <span class="number">1</span>, grid_h, grid_w, <span class="number">3</span>],</span><br><span class="line">                            np.uint8)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(m - <span class="number">1</span>):</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> range(n - <span class="number">1</span>):</span><br><span class="line">            divide_image[i, j, ...] = img_re[</span><br><span class="line">                                      gy[i][j]:gy[i + <span class="number">1</span>][j + <span class="number">1</span>], gx[i][j]:gx[i + <span class="number">1</span>][j + <span class="number">1</span>], :]</span><br><span class="line">    <span class="keyword">return</span> divide_image</span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#  分析分割后的图片 divideImages 是背景图分割后的一系列图片 materialIndexColor是包含颜色均值的一些列图片（从视频中提取或者用户提供）</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">handleBlocks</span><span class="params">(divideImages, materialIndexColor)</span>:</span></span><br><span class="line">    print(<span class="string">'--- handleBlocks begin ---'</span>)</span><br><span class="line">    beginTime = time.time()</span><br><span class="line">    cap.set(cv2.CAP_PROP_POS_FRAMES, <span class="number">0</span>)</span><br><span class="line">    res0, frame0 = cap.read()</span><br><span class="line">    originX, originY = frame0.shape[<span class="number">0</span>:<span class="number">2</span>]</span><br><span class="line">    sortedAverColor = np.array(materialIndexColor)[:, <span class="number">0</span>].astype(<span class="string">"int32"</span>)</span><br><span class="line">    m, n = divideImages.shape[<span class="number">0</span>], divideImages.shape[<span class="number">1</span>]</span><br><span class="line">    cnt, total, listLen = <span class="number">0</span>, (m + <span class="number">1</span>) * (n + <span class="number">1</span>), len(materialIndexColor)</span><br><span class="line">    resImg = np.array([])</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(m):</span><br><span class="line">        rowItem = np.array([])</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> range(n):</span><br><span class="line">            aver = divideImages[i, j].mean(axis=<span class="number">0</span>).mean(axis=<span class="number">0</span>)</span><br><span class="line">            averHex = BGR2HEX(aver)</span><br><span class="line">            <span class="comment"># 在有序序列中寻找接近该 块（来自背景图） 的图片</span></span><br><span class="line">            left = bisect.bisect_left(sortedAverColor, averHex)</span><br><span class="line">            left = max(<span class="number">0</span>, left)</span><br><span class="line">            left = min(left, listLen - <span class="number">1</span>)</span><br><span class="line">            imgFilename = materialIndexColor[left][<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line">            frame = cv2.imread(imgFilename)</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> rowItem.shape == (<span class="number">0</span>,):</span><br><span class="line">                <span class="comment"># 拼接列</span></span><br><span class="line">                rowItem = cv2.resize(frame, (originY // ZOOM_FACTOR, originX // ZOOM_FACTOR))</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                rowItem = np.concatenate((rowItem, cv2.resize(frame, (originY // ZOOM_FACTOR, originX // ZOOM_FACTOR))),</span><br><span class="line">                                         <span class="number">1</span>)</span><br><span class="line">            print(<span class="string">'\r'</span> + <span class="string">'+'</span> * (int(cnt / total * <span class="number">100</span>)) + str(int(cnt / total * <span class="number">100</span>)) + <span class="string">'%'</span>, end=<span class="string">''</span>, flush=<span class="literal">True</span>)</span><br><span class="line">            cnt += <span class="number">1</span></span><br><span class="line">        <span class="keyword">if</span> resImg.shape == (<span class="number">0</span>,):</span><br><span class="line">            resImg = rowItem</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="comment"># 拼接行</span></span><br><span class="line">            resImg = np.concatenate((resImg, rowItem))</span><br><span class="line">    cv2.imwrite(OUTPUT_PICTURE, resImg)</span><br><span class="line">    cv2.destroyAllWindows()</span><br><span class="line">    <span class="comment"># 删除中间生成的文件</span></span><br><span class="line">    <span class="keyword">for</span> item <span class="keyword">in</span> materialIndexColor:</span><br><span class="line">        os.remove(item[<span class="number">1</span>])</span><br><span class="line">    endTime = time.time()</span><br><span class="line">    print(<span class="string">'\n---- handleMaterial2 finished and cost &#123;&#125; --------'</span>.format(endTime - beginTime))</span><br><span class="line">    print(<span class="string">'\n--- handleBlocks end ---'</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 将BGR数组转为 RGB16进制形式</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">BGR2HEX</span><span class="params">(BGR)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> (int(BGR[<span class="number">2</span>]) &lt;&lt; <span class="number">16</span>) + (int(BGR[<span class="number">1</span>]) &lt;&lt; <span class="number">8</span>) + int(BGR[<span class="number">0</span>])</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">handleMaterial</span><span class="params">(needNum=<span class="number">500</span>)</span>:</span></span><br><span class="line">    print(<span class="string">'--- handleMaterial begin ---'</span>)</span><br><span class="line">    <span class="comment"># 视频总帧数</span></span><br><span class="line">    frameNum = cap.get(<span class="number">7</span>)</span><br><span class="line">    <span class="comment"># 提取帧数的步长</span></span><br><span class="line">    step = frameNum / needNum</span><br><span class="line">    idx = <span class="number">0</span></span><br><span class="line">    imgList = []</span><br><span class="line">    <span class="comment"># 按照步长分析每一帧</span></span><br><span class="line">    <span class="keyword">for</span> cnt <span class="keyword">in</span> range(needNum):</span><br><span class="line">        print(<span class="string">'\r'</span> + <span class="string">'-'</span> * (cnt * <span class="number">100</span> // needNum) + str(cnt * <span class="number">100</span> // needNum) + <span class="string">'%'</span>, end=<span class="string">''</span>, flush=<span class="literal">True</span>)</span><br><span class="line">        cap.set(cv2.CAP_PROP_POS_FRAMES, idx)</span><br><span class="line"></span><br><span class="line">        res, frame = cap.read()</span><br><span class="line"></span><br><span class="line">        aver = frame.mean(axis=<span class="number">0</span>).mean(axis=<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">        averHex = BGR2HEX(aver)</span><br><span class="line">        <span class="comment"># cnt 是标记该元素在imgList中的下标，idx是标记该帧在原视频中的下标</span></span><br><span class="line">        imgList.append([cnt, averHex, idx])</span><br><span class="line"></span><br><span class="line">        idx += step</span><br><span class="line">    print(<span class="string">'\n---- handleMaterial finished! --------'</span>)</span><br><span class="line">    imgList.sort(key=<span class="keyword">lambda</span> x: x[<span class="number">1</span>])</span><br><span class="line">    <span class="keyword">return</span> imgList</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">handlePictures</span><span class="params">()</span>:</span></span><br><span class="line">    print(<span class="string">'--- handlePictures begin ---'</span>)</span><br><span class="line">    imgList = []</span><br><span class="line">    <span class="keyword">if</span> os.path.exists(PICTURES_DIR):</span><br><span class="line">        imgsFiles = os.listdir(PICTURES_DIR)</span><br><span class="line">        fileLen = len(imgsFiles)</span><br><span class="line">        cnt = <span class="number">0</span></span><br><span class="line">        <span class="keyword">for</span> file <span class="keyword">in</span> imgsFiles:</span><br><span class="line">            fileType = os.path.splitext(file)[<span class="number">1</span>]</span><br><span class="line">            <span class="comment"># 常见的图片格式</span></span><br><span class="line">            <span class="keyword">if</span> fileType == <span class="string">'.jpg'</span> <span class="keyword">or</span> fileType == <span class="string">'.jpeg'</span> <span class="keyword">or</span> fileType == <span class="string">'.png'</span> <span class="keyword">or</span> fileType == <span class="string">'.bmp'</span> <span class="keyword">or</span> fileType == <span class="string">'.svg'</span>:</span><br><span class="line">                img = cv2.imread(PICTURES_DIR + file)</span><br><span class="line">                <span class="comment"># 判断图片是否读取成功</span></span><br><span class="line">                <span class="keyword">if</span> isinstance(img, np.ndarray):</span><br><span class="line">                    aver = img.mean(axis=<span class="number">0</span>).mean(axis=<span class="number">0</span>)</span><br><span class="line">                    averHex = BGR2HEX(aver)</span><br><span class="line">                    cv2.imwrite(PICTURES_DIR + <span class="string">'cache-'</span> + file, img)</span><br><span class="line">                    imgList.append([averHex, PICTURES_DIR + <span class="string">'cache-'</span> + file])</span><br><span class="line">                    print(<span class="string">'\r'</span> + <span class="string">'+'</span> * (int(cnt / fileLen * <span class="number">100</span>)) + str(int(cnt / fileLen * <span class="number">100</span>)) + <span class="string">'%'</span>, end=<span class="string">''</span>,</span><br><span class="line">                          flush=<span class="literal">True</span>)</span><br><span class="line">                    cnt += <span class="number">1</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        print(<span class="string">'this path not exist'</span>)</span><br><span class="line">    imgList.sort(key=<span class="keyword">lambda</span> x: x[<span class="number">0</span>])</span><br><span class="line">    print(<span class="string">'\n--- handlePictures end ---'</span>)</span><br><span class="line">    <span class="keyword">return</span> imgList</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">handleVideoMaterial</span><span class="params">(needNum)</span>:</span></span><br><span class="line">    print(<span class="string">'--- handleMaterial2 begin ---'</span>)</span><br><span class="line">    beginTime = time.time()</span><br><span class="line">    <span class="comment"># 视频总帧数</span></span><br><span class="line">    frameNum = cap.get(<span class="number">7</span>)</span><br><span class="line">    <span class="comment"># 提取帧数的步长</span></span><br><span class="line">    step = frameNum // needNum</span><br><span class="line">    cnt, idx = <span class="number">0</span>, <span class="number">0</span></span><br><span class="line">    imgList = []</span><br><span class="line">    <span class="keyword">while</span> (<span class="literal">True</span>):</span><br><span class="line">        ret, frame = cap.read()</span><br><span class="line">        <span class="keyword">if</span> ret:</span><br><span class="line">            print(<span class="string">'\r'</span> + <span class="string">'-'</span> * (int(idx / frameNum * <span class="number">100</span>)) + str(int(idx / frameNum * <span class="number">100</span>)) + <span class="string">'%'</span>, end=<span class="string">''</span>, flush=<span class="literal">True</span>)</span><br><span class="line">            <span class="keyword">if</span> idx % step == <span class="number">0</span>:</span><br><span class="line">                aver = frame.mean(axis=<span class="number">0</span>).mean(axis=<span class="number">0</span>)</span><br><span class="line">                averHex = BGR2HEX(aver)</span><br><span class="line">                cv2.imwrite(PICTURES_DIR + <span class="string">'cache-'</span> + str(cnt) + <span class="string">'.jpg'</span>, frame)</span><br><span class="line">                imgList.append([averHex, PICTURES_DIR + <span class="string">'cache-'</span> + str(cnt) + <span class="string">'.jpg'</span>])</span><br><span class="line">                cnt += <span class="number">1</span></span><br><span class="line">            idx += <span class="number">1</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">    endTime = time.time()</span><br><span class="line">    print(<span class="string">'\n---- handleMaterial2 finished!  way 2 cost &#123;&#125; --------'</span>.format(endTime - beginTime))</span><br><span class="line">    imgList.sort(key=<span class="keyword">lambda</span> x: x[<span class="number">0</span>])</span><br><span class="line">    <span class="keyword">return</span> imgList</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    img = cv2.imread(BACKGROUND_URL)</span><br><span class="line">    way = int(input(<span class="string">'请选择你的方式：1.从视频中截取 2.从含有图片的文件夹中提取'</span>))</span><br><span class="line">    <span class="keyword">if</span> way == <span class="number">1</span>:</span><br><span class="line">        divideImages = cutBackgroundImg(img, m=ROW, n=COL)</span><br><span class="line">        materialList = handleVideoMaterial(needNum=<span class="number">3000</span>)</span><br><span class="line">        handleBlocks(divideImages, materialList)</span><br><span class="line">    <span class="keyword">elif</span> way == <span class="number">2</span>:</span><br><span class="line">        divideImages = cutBackgroundImg(img, m=ROW, n=COL)</span><br><span class="line">        materialList = handlePictures()</span><br><span class="line">        handleBlocks(divideImages, materialList)</span><br></pre></td></tr></table></figure></div><div class="reward-container"><div>假如对您有所帮助，那就请我喝咖啡吧~~</div> <button onclick='var qr=document.getElementById("qr");qr.style.display="none"===qr.style.display?"block":"none"'> 打赏</button><div id="qr" style="display:none"><div style="display:inline-block"> <img src="/images/WeChat.png" alt="YaleXin 微信支付"><p>微信支付</p></div><div style="display:inline-block"> <img src="/images/Alipay.jpg" alt="YaleXin 支付宝"><p>支付宝</p></div></div></div><footer class="post-footer"><div class="post-tags"><a href="/tags/OpenCV/" rel="tag"><i class="fa fa-tag"></i> OpenCV</a><a href="/tags/%E5%9B%BE%E5%83%8F/" rel="tag"><i class="fa fa-tag"></i> 图像</a></div><div class="post-nav"><div class="post-nav-item"><a href="/2021/05/27/%E5%88%A9%E7%94%A8%E5%80%8D%E5%A2%9E%E7%9A%84%E6%80%9D%E6%83%B3%E5%AE%9E%E7%8E%B0LCA%E7%AE%97%E6%B3%95/" rel="prev" title="利用倍增的思想实现LCA算法"><i class="fa fa-chevron-left"></i> 利用倍增的思想实现LCA算法</a></div><div class="post-nav-item"> <a href="/2022/01/25/%E5%8D%9A%E5%AE%A2%E7%B3%BB%E7%BB%9F%E5%BC%95%E5%85%A5ECharts%E7%9A%84%E6%97%A5%E5%8E%86%E7%83%AD%E5%8A%9B%E5%9B%BE/" rel="next" title="博客系统引入ECharts的日历热力图">博客系统引入ECharts的日历热力图<i class="fa fa-chevron-right"></i></a></div></div></footer></article><div><div><div style="text-align:center;color:#ccc;font-size:14px">------ 文章结束------</div></div></div></div></div><script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script></div><div class="toggle sidebar-toggle"><span class="toggle-line toggle-line-first"></span><span class="toggle-line toggle-line-middle"></span><span class="toggle-line toggle-line-last"></span></div><aside class="sidebar"><div class="sidebar-inner"><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc"> 文章目录</li><li class="sidebar-nav-overview"> 站点概览</li></ul><div class="post-toc-wrap sidebar-panel"><div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基本原理"><span class="nav-number">2.</span> <span class="nav-text">基本原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#代码实现"><span class="nav-number">3.</span> <span class="nav-text">代码实现</span></a></li></ol></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person"> <img class="site-author-image" itemprop="image" alt="YaleXin" src="/uploads/cat_mouse.jpg"><p class="site-author-name" itemprop="name">YaleXin</p><div class="site-description" itemprop="description">学渣一枚</div></div><div class="site-state-wrap motion-element"><nav class="site-state"><div class="site-state-item site-state-posts"> <a href="/archives/"><span class="site-state-item-count">127</span> <span class="site-state-item-name">日志</span></a></div><div class="site-state-item site-state-categories"> <a href="/categories/"><span class="site-state-item-count">13</span> <span class="site-state-item-name">分类</span></a></div><div class="site-state-item site-state-tags"> <a href="/tags/"><span class="site-state-item-count">120</span> <span class="site-state-item-name">标签</span></a></div></nav></div></div></div></aside><div id="sidebar-dimmer"></div></div></main><footer class="footer"><div class="footer-inner"><div class="copyright"> &copy; 2020 – <span itemprop="copyrightYear">2024</span><span class="with-love"><i class="fa fa-fas fa-heartbeat"></i></span> <span class="author" itemprop="copyrightHolder">YaleXin</span> <span class="post-meta-divider">|</span><span class="post-meta-item-icon"><i class="fa fa-area-chart"></i></span> <span title="站点总字数">523k</span> <span class="post-meta-divider">|</span><span class="post-meta-item-icon"><i class="fa fa-coffee"></i></span> <span title="站点阅读时长">7:56</span></div> <span>本站已在此等候您 <span id="dnum" style="color:#35b8ff">0</span> 天</span> <span><span id="hnum" style="color:#35b8ff">0</span> 小时 <span id="mnum" style="color:#35b8ff">0</span> 分 <span id="snum" style="color:#35b8ff">0</span> 秒</span><script>var now=new Date;function createtime(){var n=new Date("02/21/2020 11:30:00");now.setTime(now.getTime()+250),days=(now-n)/1e3/60/60/24,dnum=Math.floor(days),hours=(now-n)/1e3/60/60-24*dnum,hnum=Math.floor(hours),1==String(hnum).length&&(hnum="0"+hnum),minutes=(now-n)/1e3/60-1440*dnum-60*hnum,mnum=Math.floor(minutes),1==String(mnum).length&&(mnum="0"+mnum),seconds=(now-n)/1e3-86400*dnum-3600*hnum-60*mnum,snum=Math.round(seconds),1==String(snum).length&&(snum="0"+snum),document.getElementById("dnum").innerHTML=dnum,document.getElementById("hnum").innerHTML=hnum,document.getElementById("mnum").innerHTML=mnum,document.getElementById("snum").innerHTML=snum}setInterval("createtime()",250)</script><div class="powered-by"> <span>powered by</span> <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a></div><div class="busuanzi-count"><script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span class="post-meta-item" id="busuanzi_container_site_uv" style="display:none"><span class="post-meta-item-icon"><i class="fa fa-user"></i></span> <span class="site-uv" title="总访客量"><span>总访客量：</span><span id="busuanzi_value_site_uv"></span></span></span> <span class="post-meta-divider">|</span><span class="post-meta-item" id="busuanzi_container_site_pv" style="display:none"><span class="post-meta-item-icon"><i class="fa fa-eye"></i></span> <span class="site-pv" title="总访问量"><span>总访问量：</span><span id="busuanzi_value_site_pv"></span></span></span></div><script>
+  function leancloudSelector(url) {
+    url = encodeURI(url);
+    return document.getElementById(url).querySelector('.leancloud-visitors-count');
+  }
+  if (CONFIG.page.isPost) {
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = decodeURI(visitors.getAttribute('id'));
+      var title = visitors.getAttribute('data-flag-title');
 
-  
-  
-  
-  <meta property="og:title" content="借助OpenCV拼接特定背景图 - 黄阿信" />
-  
-  <meta property="og:type" content="article" />
-  
-  <meta property="og:url" content="https://yalexin.gitee.io/2022/01/21/%E5%80%9F%E5%8A%A9OpenCV%E6%8B%BC%E6%8E%A5%E7%89%B9%E5%AE%9A%E8%83%8C%E6%99%AF%E5%9B%BE/index.html" />
-  
-  <meta property="og:image" content="/favicon.png" />
-  
-  <meta property="og:article:published_time" content="2022-01-21T02:25:22.000Z" />
-  
-  <meta property="og:article:author" content="YaleXin" />
-  
-  
+      Counter('get', `/classes/Counter?where=${JSON.stringify({ url })}`)
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .then(response => response.json())
+              .then(() => {
+                leancloudSelector(url).innerText = counter.time + 1;
+              })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              })
+          } else {
+              Counter('post', '/classes/Counter', { title: title, url: url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.error('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+  } else {
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return decodeURI(element.getAttribute('id'));
+      });
 
-  
-<link rel="stylesheet" href="/css/var.css">
+      Counter('get', `/classes/Counter?where=${JSON.stringify({ url: { '$in': entries } })}`)
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length === 0) {
+            document.querySelectorAll('.leancloud_visitors .leancloud-visitors-count').forEach(element => {
+              element.innerText = 0;
+            });
+            return;
+          }
+          for (let item of results) {
+            let { url, time } = item;
+            leancloudSelector(url).innerText = time;
+          }
+          for (let url of entries) {
+            var element = leancloudSelector(url);
+            if (element.innerText == '') {
+              element.innerText = 0;
+            }
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+  }
 
-  
-<link rel="stylesheet" href="/css/main.css">
-
-  
-<link rel="stylesheet" href="/css/typography.css">
-
-  
-<link rel="stylesheet" href="/css/code-highlighting.css">
-
-  
-<link rel="stylesheet" href="/css/components.css">
-
-  
-<link rel="stylesheet" href="/css/nav.css">
-
-  
-<link rel="stylesheet" href="/css/paginator.css">
-
-  
-<link rel="stylesheet" href="/css/footer.css">
-
-  
-<link rel="stylesheet" href="/css/post-list.css">
-
-  
-  
-<link rel="stylesheet" href="/css/rainbow-banner.css">
-
-  
-  
-  
-<link rel="stylesheet" href="/css/toc.css">
-
-  
-  
-  
-  
-  
-<link rel="stylesheet" href="/css/post.css">
-
-  
-  
-  
-  
-  
-
-  
-</head>
-    <body
-        data-color-scheme="auto"
-        data-uppercase-categories="true"
-        
-        data-rainbow-banner="true"
-        data-rainbow-banner-shown="auto"
-        data-rainbow-banner-month="6"
-        data-rainbow-banner-colors="#e50000,#ff8d00,#ffee00,#008121,#004cff,#760188"
-        
-        data-config-root="/"
-        
-        data-toc="true"
-        data-toc-max-depth="2"
-        
-        
-    >
-        <nav id="theme-nav">
-    <div class="inner">
-        <a class="title" href="/">Blog</a>
-        <div class="nav-arrow"></div>
-        <div class="nav-items">
-            <a class="nav-item nav-item-home" href="/">Home</a>
-            
-            
-            <a class="nav-item" href="/archives">Archives</a>
-            
-            
-            
-            <a class="nav-item" href="/friends">Friends</a>
-            
-            
-            
-            <a class="nav-item" href="/projects">Projects</a>
-            
-            
-            
-            <a class="nav-item" href="/about">About</a>
-            
-            
-            
-            <a class="nav-item nav-item-github nav-item-icon" href="https://github.com/MrWillCom" target="_blank" aria-label="GitHub">&nbsp;</a>
-            
-            
-            
-            <a class="nav-item nav-item-codepen nav-item-icon" href="https://codepen.io/mrwillcom" target="_blank" aria-label="CodePen">&nbsp;</a>
-            
-            
-            
-            <a class="nav-item nav-item-patreon nav-item-icon" href="https://www.patreon.com/MrWillCom" target="_blank" aria-label="Patreon">&nbsp;</a>
-            
-            
-            
-            <a class="nav-item nav-item-mastodon nav-item-icon" href="https://noc.social/@MrWillCom" target="_blank" aria-label="Mastodon">&nbsp;</a>
-            
-            
-            
-            <a class="nav-item nav-item-discord nav-item-icon" href="https://discord.gg/UKuFDjcfY8" target="_blank" aria-label="Discord">&nbsp;</a>
-            
-            
-            
-            <a class="nav-item nav-item-search nav-item-icon" href="/search" target="_blank" aria-label="Search">&nbsp;</a>
-            
-            
-        </div>
-    </div>
-</nav>
-        
-<article class="post">
-    <div class="meta">
-        
-        <div class="categories text-uppercase">
-        
-            <a href="/categories/算法/">算法</a>
-        
-        </div>
-        
-
-        
-        <div class="date" id="date">
-            <span>January</span>
-            <span>21,</span>
-            <span>2022</span>
-        </div>
-        
-
-        <h1 class="title">借助OpenCV拼接特定背景图</h1>
-    </div>
-
-    <div class="divider"></div>
-
-    <div class="content">
-        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>之前就一直有一个想法，提供大量图片以及一张背景图，然后将这些图片组成一个个小网格拼接起来，然后效果和原背景图差不多，简而言之就是将原背景图马赛克化，只不过每一个马赛克是用提供的图片组成，现在放寒假了终于有时间开干啦，哈哈哈哈哈。</p>
-<a id="more"></a>
-
-<p>先看下效果：</p>
-<p>原背景图</p>
-<p><img src="https://qiniu.yalexin.top/bgr.jpg" alt></p>
-<p>拼接结果图</p>
-<p><img src="https://qiniu.yalexin.top/cat-mouse.png" alt></p>
-<p>emmm，勉强能看，有点抽象</p>
-<p>只能看缩略图了</p>
-<p><img src="https://qiniu.yalexin.top/thumbnail.png" alt></p>
-<p><strong>不过只要你电脑配置够好，时间也充足，可以将图片分割成更多的小方格，效果也更佳。</strong></p>
-<h2 id="基本原理"><a href="#基本原理" class="headerlink" title="基本原理"></a>基本原理</h2><p>基本原理其实很简单：就是首先计算每一张素材图片的颜色平均值，然后计算背景图中的每一个小方格的颜色平均值，然后两两匹配就行了。</p>
-<p>下面说一下具体操作</p>
-<p>对于素材，也就是上面所提到的“大量图片”，我觉得最快速的获取方式就是视频，毕竟一个视频里边每一帧都可以作为一张图片，如果视频是<code>24</code>帧每秒，一分钟就可以提供<code>24*60=1440</code>张图片，对于我这个一年拍的生活照都不超过200张的蓝人来说，<code>1440</code>难以想象。但是对于视频来说，每一帧都分析的话，花费时间太多，并且其实有一些邻近帧的平均颜色<strong>相差不多</strong>，为了加快分析可以取一定间隔进行分析，<code>OpenCV</code>也提供了提取指定位置的帧的方法：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cap.set(cv2.CAP_PROP_POS_FRAMES, idx)</span><br></pre></td></tr></table></figure>
-
-<p>但是这个性能上面比较慢，我们可以顺序读取每一帧，然后根据间隔再分析：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 视频总帧数</span></span><br><span class="line">frameNum = cap.get(<span class="number">7</span>)</span><br><span class="line"><span class="comment"># 提取帧数的步长</span></span><br><span class="line">step = frameNum // needNum</span><br><span class="line">cnt, idx = <span class="number">0</span>, <span class="number">0</span></span><br><span class="line">imgList = []</span><br><span class="line"><span class="keyword">while</span> (<span class="literal">True</span>):</span><br><span class="line">    ret, frame = cap.read()</span><br><span class="line">    <span class="keyword">if</span> ret:</span><br><span class="line">        print(<span class="string">'\r'</span> + <span class="string">'-'</span> * (int(idx / frameNum * <span class="number">100</span>)) + str(int(idx / frameNum * <span class="number">100</span>)) + <span class="string">'%'</span>, end=<span class="string">''</span>, flush=<span class="literal">True</span>)</span><br><span class="line">        <span class="keyword">if</span> idx % step == <span class="number">0</span>:</span><br><span class="line">            aver = frame.mean(axis=<span class="number">0</span>).mean(axis=<span class="number">0</span>)</span><br><span class="line">            averHex = BGR2HEX(aver)</span><br><span class="line">            <span class="comment"># 先将暂存帧保存起来</span></span><br><span class="line">            cv2.imwrite(PICTURES_DIR + <span class="string">'cache-'</span> + str(cnt) + <span class="string">'.jpg'</span>, frame)</span><br><span class="line">            imgList.append([averHex, PICTURES_DIR + <span class="string">'cache-'</span> + str(cnt) + <span class="string">'.jpg'</span>])</span><br><span class="line">            cnt += <span class="number">1</span></span><br><span class="line">        idx += <span class="number">1</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">imgList.sort(key=<span class="keyword">lambda</span> x: x[<span class="number">0</span>])</span><br><span class="line"><span class="keyword">return</span> imgList</span><br></pre></td></tr></table></figure>
-
-<p>经过实测，花费时间减少到原来方法的一半！</p>
-<p>对<code>imgList</code>进行排序是方便后面匹配的时候使用二分查找。</p>
-<p>程序也支持自己提供素材图片，不过自己能提供几千张图片以上估计很难吧？？</p>
-<p>然后进行背景图的分割，理论上背景图分割得越精细越好，但是如此一来需要匹配的次数就越多，程序运行时间越多，而且拼接出来的图片也很大，但是分割数目太少，拼接出来的图片与原图相差甚远，因此要挑选好要切割的行数和列数。</p>
-<p>匹配过程比较好理解，我们实现把背景图切割成<code>m*n</code>个小宫格，计算每一个小宫格的平均颜色，然后遍历每一个小宫格，在<code>imgList</code>中使用二分查找与之相近的图片，并拿到该图片的名字再读取进来（我们并不在<code>imgList</code>中保存每一张图片，因为如果我们可能有几千到上万的图片，如果每一张图都有<code>1MB</code>大小，那我们就需要好几个<code>GB</code>的内存，而现在我们<code>imgList</code>中每一个元素都是包含了该图片的名字和平均颜色值）， 而<code>OpenCV</code>读取的图片返回值是矩阵，图片的拼接也就是对应矩阵的拼接，不过要注意的是区分按列拼接和按行拼接。</p>
-<p>当然了为了防止输出的文件过大，拼接过程还应该将素材图片进行缩放。</p>
-<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="string">Author      : YaleXin</span></span><br><span class="line"><span class="string">Email       :</span></span><br><span class="line"><span class="string">LastEditors : YaleXin</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> cv2</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> bisect</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="comment"># 视频链接</span></span><br><span class="line">VIDEO_URL = <span class="string">"data/mouseAndCat.mp4"</span></span><br><span class="line"><span class="comment"># 素材图片文件夹</span></span><br><span class="line">PICTURES_DIR = <span class="string">"materialPics/"</span></span><br><span class="line"><span class="comment"># 背景图</span></span><br><span class="line">BACKGROUND_URL = <span class="string">"bgr.jpg"</span></span><br><span class="line"><span class="comment"># 输出图片结果名</span></span><br><span class="line">OUTPUT_PICTURE = <span class="string">"result.jpg"</span></span><br><span class="line"><span class="comment"># 缩放比例</span></span><br><span class="line">ZOOM_FACTOR = <span class="number">4</span></span><br><span class="line"><span class="comment"># 切割图片的行数、列数</span></span><br><span class="line">ROW, COL = <span class="number">41</span>, <span class="number">41</span></span><br><span class="line">cap = cv2.VideoCapture(VIDEO_URL)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 将指定图片进行裁剪 m n 分别是行数列数</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">cutBackgroundImg</span><span class="params">(img, m=<span class="number">21</span>, n=<span class="number">21</span>)</span>:</span></span><br><span class="line">    <span class="comment"># 背景图片的高度和宽度</span></span><br><span class="line">    h, w = img.shape[<span class="number">0</span>], img.shape[<span class="number">1</span>]</span><br><span class="line">    grid_h = int(h * <span class="number">1.0</span> / (m - <span class="number">1</span>) + <span class="number">0.5</span>)</span><br><span class="line">    grid_w = int(w * <span class="number">1.0</span> / (n - <span class="number">1</span>) + <span class="number">0.5</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 满足整除关系时的高、宽</span></span><br><span class="line">    h = grid_h * (m - <span class="number">1</span>)</span><br><span class="line">    w = grid_w * (n - <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 图像缩放</span></span><br><span class="line">    img_re = cv2.resize(img, (w, h),</span><br><span class="line">                        cv2.INTER_LINEAR)  <span class="comment"># 也可以用img_re=skimage.transform.resize(img, (h,w)).astype(np.uint8)</span></span><br><span class="line">    gx, gy = np.meshgrid(np.linspace(<span class="number">0</span>, w, n), np.linspace(<span class="number">0</span>, h, m))</span><br><span class="line">    gx = gx.astype(np.int)</span><br><span class="line">    gy = gy.astype(np.int)</span><br><span class="line">    <span class="comment"># 前面两维代表位置 i行j列 后三维代表图片信息（像素位置、颜色信息）</span></span><br><span class="line">    divide_image = np.zeros([m - <span class="number">1</span>, n - <span class="number">1</span>, grid_h, grid_w, <span class="number">3</span>],</span><br><span class="line">                            np.uint8)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(m - <span class="number">1</span>):</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> range(n - <span class="number">1</span>):</span><br><span class="line">            divide_image[i, j, ...] = img_re[</span><br><span class="line">                                      gy[i][j]:gy[i + <span class="number">1</span>][j + <span class="number">1</span>], gx[i][j]:gx[i + <span class="number">1</span>][j + <span class="number">1</span>], :]</span><br><span class="line">    <span class="keyword">return</span> divide_image</span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#  分析分割后的图片 divideImages 是背景图分割后的一系列图片 materialIndexColor是包含颜色均值的一些列图片（从视频中提取或者用户提供）</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">handleBlocks</span><span class="params">(divideImages, materialIndexColor)</span>:</span></span><br><span class="line">    print(<span class="string">'--- handleBlocks begin ---'</span>)</span><br><span class="line">    beginTime = time.time()</span><br><span class="line">    cap.set(cv2.CAP_PROP_POS_FRAMES, <span class="number">0</span>)</span><br><span class="line">    res0, frame0 = cap.read()</span><br><span class="line">    originX, originY = frame0.shape[<span class="number">0</span>:<span class="number">2</span>]</span><br><span class="line">    sortedAverColor = np.array(materialIndexColor)[:, <span class="number">0</span>].astype(<span class="string">"int32"</span>)</span><br><span class="line">    m, n = divideImages.shape[<span class="number">0</span>], divideImages.shape[<span class="number">1</span>]</span><br><span class="line">    cnt, total, listLen = <span class="number">0</span>, (m + <span class="number">1</span>) * (n + <span class="number">1</span>), len(materialIndexColor)</span><br><span class="line">    resImg = np.array([])</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(m):</span><br><span class="line">        rowItem = np.array([])</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> range(n):</span><br><span class="line">            aver = divideImages[i, j].mean(axis=<span class="number">0</span>).mean(axis=<span class="number">0</span>)</span><br><span class="line">            averHex = BGR2HEX(aver)</span><br><span class="line">            <span class="comment"># 在有序序列中寻找接近该 块（来自背景图） 的图片</span></span><br><span class="line">            left = bisect.bisect_left(sortedAverColor, averHex)</span><br><span class="line">            left = max(<span class="number">0</span>, left)</span><br><span class="line">            left = min(left, listLen - <span class="number">1</span>)</span><br><span class="line">            imgFilename = materialIndexColor[left][<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line">            frame = cv2.imread(imgFilename)</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> rowItem.shape == (<span class="number">0</span>,):</span><br><span class="line">                <span class="comment"># 拼接列</span></span><br><span class="line">                rowItem = cv2.resize(frame, (originY // ZOOM_FACTOR, originX // ZOOM_FACTOR))</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                rowItem = np.concatenate((rowItem, cv2.resize(frame, (originY // ZOOM_FACTOR, originX // ZOOM_FACTOR))),</span><br><span class="line">                                         <span class="number">1</span>)</span><br><span class="line">            print(<span class="string">'\r'</span> + <span class="string">'+'</span> * (int(cnt / total * <span class="number">100</span>)) + str(int(cnt / total * <span class="number">100</span>)) + <span class="string">'%'</span>, end=<span class="string">''</span>, flush=<span class="literal">True</span>)</span><br><span class="line">            cnt += <span class="number">1</span></span><br><span class="line">        <span class="keyword">if</span> resImg.shape == (<span class="number">0</span>,):</span><br><span class="line">            resImg = rowItem</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="comment"># 拼接行</span></span><br><span class="line">            resImg = np.concatenate((resImg, rowItem))</span><br><span class="line">    cv2.imwrite(OUTPUT_PICTURE, resImg)</span><br><span class="line">    cv2.destroyAllWindows()</span><br><span class="line">    <span class="comment"># 删除中间生成的文件</span></span><br><span class="line">    <span class="keyword">for</span> item <span class="keyword">in</span> materialIndexColor:</span><br><span class="line">        os.remove(item[<span class="number">1</span>])</span><br><span class="line">    endTime = time.time()</span><br><span class="line">    print(<span class="string">'\n---- handleMaterial2 finished and cost &#123;&#125; --------'</span>.format(endTime - beginTime))</span><br><span class="line">    print(<span class="string">'\n--- handleBlocks end ---'</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 将BGR数组转为 RGB16进制形式</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">BGR2HEX</span><span class="params">(BGR)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> (int(BGR[<span class="number">2</span>]) &lt;&lt; <span class="number">16</span>) + (int(BGR[<span class="number">1</span>]) &lt;&lt; <span class="number">8</span>) + int(BGR[<span class="number">0</span>])</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">handleMaterial</span><span class="params">(needNum=<span class="number">500</span>)</span>:</span></span><br><span class="line">    print(<span class="string">'--- handleMaterial begin ---'</span>)</span><br><span class="line">    <span class="comment"># 视频总帧数</span></span><br><span class="line">    frameNum = cap.get(<span class="number">7</span>)</span><br><span class="line">    <span class="comment"># 提取帧数的步长</span></span><br><span class="line">    step = frameNum / needNum</span><br><span class="line">    idx = <span class="number">0</span></span><br><span class="line">    imgList = []</span><br><span class="line">    <span class="comment"># 按照步长分析每一帧</span></span><br><span class="line">    <span class="keyword">for</span> cnt <span class="keyword">in</span> range(needNum):</span><br><span class="line">        print(<span class="string">'\r'</span> + <span class="string">'-'</span> * (cnt * <span class="number">100</span> // needNum) + str(cnt * <span class="number">100</span> // needNum) + <span class="string">'%'</span>, end=<span class="string">''</span>, flush=<span class="literal">True</span>)</span><br><span class="line">        cap.set(cv2.CAP_PROP_POS_FRAMES, idx)</span><br><span class="line"></span><br><span class="line">        res, frame = cap.read()</span><br><span class="line"></span><br><span class="line">        aver = frame.mean(axis=<span class="number">0</span>).mean(axis=<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">        averHex = BGR2HEX(aver)</span><br><span class="line">        <span class="comment"># cnt 是标记该元素在imgList中的下标，idx是标记该帧在原视频中的下标</span></span><br><span class="line">        imgList.append([cnt, averHex, idx])</span><br><span class="line"></span><br><span class="line">        idx += step</span><br><span class="line">    print(<span class="string">'\n---- handleMaterial finished! --------'</span>)</span><br><span class="line">    imgList.sort(key=<span class="keyword">lambda</span> x: x[<span class="number">1</span>])</span><br><span class="line">    <span class="keyword">return</span> imgList</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">handlePictures</span><span class="params">()</span>:</span></span><br><span class="line">    print(<span class="string">'--- handlePictures begin ---'</span>)</span><br><span class="line">    imgList = []</span><br><span class="line">    <span class="keyword">if</span> os.path.exists(PICTURES_DIR):</span><br><span class="line">        imgsFiles = os.listdir(PICTURES_DIR)</span><br><span class="line">        fileLen = len(imgsFiles)</span><br><span class="line">        cnt = <span class="number">0</span></span><br><span class="line">        <span class="keyword">for</span> file <span class="keyword">in</span> imgsFiles:</span><br><span class="line">            fileType = os.path.splitext(file)[<span class="number">1</span>]</span><br><span class="line">            <span class="comment"># 常见的图片格式</span></span><br><span class="line">            <span class="keyword">if</span> fileType == <span class="string">'.jpg'</span> <span class="keyword">or</span> fileType == <span class="string">'.jpeg'</span> <span class="keyword">or</span> fileType == <span class="string">'.png'</span> <span class="keyword">or</span> fileType == <span class="string">'.bmp'</span> <span class="keyword">or</span> fileType == <span class="string">'.svg'</span>:</span><br><span class="line">                img = cv2.imread(PICTURES_DIR + file)</span><br><span class="line">                <span class="comment"># 判断图片是否读取成功</span></span><br><span class="line">                <span class="keyword">if</span> isinstance(img, np.ndarray):</span><br><span class="line">                    aver = img.mean(axis=<span class="number">0</span>).mean(axis=<span class="number">0</span>)</span><br><span class="line">                    averHex = BGR2HEX(aver)</span><br><span class="line">                    cv2.imwrite(PICTURES_DIR + <span class="string">'cache-'</span> + file, img)</span><br><span class="line">                    imgList.append([averHex, PICTURES_DIR + <span class="string">'cache-'</span> + file])</span><br><span class="line">                    print(<span class="string">'\r'</span> + <span class="string">'+'</span> * (int(cnt / fileLen * <span class="number">100</span>)) + str(int(cnt / fileLen * <span class="number">100</span>)) + <span class="string">'%'</span>, end=<span class="string">''</span>,</span><br><span class="line">                          flush=<span class="literal">True</span>)</span><br><span class="line">                    cnt += <span class="number">1</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        print(<span class="string">'this path not exist'</span>)</span><br><span class="line">    imgList.sort(key=<span class="keyword">lambda</span> x: x[<span class="number">0</span>])</span><br><span class="line">    print(<span class="string">'\n--- handlePictures end ---'</span>)</span><br><span class="line">    <span class="keyword">return</span> imgList</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">handleVideoMaterial</span><span class="params">(needNum)</span>:</span></span><br><span class="line">    print(<span class="string">'--- handleMaterial2 begin ---'</span>)</span><br><span class="line">    beginTime = time.time()</span><br><span class="line">    <span class="comment"># 视频总帧数</span></span><br><span class="line">    frameNum = cap.get(<span class="number">7</span>)</span><br><span class="line">    <span class="comment"># 提取帧数的步长</span></span><br><span class="line">    step = frameNum // needNum</span><br><span class="line">    cnt, idx = <span class="number">0</span>, <span class="number">0</span></span><br><span class="line">    imgList = []</span><br><span class="line">    <span class="keyword">while</span> (<span class="literal">True</span>):</span><br><span class="line">        ret, frame = cap.read()</span><br><span class="line">        <span class="keyword">if</span> ret:</span><br><span class="line">            print(<span class="string">'\r'</span> + <span class="string">'-'</span> * (int(idx / frameNum * <span class="number">100</span>)) + str(int(idx / frameNum * <span class="number">100</span>)) + <span class="string">'%'</span>, end=<span class="string">''</span>, flush=<span class="literal">True</span>)</span><br><span class="line">            <span class="keyword">if</span> idx % step == <span class="number">0</span>:</span><br><span class="line">                aver = frame.mean(axis=<span class="number">0</span>).mean(axis=<span class="number">0</span>)</span><br><span class="line">                averHex = BGR2HEX(aver)</span><br><span class="line">                cv2.imwrite(PICTURES_DIR + <span class="string">'cache-'</span> + str(cnt) + <span class="string">'.jpg'</span>, frame)</span><br><span class="line">                imgList.append([averHex, PICTURES_DIR + <span class="string">'cache-'</span> + str(cnt) + <span class="string">'.jpg'</span>])</span><br><span class="line">                cnt += <span class="number">1</span></span><br><span class="line">            idx += <span class="number">1</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">    endTime = time.time()</span><br><span class="line">    print(<span class="string">'\n---- handleMaterial2 finished!  way 2 cost &#123;&#125; --------'</span>.format(endTime - beginTime))</span><br><span class="line">    imgList.sort(key=<span class="keyword">lambda</span> x: x[<span class="number">0</span>])</span><br><span class="line">    <span class="keyword">return</span> imgList</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    img = cv2.imread(BACKGROUND_URL)</span><br><span class="line">    way = int(input(<span class="string">'请选择你的方式：1.从视频中截取 2.从含有图片的文件夹中提取'</span>))</span><br><span class="line">    <span class="keyword">if</span> way == <span class="number">1</span>:</span><br><span class="line">        divideImages = cutBackgroundImg(img, m=ROW, n=COL)</span><br><span class="line">        materialList = handleVideoMaterial(needNum=<span class="number">3000</span>)</span><br><span class="line">        handleBlocks(divideImages, materialList)</span><br><span class="line">    <span class="keyword">elif</span> way == <span class="number">2</span>:</span><br><span class="line">        divideImages = cutBackgroundImg(img, m=ROW, n=COL)</span><br><span class="line">        materialList = handlePictures()</span><br><span class="line">        handleBlocks(divideImages, materialList)</span><br></pre></td></tr></table></figure>
-
-
-    </div>
-
-    
-    <div class="about">
-        <h1>About this Post</h1>
-        <div class="details">
-            <p>This post is written by YaleXin, licensed under <a href="https://creativecommons.org/licenses/by-nc/4.0" target="_blank" rel="noopener">CC BY-NC 4.0</a>.</p>
-        </div>
-        
-        <p class="tags">
-            
-            <i class="icon"></i>
-            <a href="/tags/OpenCV/" class="tag">#OpenCV</a><a href="/tags/图像/" class="tag">#图像</a>
-        </p>
-        
-    </div>
-    
-
-    <div class="container post-prev-next">
-        
-        <a href="/2022/01/25/%E5%8D%9A%E5%AE%A2%E7%B3%BB%E7%BB%9F%E5%BC%95%E5%85%A5ECharts%E7%9A%84%E6%97%A5%E5%8E%86%E7%83%AD%E5%8A%9B%E5%9B%BE/" class="next">
-            <div>
-                <div class="text">
-                    <p class="label">Next</p>
-                    <h3 class="title">博客系统引入ECharts的日历热力图</h3>
-                </div>
-            </div>
-        </a>
-        
-        
-        <a href="/2021/05/27/%E5%88%A9%E7%94%A8%E5%80%8D%E5%A2%9E%E7%9A%84%E6%80%9D%E6%83%B3%E5%AE%9E%E7%8E%B0LCA%E7%AE%97%E6%B3%95/" class="prev">
-            <div>
-                <div class="text">
-                    <p class="label">Previous</p>
-                    <h3 class="title">利用倍增的思想实现LCA算法</>
-                </div>
-            </div>
-        </a>
-        
-    </div>
-
-    
-        
-        
-    
-</article>
-
-        <footer>
-    <div class="inner">
-        <div class="links">
-            
-            <div class="group">
-                <h2 class="title">Blog</h2>
-                
-                <a href="/" class="item">Blog</a>
-                
-                <a href="/archives" class="item">Archives</a>
-                
-                <a href="/tags" class="item">Tags</a>
-                
-                <a href="/categories" class="item">Categories</a>
-                
-                <a href="/search" class="item">Search</a>
-                
-                <a href="/friends" class="item">Friends</a>
-                
-                <a href="/projects" class="item">Projects</a>
-                
-                <a href="/resume" class="item">Resume</a>
-                
-                <a href="/about" class="item">About</a>
-                
-                <a href="/atom.xml" class="item">RSS</a>
-                
-            </div>
-            
-            <div class="group">
-                <h2 class="title">Projects</h2>
-                
-                <a href="https://github.com/MrWillCom/rsa-cli" target="_blank" rel="noopener" class="item">RSA CLI</a>
-                
-                <a href="https://github.com/MrWillCom/hexo-theme-cupertino" target="_blank" rel="noopener" class="item">Hexo Theme Cupertino</a>
-                
-                <a href="https://github.com/MrWillCom/a-calendar" target="_blank" rel="noopener" class="item">A Calendar</a>
-                
-                <a href="https://github.com/MrWillCom/auto-mirroring-bucket" target="_blank" rel="noopener" class="item">Auto Mirroring Bucket</a>
-                
-            </div>
-            
-            <div class="group">
-                <h2 class="title">Me</h2>
-                
-                <a href="https://github.com/MrWillCom" target="_blank" rel="noopener" class="item">GitHub</a>
-                
-                <a href="https://codepen.io/mrwillcom" target="_blank" rel="noopener" class="item">CodePen</a>
-                
-                <a href="https://www.patreon.com/MrWillCom" target="_blank" rel="noopener" class="item">Patreon</a>
-                
-                <a href="https://noc.social/@MrWillCom" target="_blank" rel="noopener" class="item">Mastodon</a>
-                
-                <a href="https://discord.gg/UKuFDjcfY8" target="_blank" rel="noopener" class="item">Discord</a>
-                
-                <a href="mailto:mr.will.com@outlook.com" class="item">Email</a>
-                
-            </div>
-            
-        </div>
-        <span>&copy; 2024 YaleXin<br>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> </span>
-        
-        
-            <br>
-            <div class="color-scheme-toggle" role="radiogroup" id="theme-color-scheme-toggle">
-                <label>
-                    <input type="radio" value="light">
-                    <span>Light</span>
-                </label>
-                <label>
-                    <input type="radio" value="dark">
-                    <span>Dark</span>
-                </label>
-                <label>
-                    <input type="radio" value="auto">
-                    <span>Auto</span>
-                </label>
-            </div>
-        
-    </div>
-</footer>
-
-
-        
-<script src="/js/main.js"></script>
-
-        
-        
-        
-
-        
-        <script src="https://unpkg.com/scrollreveal"></script>
-        <script>
-            window.addEventListener('load', () => {
-                ScrollReveal({ delay: 250, reset: true, easing: 'cubic-bezier(0, 0, 0, 1)' })
-                ScrollReveal().reveal('.post-list-item .cover-img img')
-                ScrollReveal().reveal('.post-list-item, .card, .content p img, .content .block-large img', { distance: '60px', origin: 'bottom', duration: 800 })
-            })
-        </script>
-        
-    </body>
-</html>
+  fetch('https://app-router.leancloud.cn/2/route?appId=CjaKbRAizU0DNH3B4Hllhtwp-gzGzoHsz')
+    .then(response => response.json())
+    .then(({ api_server }) => {
+      var Counter = (method, url, data) => {
+        return fetch(`https://${api_server}/1.1${url}`, {
+          method: method,
+          headers: {
+            'X-LC-Id'     : 'CjaKbRAizU0DNH3B4Hllhtwp-gzGzoHsz',
+            'X-LC-Key'    : 'B61jy2Xnwe90oJ2dtUeF6HHU',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    });
+  </script></div></footer></div><script src="/lib/anime.min.js"></script><script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script><script src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script><script src="/lib/velocity/velocity.min.js"></script><script src="/lib/velocity/velocity.ui.min.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/pisces.js"></script><script src="/js/next-boot.js"></script><script>!function(){var t=document.createElement("script"),e=window.location.protocol.split(":")[0];t.src="https"===e?"https://zz.bdstatic.com/linksubmit/push.js":"http://push.zhanzhang.baidu.com/push.js";var s=document.getElementsByTagName("script")[0];s.parentNode.insertBefore(t,s)}()</script></body></html>
