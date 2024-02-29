@@ -1,114 +1,379 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=2"><meta name="theme-color" content="#222"><meta name="generator" content="Hexo 4.2.0"><link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.ico"><link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico"><link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico"><link rel="mask-icon" href="/images/favicon.ico" color="#222"><link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css"><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css"><script id="hexo-configurations">var NexT=window.NexT||{},CONFIG={hostname:"yalexin.gitee.io",root:"/",scheme:"Gemini",version:"7.7.1",exturl:!1,sidebar:{position:"left",display:"post",padding:18,offset:12,onmobile:!0},copycode:{enable:!0,show_result:!0,style:"mac"},back2top:{enable:!0,sidebar:!1,scrollpercent:!0},bookmark:{enable:!1,color:"#222",save:"auto"},fancybox:!0,mediumzoom:!1,lazyload:!1,pangu:!1,comments:{style:"tabs",active:null,storage:!0,lazyload:!1,nav:null},algolia:{hits:{per_page:10},labels:{input_placeholder:"Search for Posts",hits_empty:"We didn't find any results for the search: ${query}",hits_stats:"${hits} results found in ${time} ms"}},localsearch:{enable:!1,trigger:"auto",top_n_per_article:1,unescape:!1,preload:!1},motion:{enable:!0,async:!1,transition:{post_block:"fadeIn",post_header:"slideDownIn",post_body:"slideDownIn",coll_header:"slideLeftIn",sidebar:"slideUpIn"}},path:"search.xml"}</script><meta name="description" content="书接上回，本文主要介绍如何搭建属于你自己的Git私服。"><meta property="og:type" content="article"><meta property="og:title" content="Git学习笔记之搭建私服"><meta property="og:url" content="https://yalexin.gitee.io/2022/02/12/Git%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%8D/index.html"><meta property="og:site_name" content="黄阿信"><meta property="og:description" content="书接上回，本文主要介绍如何搭建属于你自己的Git私服。"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://qiniu.yalexin.top/gitlab-0.png"><meta property="og:image" content="https://qiniu.yalexin.top/gitlab-1.png"><meta property="og:image" content="https://qiniu.yalexin.top/gitlab-2.png"><meta property="og:image" content="https://qiniu.yalexin.top/gitlab-4.png"><meta property="article:published_time" content="2022-02-12T04:16:17.000Z"><meta property="article:modified_time" content="2022-05-07T07:30:55.195Z"><meta property="article:author" content="YaleXin"><meta property="article:tag" content="Git"><meta property="article:tag" content="学习"><meta property="article:tag" content="命令行"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://qiniu.yalexin.top/gitlab-0.png"><link rel="canonical" href="https://yalexin.gitee.io/2022/02/12/Git%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%8D/"><script id="page-configurations">CONFIG.page={sidebar:"",isHome:!1,isPost:!0}</script><title>Git学习笔记之搭建私服 | 黄阿信</title><noscript><style>.sidebar-inner,.use-motion .brand,.use-motion .collection-header,.use-motion .comments,.use-motion .menu-item,.use-motion .pagination,.use-motion .post-block,.use-motion .post-body,.use-motion .post-header{opacity:initial}.use-motion .site-subtitle,.use-motion .site-title{opacity:initial;top:initial}.use-motion .logo-line-before i{left:initial}.use-motion .logo-line-after i{right:initial}</style></noscript></head><body itemscope itemtype="http://schema.org/WebPage"><div class="container use-motion"><div class="headband"></div><header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="header-inner"><div class="site-brand-container"><div class="site-nav-toggle"><div class="toggle" aria-label="切换导航栏"><span class="toggle-line toggle-line-first"></span><span class="toggle-line toggle-line-middle"></span><span class="toggle-line toggle-line-last"></span></div></div><div class="site-meta"><div><a href="/" class="brand" rel="start"><span class="logo-line-before"><i></i></span> <span class="site-title">黄阿信</span><span class="logo-line-after"><i></i></span></a></div><p class="site-subtitle">要么改变世界，要么适应世界。</p></div><div class="site-nav-right"><div class="toggle popup-trigger"></div></div></div><nav class="site-nav"><ul id="menu" class="menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-fw fa-home"></i> 首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i> 标签<span class="badge">120</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i> 分类<span class="badge">13</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i> 归档<span class="badge">127</span></a></li><li class="menu-item menu-item-guestbook"><a href="/guestbook/" rel="section"><i class="fa fa-fw fa-book"></i> 留言板</a></li><li class="menu-item menu-item-links"><a href="/links/" rel="section"><i class="fa fa-fw fa-link"></i> 友链</a></li></ul></nav></div></header><div class="back-to-top"><i class="fa fa-arrow-up"></i> <span>0%</span></div><div class="reading-progress-bar"></div><main class="main"><div class="main-inner"><div class="content-wrap"><div class="content"><div class="posts-expand"><article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN"><link itemprop="mainEntityOfPage" href="https://yalexin.gitee.io/2022/02/12/Git%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%8D/"><span hidden itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="image" content="/uploads/cat_mouse.jpg"><meta itemprop="name" content="YaleXin"><meta itemprop="description" content="学渣一枚"></span><span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><meta itemprop="name" content="黄阿信"></span><header class="post-header"><h1 class="post-title" itemprop="name headline"> Git学习笔记之搭建私服</h1><div class="post-meta"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-calendar-o"></i></span> <span class="post-meta-item-text">发表于</span> <time title="创建时间：2022-02-12 12:16:17" itemprop="dateCreated datePublished" datetime="2022-02-12T12:16:17+08:00">2022-02-12</time></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-calendar-check-o"></i></span> <span class="post-meta-item-text">更新于</span> <time title="修改时间：2022-05-07 15:30:55" itemprop="dateModified" datetime="2022-05-07T15:30:55+08:00">2022-05-07</time></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-folder-o"></i></span> <span class="post-meta-item-text">分类于</span> <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">笔记</span></a></span></span><span id="/2022/02/12/Git%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%8D/" class="post-meta-item leancloud_visitors" data-flag-title="Git学习笔记之搭建私服" title="阅读次数"><span class="post-meta-item-icon"><i class="fa fa-eye"></i></span> <span class="post-meta-item-text">阅读次数：</span><span class="leancloud-visitors-count"></span></span><br><span class="post-meta-item" title="本文字数"><span class="post-meta-item-icon"><i class="fa fa-file-word-o"></i></span> <span class="post-meta-item-text">本文字数：</span> <span>1.9k</span></span><span class="post-meta-item" title="阅读时长"><span class="post-meta-item-icon"><i class="fa fa-clock-o"></i></span> <span class="post-meta-item-text">阅读时长 &asymp;</span> <span>2 分钟</span></span></div></header><div class="post-body" itemprop="articleBody"><p>书接上回，本文主要介绍如何搭建属于你自己的<code>Git</code>私服。</p><a id="more"></a><p>我们之前演示了如何使用第三方代码托管平台<code>Github</code>来作为我们远端仓库，不过虽然之前<code>Github</code>允许建立私有仓库，但是免费的之余还是有一些限制诸如协作者人数不能过多，况且有的时候我们视代码如命脉，不想开源又想使用<code>Git</code>怎么办？答案就是搭建私服！搭建私服有几种方式，下面介绍一种比较流行的，但是比较复杂。</p><p>前提提示：我的<code>Linux</code>系统是<code>centos7</code>。</p><h2 id="安装GitLab"><a href="#安装GitLab" class="headerlink" title="安装GitLab"></a>安装GitLab</h2><p>安装前提依赖：</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install -y curl policycoreutils-python openssh-server perl</span><br></pre></td></tr></table></figure><p> 在系统防火墙中打开 <code>HTTP</code>、<code>HTTPS</code>和 <code>SSH</code>访问 （可选，不设置则只能从本地网络访问 ）</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl enable sshd</span><br><span class="line">sudo systemctl start sshd</span><br><span class="line">sudo firewall-cmd --permanent --add-service=http</span><br><span class="line">sudo systemctl reload firewalld</span><br></pre></td></tr></table></figure><p> 安装 <code>Postfix</code> 以发送电子邮件通知 （可选）</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install postfix</span><br><span class="line">sudo systemctl enable postfix</span><br><span class="line">sudo systemctl start postfix</span><br></pre></td></tr></table></figure><p>下载<code>GitLab</code>安装包</p><p>到网站<a href="https://packages.gitlab.com/gitlab/gitlab-ce/下载合适的包" target="_blank" rel="noopener">https://packages.gitlab.com/gitlab/gitlab-ce/下载合适的包</a></p><blockquote><p>gitlab-ce是社区版，免费的<br>gitlab-ee是企业版，收费的</p></blockquote><p>找到合适的包后页面往下滑找到<code>wget</code>的地址复制下来到服务器中下载：</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget --content-disposition https://packages.gitlab.com/gitlab/gitlab-ce/packages/el/7/gitlab-ce-14.7.2-ce.0.el7.x86_64.rpm/download.rpm</span><br></pre></td></tr></table></figure><p>然后开始安装：</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo rpm -Uvh gitlab-ce-14.7.2-ce.0.el7.x86_64.rpm</span><br></pre></td></tr></table></figure><p> 安装成功后的提示:</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Thank you for installing GitLab! GitLab was unable to detect a valid hostname for your instance. Please configure a URL for your GitLab instance by setting &#96;external_url&#96; configuration in &#x2F;etc&#x2F;gitlab&#x2F;gitlab.rb file. Then, you can start your GitLab instance by running the following command:  sudo gitlab-ctl reconfigure</span><br></pre></td></tr></table></figure><p>按照提示，打开<code>/etc/gitlab/gitlab.rb</code>文件，搜索<code>external_url</code>选项，设置为<code>ip</code>地址（例如我的为<a href="http://124.222.8.87:81/）或者域名地址" target="_blank" rel="noopener">http://124.222.8.87:81/）或者域名地址</a></p><p>然后重新配置：</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gitlab-ctl reconfigure</span><br></pre></td></tr></table></figure><p>然后开启<code>gitlab</code></p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gitlab-ctl start</span><br></pre></td></tr></table></figure><p>然后访问之前设置的<code>ip</code>地址</p><p><img src="https://qiniu.yalexin.top/gitlab-0.png" alt></p><p> 用户名为<code>root</code>。初始密码是在<code>/etc/gitlab/initial_root_password</code>，不过该密码在执行<code>reconfigreure</code>后的24小时就会被删除，所以记性不好的话建议立即改密码。</p><blockquote><p>如果无法访问，则可能是没有开放防火墙端口</p><p>依次执行以下命令即可：</p><p><code>firewall-cmd --zone=public --list-ports</code> #查看开放端口<br><code>firewall-cmd --zone=public --add-port=81/tcp --permanent</code> #开放81端口<br><code>firewall-cmd --reload</code> #重新加载配置<br>#如果不需要，也可以直接关闭防火墙，前提是不怕被运维的追着打！<br><code>systemctl stop firewalld.service</code></p></blockquote><p><strong>强烈建议服务器运行内存在2GB以上！！</strong></p><p>我的学生机真的只有2BG内存，还得开个4GB的虚拟内存才勉勉强强运行起来。</p><h2 id="注册并使用GitLab"><a href="#注册并使用GitLab" class="headerlink" title="注册并使用GitLab"></a>注册并使用GitLab</h2><p>我发现2GB实在是不能用，只好斥巨资几块钱在华为云上买了弹性计算型主机~~</p><p>登录后台以后，可以自行选择更改语言为简体中文，也可以使用默认的。</p><p>接下来就像使用<code>GitHub</code>一样啦！</p><p>先注册普通用户，因为你总不可能所有人都使用<code>root</code>账户吧！</p><p><img src="https://qiniu.yalexin.top/gitlab-1.png" alt></p><p>注册好以后，管理员后台审核即可。</p><p><img src="https://qiniu.yalexin.top/gitlab-2.png" alt></p><p><img src="https://qiniu.yalexin.top/gitlab-4.png" alt></p><p>通过以后，该普通用户就可以登录了。</p><p>当然了，为了能够正常使用，还<strong>需要添加<code>SSH</code>公钥。</strong></p></div><div class="reward-container"><div>假如对您有所帮助，那就请我喝咖啡吧~~</div> <button onclick='var qr=document.getElementById("qr");qr.style.display="none"===qr.style.display?"block":"none"'> 打赏</button><div id="qr" style="display:none"><div style="display:inline-block"> <img src="/images/WeChat.png" alt="YaleXin 微信支付"><p>微信支付</p></div><div style="display:inline-block"> <img src="/images/Alipay.jpg" alt="YaleXin 支付宝"><p>支付宝</p></div></div></div><footer class="post-footer"><div class="post-tags"><a href="/tags/Git/" rel="tag"><i class="fa fa-tag"></i> Git</a><a href="/tags/%E5%AD%A6%E4%B9%A0/" rel="tag"><i class="fa fa-tag"></i> 学习</a><a href="/tags/%E5%91%BD%E4%BB%A4%E8%A1%8C/" rel="tag"><i class="fa fa-tag"></i> 命令行</a></div><div class="post-nav"><div class="post-nav-item"><a href="/2022/02/11/Git%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8BGit%E9%85%8D%E7%BD%AE/" rel="prev" title="Git学习笔记之Git配置"><i class="fa fa-chevron-left"></i> Git学习笔记之Git配置</a></div><div class="post-nav-item"> <a href="/2022/03/25/numpy%E5%AE%9E%E7%8E%B0%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92%E6%A8%A1%E5%9E%8B/" rel="next" title="numpy实现线性回归模型">numpy实现线性回归模型<i class="fa fa-chevron-right"></i></a></div></div></footer></article><div><div><div style="text-align:center;color:#ccc;font-size:14px">------ 文章结束------</div></div></div></div></div><script>
-  window.addEventListener('tabs:register', () => {
-    let activeClass = CONFIG.comments.activeClass;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script></div><div class="toggle sidebar-toggle"><span class="toggle-line toggle-line-first"></span><span class="toggle-line toggle-line-middle"></span><span class="toggle-line toggle-line-last"></span></div><aside class="sidebar"><div class="sidebar-inner"><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc"> 文章目录</li><li class="sidebar-nav-overview"> 站点概览</li></ul><div class="post-toc-wrap sidebar-panel"><div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#安装GitLab"><span class="nav-number">1.</span> <span class="nav-text">安装GitLab</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#注册并使用GitLab"><span class="nav-number">2.</span> <span class="nav-text">注册并使用GitLab</span></a></li></ol></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person"> <img class="site-author-image" itemprop="image" alt="YaleXin" src="/uploads/cat_mouse.jpg"><p class="site-author-name" itemprop="name">YaleXin</p><div class="site-description" itemprop="description">学渣一枚</div></div><div class="site-state-wrap motion-element"><nav class="site-state"><div class="site-state-item site-state-posts"> <a href="/archives/"><span class="site-state-item-count">127</span> <span class="site-state-item-name">日志</span></a></div><div class="site-state-item site-state-categories"> <a href="/categories/"><span class="site-state-item-count">13</span> <span class="site-state-item-name">分类</span></a></div><div class="site-state-item site-state-tags"> <a href="/tags/"><span class="site-state-item-count">120</span> <span class="site-state-item-name">标签</span></a></div></nav></div></div></div></aside><div id="sidebar-dimmer"></div></div></main><footer class="footer"><div class="footer-inner"><div class="copyright"> &copy; 2020 – <span itemprop="copyrightYear">2024</span><span class="with-love"><i class="fa fa-fas fa-heartbeat"></i></span> <span class="author" itemprop="copyrightHolder">YaleXin</span> <span class="post-meta-divider">|</span><span class="post-meta-item-icon"><i class="fa fa-area-chart"></i></span> <span title="站点总字数">523k</span> <span class="post-meta-divider">|</span><span class="post-meta-item-icon"><i class="fa fa-coffee"></i></span> <span title="站点阅读时长">7:56</span></div> <span>本站已在此等候您 <span id="dnum" style="color:#35b8ff">0</span> 天</span> <span><span id="hnum" style="color:#35b8ff">0</span> 小时 <span id="mnum" style="color:#35b8ff">0</span> 分 <span id="snum" style="color:#35b8ff">0</span> 秒</span><script>var now=new Date;function createtime(){var n=new Date("02/21/2020 11:30:00");now.setTime(now.getTime()+250),days=(now-n)/1e3/60/60/24,dnum=Math.floor(days),hours=(now-n)/1e3/60/60-24*dnum,hnum=Math.floor(hours),1==String(hnum).length&&(hnum="0"+hnum),minutes=(now-n)/1e3/60-1440*dnum-60*hnum,mnum=Math.floor(minutes),1==String(mnum).length&&(mnum="0"+mnum),seconds=(now-n)/1e3-86400*dnum-3600*hnum-60*mnum,snum=Math.round(seconds),1==String(snum).length&&(snum="0"+snum),document.getElementById("dnum").innerHTML=dnum,document.getElementById("hnum").innerHTML=hnum,document.getElementById("mnum").innerHTML=mnum,document.getElementById("snum").innerHTML=snum}setInterval("createtime()",250)</script><div class="powered-by"> <span>powered by</span> <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a></div><div class="busuanzi-count"><script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span class="post-meta-item" id="busuanzi_container_site_uv" style="display:none"><span class="post-meta-item-icon"><i class="fa fa-user"></i></span> <span class="site-uv" title="总访客量"><span>总访客量：</span><span id="busuanzi_value_site_uv"></span></span></span> <span class="post-meta-divider">|</span><span class="post-meta-item" id="busuanzi_container_site_pv" style="display:none"><span class="post-meta-item-icon"><i class="fa fa-eye"></i></span> <span class="site-pv" title="总访问量"><span>总访问量：</span><span id="busuanzi_value_site_pv"></span></span></span></div><script>
-  function leancloudSelector(url) {
-    url = encodeURI(url);
-    return document.getElementById(url).querySelector('.leancloud-visitors-count');
-  }
-  if (CONFIG.page.isPost) {
-    function addCount(Counter) {
-      var visitors = document.querySelector('.leancloud_visitors');
-      var url = decodeURI(visitors.getAttribute('id'));
-      var title = visitors.getAttribute('data-flag-title');
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head prefix="og: https://ogp.me/ns#">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  
+  <title>Git学习笔记之搭建私服 - 黄阿信</title>
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    <link rel='manifest' href='/manifest.json'>
+  
 
-      Counter('get', `/classes/Counter?where=${JSON.stringify({ url })}`)
-        .then(response => response.json())
-        .then(({ results }) => {
-          if (results.length > 0) {
-            var counter = results[0];
-            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
-              .then(response => response.json())
-              .then(() => {
-                leancloudSelector(url).innerText = counter.time + 1;
-              })
-              .catch(error => {
-                console.error('Failed to save visitor count', error);
-              })
-          } else {
-              Counter('post', '/classes/Counter', { title: title, url: url, time: 1 })
-                .then(response => response.json())
-                .then(() => {
-                  leancloudSelector(url).innerText = 1;
-                })
-                .catch(error => {
-                  console.error('Failed to create', error);
-                });
-          }
-        })
-        .catch(error => {
-          console.error('LeanCloud Counter Error', error);
-        });
-    }
-  } else {
-    function showTime(Counter) {
-      var visitors = document.querySelectorAll('.leancloud_visitors');
-      var entries = [...visitors].map(element => {
-        return decodeURI(element.getAttribute('id'));
-      });
+  
+  
+  
+  <meta property="og:title" content="Git学习笔记之搭建私服 - 黄阿信" />
+  
+  <meta property="og:type" content="article" />
+  
+  <meta property="og:url" content="https://yalexin.gitee.io/2022/02/12/Git%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%8D/index.html" />
+  
+  <meta property="og:image" content="/favicon.png" />
+  
+  <meta property="og:article:published_time" content="2022-02-12T04:16:17.000Z" />
+  
+  <meta property="og:article:author" content="YaleXin" />
+  
+  
 
-      Counter('get', `/classes/Counter?where=${JSON.stringify({ url: { '$in': entries } })}`)
-        .then(response => response.json())
-        .then(({ results }) => {
-          if (results.length === 0) {
-            document.querySelectorAll('.leancloud_visitors .leancloud-visitors-count').forEach(element => {
-              element.innerText = 0;
-            });
-            return;
-          }
-          for (let item of results) {
-            let { url, time } = item;
-            leancloudSelector(url).innerText = time;
-          }
-          for (let url of entries) {
-            var element = leancloudSelector(url);
-            if (element.innerText == '') {
-              element.innerText = 0;
-            }
-          }
-        })
-        .catch(error => {
-          console.error('LeanCloud Counter Error', error);
-        });
-    }
-  }
+  
+<link rel="stylesheet" href="/css/var.css">
 
-  fetch('https://app-router.leancloud.cn/2/route?appId=CjaKbRAizU0DNH3B4Hllhtwp-gzGzoHsz')
-    .then(response => response.json())
-    .then(({ api_server }) => {
-      var Counter = (method, url, data) => {
-        return fetch(`https://${api_server}/1.1${url}`, {
-          method: method,
-          headers: {
-            'X-LC-Id'     : 'CjaKbRAizU0DNH3B4Hllhtwp-gzGzoHsz',
-            'X-LC-Key'    : 'B61jy2Xnwe90oJ2dtUeF6HHU',
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data)
-        });
-      };
-      if (CONFIG.page.isPost) {
-        if (CONFIG.hostname !== location.hostname) return;
-        addCount(Counter);
-      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
-        showTime(Counter);
-      }
-    });
-  </script></div></footer></div><script src="/lib/anime.min.js"></script><script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script><script src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script><script src="/lib/velocity/velocity.min.js"></script><script src="/lib/velocity/velocity.ui.min.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/pisces.js"></script><script src="/js/next-boot.js"></script><script>!function(){var t=document.createElement("script"),e=window.location.protocol.split(":")[0];t.src="https"===e?"https://zz.bdstatic.com/linksubmit/push.js":"http://push.zhanzhang.baidu.com/push.js";var s=document.getElementsByTagName("script")[0];s.parentNode.insertBefore(t,s)}()</script></body></html>
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+<link rel="stylesheet" href="/css/typography.css">
+
+  
+<link rel="stylesheet" href="/css/code-highlighting.css">
+
+  
+<link rel="stylesheet" href="/css/components.css">
+
+  
+<link rel="stylesheet" href="/css/nav.css">
+
+  
+<link rel="stylesheet" href="/css/paginator.css">
+
+  
+<link rel="stylesheet" href="/css/footer.css">
+
+  
+<link rel="stylesheet" href="/css/post-list.css">
+
+  
+  
+<link rel="stylesheet" href="/css/rainbow-banner.css">
+
+  
+  
+  
+<link rel="stylesheet" href="/css/toc.css">
+
+  
+  
+  
+  
+  
+<link rel="stylesheet" href="/css/post.css">
+
+  
+  
+  
+  
+  
+
+  
+</head>
+    <body
+        data-color-scheme="auto"
+        data-uppercase-categories="true"
+        
+        data-rainbow-banner="true"
+        data-rainbow-banner-shown="auto"
+        data-rainbow-banner-month="6"
+        data-rainbow-banner-colors="#e50000,#ff8d00,#ffee00,#008121,#004cff,#760188"
+        
+        data-config-root="/"
+        
+        data-toc="true"
+        data-toc-max-depth="2"
+        
+        
+    >
+        <nav id="theme-nav">
+    <div class="inner">
+        <a class="title" href="/">Blog</a>
+        <div class="nav-arrow"></div>
+        <div class="nav-items">
+            <a class="nav-item nav-item-home" href="/">Home</a>
+            
+            
+            <a class="nav-item" href="/archives">Archives</a>
+            
+            
+            
+            <a class="nav-item" href="/friends">Friends</a>
+            
+            
+            
+            <a class="nav-item" href="/projects">Projects</a>
+            
+            
+            
+            <a class="nav-item" href="/about">About</a>
+            
+            
+            
+            <a class="nav-item nav-item-github nav-item-icon" href="https://github.com/MrWillCom" target="_blank" aria-label="GitHub">&nbsp;</a>
+            
+            
+            
+            <a class="nav-item nav-item-codepen nav-item-icon" href="https://codepen.io/mrwillcom" target="_blank" aria-label="CodePen">&nbsp;</a>
+            
+            
+            
+            <a class="nav-item nav-item-patreon nav-item-icon" href="https://www.patreon.com/MrWillCom" target="_blank" aria-label="Patreon">&nbsp;</a>
+            
+            
+            
+            <a class="nav-item nav-item-mastodon nav-item-icon" href="https://noc.social/@MrWillCom" target="_blank" aria-label="Mastodon">&nbsp;</a>
+            
+            
+            
+            <a class="nav-item nav-item-discord nav-item-icon" href="https://discord.gg/UKuFDjcfY8" target="_blank" aria-label="Discord">&nbsp;</a>
+            
+            
+            
+            <a class="nav-item nav-item-search nav-item-icon" href="/search" target="_blank" aria-label="Search">&nbsp;</a>
+            
+            
+        </div>
+    </div>
+</nav>
+        
+<article class="post">
+    <div class="meta">
+        
+        <div class="categories text-uppercase">
+        
+            <a href="/categories/笔记/">笔记</a>
+        
+        </div>
+        
+
+        
+        <div class="date" id="date">
+            <span>February</span>
+            <span>12,</span>
+            <span>2022</span>
+        </div>
+        
+
+        <h1 class="title">Git学习笔记之搭建私服</h1>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="content">
+        <p>书接上回，本文主要介绍如何搭建属于你自己的<code>Git</code>私服。</p>
+<a id="more"></a>
+
+<p>我们之前演示了如何使用第三方代码托管平台<code>Github</code>来作为我们远端仓库，不过虽然之前<code>Github</code>允许建立私有仓库，但是免费的之余还是有一些限制诸如协作者人数不能过多，况且有的时候我们视代码如命脉，不想开源又想使用<code>Git</code>怎么办？答案就是搭建私服！搭建私服有几种方式，下面介绍一种比较流行的，但是比较复杂。</p>
+<p>前提提示：我的<code>Linux</code>系统是<code>centos7</code>。</p>
+<h2 id="安装GitLab"><a href="#安装GitLab" class="headerlink" title="安装GitLab"></a>安装GitLab</h2><p>安装前提依赖：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install -y curl policycoreutils-python openssh-server perl</span><br></pre></td></tr></table></figure>
+
+<p> 在系统防火墙中打开 <code>HTTP</code>、<code>HTTPS</code>和 <code>SSH</code>访问 （可选，不设置则只能从本地网络访问 ）</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl enable sshd</span><br><span class="line">sudo systemctl start sshd</span><br><span class="line">sudo firewall-cmd --permanent --add-service=http</span><br><span class="line">sudo systemctl reload firewalld</span><br></pre></td></tr></table></figure>
+
+<p> 安装 <code>Postfix</code> 以发送电子邮件通知 （可选）</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install postfix</span><br><span class="line">sudo systemctl enable postfix</span><br><span class="line">sudo systemctl start postfix</span><br></pre></td></tr></table></figure>
+
+<p>下载<code>GitLab</code>安装包</p>
+<p>到网站<a href="https://packages.gitlab.com/gitlab/gitlab-ce/下载合适的包" target="_blank" rel="noopener">https://packages.gitlab.com/gitlab/gitlab-ce/下载合适的包</a></p>
+<blockquote>
+<p>gitlab-ce是社区版，免费的<br>gitlab-ee是企业版，收费的</p>
+</blockquote>
+<p>找到合适的包后页面往下滑找到<code>wget</code>的地址复制下来到服务器中下载：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget --content-disposition https://packages.gitlab.com/gitlab/gitlab-ce/packages/el/7/gitlab-ce-14.7.2-ce.0.el7.x86_64.rpm/download.rpm</span><br></pre></td></tr></table></figure>
+
+<p>然后开始安装：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo rpm -Uvh gitlab-ce-14.7.2-ce.0.el7.x86_64.rpm</span><br></pre></td></tr></table></figure>
+
+<p> 安装成功后的提示:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Thank you for installing GitLab! GitLab was unable to detect a valid hostname for your instance. Please configure a URL for your GitLab instance by setting &#96;external_url&#96; configuration in &#x2F;etc&#x2F;gitlab&#x2F;gitlab.rb file. Then, you can start your GitLab instance by running the following command:  sudo gitlab-ctl reconfigure</span><br></pre></td></tr></table></figure>
+
+<p>按照提示，打开<code>/etc/gitlab/gitlab.rb</code>文件，搜索<code>external_url</code>选项，设置为<code>ip</code>地址（例如我的为<a href="http://124.222.8.87:81/）或者域名地址" target="_blank" rel="noopener">http://124.222.8.87:81/）或者域名地址</a></p>
+<p>然后重新配置：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gitlab-ctl reconfigure</span><br></pre></td></tr></table></figure>
+
+<p>然后开启<code>gitlab</code></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gitlab-ctl start</span><br></pre></td></tr></table></figure>
+
+<p>然后访问之前设置的<code>ip</code>地址</p>
+<p><img src="https://qiniu.yalexin.top/gitlab-0.png" alt></p>
+<p> 用户名为<code>root</code>。初始密码是在<code>/etc/gitlab/initial_root_password</code>，不过该密码在执行<code>reconfigreure</code>后的24小时就会被删除，所以记性不好的话建议立即改密码。</p>
+<blockquote>
+<p>如果无法访问，则可能是没有开放防火墙端口</p>
+<p>依次执行以下命令即可：</p>
+<p><code>firewall-cmd --zone=public --list-ports</code> #查看开放端口<br><code>firewall-cmd --zone=public --add-port=81/tcp --permanent</code> #开放81端口<br><code>firewall-cmd --reload</code>   #重新加载配置<br>#如果不需要，也可以直接关闭防火墙，前提是不怕被运维的追着打！<br><code>systemctl stop firewalld.service</code></p>
+</blockquote>
+<p><strong>强烈建议服务器运行内存在2GB以上！！</strong></p>
+<p>我的学生机真的只有2BG内存，还得开个4GB的虚拟内存才勉勉强强运行起来。</p>
+<h2 id="注册并使用GitLab"><a href="#注册并使用GitLab" class="headerlink" title="注册并使用GitLab"></a>注册并使用GitLab</h2><p>我发现2GB实在是不能用，只好斥巨资几块钱在华为云上买了弹性计算型主机~~</p>
+<p>登录后台以后，可以自行选择更改语言为简体中文，也可以使用默认的。</p>
+<p>接下来就像使用<code>GitHub</code>一样啦！</p>
+<p>先注册普通用户，因为你总不可能所有人都使用<code>root</code>账户吧！</p>
+<p><img src="https://qiniu.yalexin.top/gitlab-1.png" alt></p>
+<p>注册好以后，管理员后台审核即可。</p>
+<p><img src="https://qiniu.yalexin.top/gitlab-2.png" alt></p>
+<p><img src="https://qiniu.yalexin.top/gitlab-4.png" alt></p>
+<p>通过以后，该普通用户就可以登录了。</p>
+<p>当然了，为了能够正常使用，还<strong>需要添加<code>SSH</code>公钥。</strong></p>
+
+    </div>
+
+    
+    <div class="about">
+        <h1>About this Post</h1>
+        <div class="details">
+            <p>This post is written by YaleXin, licensed under <a href="https://creativecommons.org/licenses/by-nc/4.0" target="_blank" rel="noopener">CC BY-NC 4.0</a>.</p>
+        </div>
+        
+        <p class="tags">
+            
+            <i class="icon"></i>
+            <a href="/tags/命令行/" class="tag">#命令行</a><a href="/tags/Git/" class="tag">#Git</a><a href="/tags/学习/" class="tag">#学习</a>
+        </p>
+        
+    </div>
+    
+
+    <div class="container post-prev-next">
+        
+        <a href="/2022/03/25/numpy%E5%AE%9E%E7%8E%B0%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92%E6%A8%A1%E5%9E%8B/" class="next">
+            <div>
+                <div class="text">
+                    <p class="label">Next</p>
+                    <h3 class="title">numpy实现线性回归模型</h3>
+                </div>
+            </div>
+        </a>
+        
+        
+        <a href="/2022/02/11/Git%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8BGit%E9%85%8D%E7%BD%AE/" class="prev">
+            <div>
+                <div class="text">
+                    <p class="label">Previous</p>
+                    <h3 class="title">Git学习笔记之Git配置</>
+                </div>
+            </div>
+        </a>
+        
+    </div>
+
+    
+        
+        
+    
+</article>
+
+        <footer>
+    <div class="inner">
+        <div class="links">
+            
+            <div class="group">
+                <h2 class="title">Blog</h2>
+                
+                <a href="/" class="item">Blog</a>
+                
+                <a href="/archives" class="item">Archives</a>
+                
+                <a href="/tags" class="item">Tags</a>
+                
+                <a href="/categories" class="item">Categories</a>
+                
+                <a href="/search" class="item">Search</a>
+                
+                <a href="/friends" class="item">Friends</a>
+                
+                <a href="/projects" class="item">Projects</a>
+                
+                <a href="/resume" class="item">Resume</a>
+                
+                <a href="/about" class="item">About</a>
+                
+                <a href="/atom.xml" class="item">RSS</a>
+                
+            </div>
+            
+            <div class="group">
+                <h2 class="title">Projects</h2>
+                
+                <a href="https://github.com/MrWillCom/rsa-cli" target="_blank" rel="noopener" class="item">RSA CLI</a>
+                
+                <a href="https://github.com/MrWillCom/hexo-theme-cupertino" target="_blank" rel="noopener" class="item">Hexo Theme Cupertino</a>
+                
+                <a href="https://github.com/MrWillCom/a-calendar" target="_blank" rel="noopener" class="item">A Calendar</a>
+                
+                <a href="https://github.com/MrWillCom/auto-mirroring-bucket" target="_blank" rel="noopener" class="item">Auto Mirroring Bucket</a>
+                
+            </div>
+            
+            <div class="group">
+                <h2 class="title">Me</h2>
+                
+                <a href="https://github.com/MrWillCom" target="_blank" rel="noopener" class="item">GitHub</a>
+                
+                <a href="https://codepen.io/mrwillcom" target="_blank" rel="noopener" class="item">CodePen</a>
+                
+                <a href="https://www.patreon.com/MrWillCom" target="_blank" rel="noopener" class="item">Patreon</a>
+                
+                <a href="https://noc.social/@MrWillCom" target="_blank" rel="noopener" class="item">Mastodon</a>
+                
+                <a href="https://discord.gg/UKuFDjcfY8" target="_blank" rel="noopener" class="item">Discord</a>
+                
+                <a href="mailto:mr.will.com@outlook.com" class="item">Email</a>
+                
+            </div>
+            
+        </div>
+        <span>&copy; 2024 YaleXin<br>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> </span>
+        
+        
+            <br>
+            <div class="color-scheme-toggle" role="radiogroup" id="theme-color-scheme-toggle">
+                <label>
+                    <input type="radio" value="light">
+                    <span>Light</span>
+                </label>
+                <label>
+                    <input type="radio" value="dark">
+                    <span>Dark</span>
+                </label>
+                <label>
+                    <input type="radio" value="auto">
+                    <span>Auto</span>
+                </label>
+            </div>
+        
+    </div>
+</footer>
+
+
+        
+<script src="/js/main.js"></script>
+
+        
+        
+        
+
+        
+        <script src="https://unpkg.com/scrollreveal"></script>
+        <script>
+            window.addEventListener('load', () => {
+                ScrollReveal({ delay: 250, reset: true, easing: 'cubic-bezier(0, 0, 0, 1)' })
+                ScrollReveal().reveal('.post-list-item .cover-img img')
+                ScrollReveal().reveal('.post-list-item, .card, .content p img, .content .block-large img', { distance: '60px', origin: 'bottom', duration: 800 })
+            })
+        </script>
+        
+    </body>
+</html>
