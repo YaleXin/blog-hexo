@@ -1,6 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Django一些学习笔记</title>
+    <url>/2024/03/09/Django%E4%B8%80%E4%BA%9B%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<h2 id="模型转dict"><a href="#模型转dict" class="headerlink" title="模型转dict"></a>模型转dict</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 获取所有的Dataset对象的QuerySet</span></span><br><span class="line">dataset_all = Dataset.objects.all()</span><br><span class="line"><span class="comment"># 使用model_to_dict将每个对象转换为字典</span></span><br><span class="line">dataset_all_dicts = [model_to_dict(obj) <span class="keyword">for</span> obj <span class="keyword">in</span> dataset_all]</span><br></pre></td></tr></table></figure>
+
+<p>调用<code>model_to_dict</code>的时候我们还可以指定包含或者排除的字段：<a id="more"></a></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">model_to_dict(obj, fields=[<span class="string">"a"</span>, <span class="string">"b"</span>], exclude=[<span class="string">"c"</span>])</span><br></pre></td></tr></table></figure>
+
+<p>如果我们还想在转换过程添加其他比较复杂的转换，我们可以直接手写一个，例如我想把时间类型的属性同时转换成人类可阅读的字符串和时间戳：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 自定义的用于转dict,添加一个将时间转为时间戳的功能</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">my_model_to_dict</span><span class="params">(instance, fields=None, exclude=None)</span>:</span></span><br><span class="line">    opts = instance._meta</span><br><span class="line">    data = &#123;&#125;</span><br><span class="line">    <span class="keyword">for</span> f <span class="keyword">in</span> opts.fields + opts.many_to_many:</span><br><span class="line">        <span class="keyword">if</span> fields <span class="keyword">and</span> f.name <span class="keyword">not</span> <span class="keyword">in</span> fields:</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line">        <span class="keyword">if</span> exclude <span class="keyword">and</span> f.name <span class="keyword">in</span> exclude:</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line">        <span class="keyword">if</span> isinstance(f, DateTimeField):</span><br><span class="line">            value = f.value_from_object(instance).timestamp()</span><br><span class="line">            data[<span class="string">f"<span class="subst">&#123;f.name&#125;</span>_timestamp"</span>] = value</span><br><span class="line">        data[f.name] = f.value_from_object(instance)</span><br><span class="line">    <span class="keyword">return</span> data</span><br></pre></td></tr></table></figure>
+
+<h2 id="聚合"><a href="#聚合" class="headerlink" title="聚合"></a>聚合</h2><p>有时候我们需要根据一组对象聚合后才能得到我们想要的结果，例如有一批学生成绩，我们要获取到最值，可以通过聚合操作完成：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">max_score = score_objects.aggregate(max_score=Max(<span class="string">"filed_name"</span>))[<span class="string">'max_score'</span>]</span><br><span class="line">min_score = score_objects.aggregate(Min(<span class="string">"filed_name"</span>))</span><br></pre></td></tr></table></figure>
+
+<p>推荐使用第一行，因为聚合时候，如果我们不指定新的一个新的属性名（也称“新列”），那么<code>Django</code>会默认给新列一个新的属性名，假如最大值是99，最小值是60，则</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">max_score = <span class="number">99</span></span><br><span class="line">min_score = &#123; <span class="string">"filed_name__min"</span> : <span class="number">60</span> &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="去重"><a href="#去重" class="headerlink" title="去重"></a>去重</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">Model.objects.values(<span class="string">"distinct_filed"</span>).distinct().all()</span><br></pre></td></tr></table></figure>
+
+<h2 id="分组并组内运算"><a href="#分组并组内运算" class="headerlink" title="分组并组内运算"></a>分组并组内运算</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 根据 IP 分组，然后计算组内的最早最晚时间</span></span><br><span class="line">result = Model.objects.values(<span class="string">'ip'</span>).annotate(</span><br><span class="line">    latest_time=Max(<span class="string">'create_time'</span>),</span><br><span class="line">    earliest_time=Min(<span class="string">'create_time'</span>)</span><br><span class="line">).values(<span class="string">'ip'</span>, <span class="string">'latest_time'</span>, <span class="string">'earliest_time'</span>).all()</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="返回文件（以返回压缩文件为例）"><a href="#返回文件（以返回压缩文件为例）" class="headerlink" title="返回文件（以返回压缩文件为例）"></a>返回文件（以返回压缩文件为例）</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 打开zip文件，并读取其内容</span></span><br><span class="line"><span class="keyword">with</span> open(zip_file_path, <span class="string">'rb'</span>) <span class="keyword">as</span> zip_file:</span><br><span class="line">    response = HttpResponse(zip_file.read(), content_type=<span class="string">'application/zip'</span>)</span><br><span class="line"><span class="comment"># 设置响应头，指定文件名</span></span><br><span class="line">response[<span class="string">'Content-Disposition'</span>] = <span class="string">f'attachment; filename=<span class="subst">&#123;os.path.basename(zip_file_path)&#125;</span>'</span></span><br><span class="line"><span class="keyword">return</span> response</span><br></pre></td></tr></table></figure>
+
+<h2 id="读取客户端上传的文件"><a href="#读取客户端上传的文件" class="headerlink" title="读取客户端上传的文件"></a>读取客户端上传的文件</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">uploaded_file = request.FILES.get(<span class="string">"datasetFile"</span>)</span><br><span class="line"><span class="comment"># 创建一个临时目录用于存放解压缩后的文件</span></span><br><span class="line">temp_dir = os.path.join(<span class="string">'data'</span>, <span class="string">'temp_dir'</span>)</span><br><span class="line">os.makedirs(temp_dir, exist_ok=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将上传的文件保存到临时目录</span></span><br><span class="line">uploaded_file_path = os.path.join(temp_dir, uploaded_file.name)</span><br><span class="line"><span class="keyword">with</span> open(uploaded_file_path, <span class="string">'wb'</span>) <span class="keyword">as</span> destination:</span><br><span class="line">    <span class="keyword">for</span> chunk <span class="keyword">in</span> uploaded_file.chunks():</span><br><span class="line">        destination.write(chunk)</span><br></pre></td></tr></table></figure>
+
+<h2 id="事务"><a href="#事务" class="headerlink" title="事务"></a>事务</h2><p>通常有两种用法：</p>
+<p>一种是加在<code>view</code>函数上面，这样整个<code>reuqest</code>都会在事务中：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">@transaction.atomic</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">hello_view</span><span class="params">(request)</span>:</span></span><br><span class="line">    <span class="comment"># 数据库操作</span></span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+<p>也可以在需要访问数据库的代码处使用事务包裹 ，实现精准把控：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">hello_view</span><span class="params">(request)</span>:</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">with</span> transaction.atomic():</span><br><span class="line">    <span class="comment"># 数据库操作    </span></span><br><span class="line">        <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="未完待续-，持续更新"><a href="#未完待续-，持续更新" class="headerlink" title="未完待续 ，持续更新"></a>未完待续 ，持续更新</h2>]]></content>
+      <categories>
+        <category>笔记</category>
+      </categories>
+      <tags>
+        <tag>Django</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>手撕红黑树！使用C语言带你实现一个平衡搜索树【正文】</title>
     <url>/2024/01/14/%E6%89%8B%E6%92%95%E7%BA%A2%E9%BB%91%E6%A0%91%EF%BC%81%E4%BD%BF%E7%94%A8C%E8%AF%AD%E8%A8%80%E5%B8%A6%E4%BD%A0%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E5%B9%B3%E8%A1%A1%E6%90%9C%E7%B4%A2%E6%A0%91%E3%80%90%E6%AD%A3%E6%96%87%E3%80%91/</url>
     <content><![CDATA[<h2 id="认识红黑树"><a href="#认识红黑树" class="headerlink" title="认识红黑树"></a>认识红黑树</h2><p>上篇文章我们主要认识了二叉树搜索树，这篇文章正式介绍红黑树。</p>
@@ -3724,9 +3765,9 @@
         <category>笔记</category>
       </categories>
       <tags>
-        <tag>命令行</tag>
         <tag>Git</tag>
         <tag>学习</tag>
+        <tag>命令行</tag>
       </tags>
   </entry>
   <entry>
@@ -3792,9 +3833,9 @@
         <category>笔记</category>
       </categories>
       <tags>
-        <tag>命令行</tag>
         <tag>Git</tag>
         <tag>学习</tag>
+        <tag>命令行</tag>
       </tags>
   </entry>
   <entry>
@@ -3844,9 +3885,9 @@
         <category>笔记</category>
       </categories>
       <tags>
-        <tag>命令行</tag>
         <tag>Git</tag>
         <tag>学习</tag>
+        <tag>命令行</tag>
       </tags>
   </entry>
   <entry>
@@ -3916,9 +3957,9 @@
         <category>笔记</category>
       </categories>
       <tags>
-        <tag>命令行</tag>
         <tag>Git</tag>
         <tag>学习</tag>
+        <tag>命令行</tag>
       </tags>
   </entry>
   <entry>
@@ -4082,9 +4123,9 @@
         <category>笔记</category>
       </categories>
       <tags>
-        <tag>命令行</tag>
         <tag>Git</tag>
         <tag>学习</tag>
+        <tag>命令行</tag>
       </tags>
   </entry>
   <entry>
@@ -4230,9 +4271,9 @@
         <category>笔记</category>
       </categories>
       <tags>
-        <tag>命令行</tag>
         <tag>Git</tag>
         <tag>学习</tag>
+        <tag>命令行</tag>
       </tags>
   </entry>
   <entry>
@@ -4282,9 +4323,9 @@
         <category>笔记</category>
       </categories>
       <tags>
-        <tag>命令行</tag>
         <tag>Git</tag>
         <tag>学习</tag>
+        <tag>命令行</tag>
       </tags>
   </entry>
   <entry>
@@ -8287,8 +8328,8 @@
         <category>Linux相关</category>
       </categories>
       <tags>
-        <tag>命令行</tag>
         <tag>学习</tag>
+        <tag>命令行</tag>
       </tags>
   </entry>
   <entry>
