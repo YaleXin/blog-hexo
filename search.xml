@@ -4,6 +4,25 @@
   
     
     <entry>
+      <title>关于我</title>
+      <link href="/2024/03/17/%E5%85%B3%E4%BA%8E%E6%88%91/"/>
+      <url>/2024/03/17/%E5%85%B3%E4%BA%8E%E6%88%91/</url>
+      
+        <content type="html"><![CDATA[<h2 id="教育背景"><a href="#教育背景" class="headerlink" title="教育背景"></a>教育背景</h2><p>目前广东某高校在读研究生，方向为区块链安全。<br>本科毕业于扬州大学，专业为计算机科学与技术。<a id="more"></a></p><h2 id="获奖荣誉："><a href="#获奖荣誉：" class="headerlink" title="获奖荣誉："></a>获奖荣誉：</h2><ul><li><p>2018 年度扬州大学“校长奖学金二等奖” </p></li><li><p>2019 年度扬州大学“校级优秀班干部”称号 </p></li><li><p>第 11 蓝桥杯江苏赛区 C/C++程序设计大学 A 组二等奖 </p></li><li><p>2019 年度国家励志奖学金 </p></li><li><p>第 12 届蓝桥杯国赛 C/C++程序设计大学 B 组二等奖 </p></li><li><p>第 14 届大学生计算机设计大赛国赛三等奖 </p></li><li><p>2020 年度扬州大学“校长奖学金二等奖” </p></li><li><p>2022 年扬州大学优秀毕业生 </p></li><li><p>两项软件著作权（第三作者） </p></li><li><p>学业三等奖学金 </p></li><li><p>方滨兴院士基金优秀贡献奖 </p></li><li><p>学业一等奖学金 </p></li><li><p>奇安信方班奖学金 </p></li><li><p>五项发明专利，其中一项实审阶段（学生一作），四项受理阶段（三项学生一作，一项学生二作） </p><h2 id="IT技能"><a href="#IT技能" class="headerlink" title="IT技能"></a>IT技能</h2></li><li><p>熟练掌握 Java 基本语法，了解 Spring、Spring Boot 框架。</p></li><li><p>熟悉掌握 Node.js 常用语法，熟悉 Vue 前端构建框架、Axios Http 库。</p></li><li><p>熟悉 python 的基本语法，了解 python 的常用库的使用方法</p></li></ul><h2 id="个人评价"><a href="#个人评价" class="headerlink" title="个人评价"></a>个人评价</h2><p>略微中二和社恐的少年，平常爱跑步和骑行。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 其他 </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>当我们要对100亿的数据排序，内存无法一次性装下数据时，怎么办？（附代码）</title>
       <link href="/2024/03/10/%E5%BD%93%E6%88%91%E4%BB%AC%E8%A6%81%E5%AF%B9100%E4%BA%BF%E7%9A%84%E6%95%B0%E6%8D%AE%E6%8E%92%E5%BA%8F%EF%BC%8C%E5%86%85%E5%AD%98%E6%97%A0%E6%B3%95%E4%B8%80%E6%AC%A1%E6%80%A7%E8%A3%85%E4%B8%8B%E6%95%B0%E6%8D%AE%E6%97%B6%EF%BC%8C%E6%80%8E%E4%B9%88%E5%8A%9E%EF%BC%9F%EF%BC%88%E9%99%84%E4%BB%A3%E7%A0%81%EF%BC%89/"/>
       <url>/2024/03/10/%E5%BD%93%E6%88%91%E4%BB%AC%E8%A6%81%E5%AF%B9100%E4%BA%BF%E7%9A%84%E6%95%B0%E6%8D%AE%E6%8E%92%E5%BA%8F%EF%BC%8C%E5%86%85%E5%AD%98%E6%97%A0%E6%B3%95%E4%B8%80%E6%AC%A1%E6%80%A7%E8%A3%85%E4%B8%8B%E6%95%B0%E6%8D%AE%E6%97%B6%EF%BC%8C%E6%80%8E%E4%B9%88%E5%8A%9E%EF%BC%9F%EF%BC%88%E9%99%84%E4%BB%A3%E7%A0%81%EF%BC%89/</url>
@@ -1153,11 +1172,11 @@
       
         <tags>
             
-            <tag> 命令行 </tag>
-            
             <tag> Git </tag>
             
             <tag> 学习 </tag>
+            
+            <tag> 命令行 </tag>
             
         </tags>
       
@@ -1182,11 +1201,11 @@
       
         <tags>
             
-            <tag> 命令行 </tag>
-            
             <tag> Git </tag>
             
             <tag> 学习 </tag>
+            
+            <tag> 命令行 </tag>
             
         </tags>
       
@@ -1211,11 +1230,11 @@
       
         <tags>
             
-            <tag> 命令行 </tag>
-            
             <tag> Git </tag>
             
             <tag> 学习 </tag>
+            
+            <tag> 命令行 </tag>
             
         </tags>
       
@@ -1240,11 +1259,11 @@
       
         <tags>
             
-            <tag> 命令行 </tag>
-            
             <tag> Git </tag>
             
             <tag> 学习 </tag>
+            
+            <tag> 命令行 </tag>
             
         </tags>
       
@@ -1269,11 +1288,11 @@
       
         <tags>
             
-            <tag> 命令行 </tag>
-            
             <tag> Git </tag>
             
             <tag> 学习 </tag>
+            
+            <tag> 命令行 </tag>
             
         </tags>
       
@@ -1298,11 +1317,11 @@
       
         <tags>
             
-            <tag> 命令行 </tag>
-            
             <tag> Git </tag>
             
             <tag> 学习 </tag>
+            
+            <tag> 命令行 </tag>
             
         </tags>
       
@@ -1327,11 +1346,11 @@
       
         <tags>
             
-            <tag> 命令行 </tag>
-            
             <tag> Git </tag>
             
             <tag> 学习 </tag>
+            
+            <tag> 命令行 </tag>
             
         </tags>
       
@@ -2831,9 +2850,9 @@
       
         <tags>
             
-            <tag> shell </tag>
-            
             <tag> 字符串 </tag>
+            
+            <tag> shell </tag>
             
         </tags>
       
@@ -3308,9 +3327,9 @@
       
         <tags>
             
-            <tag> 脚本 </tag>
-            
             <tag> 效率 </tag>
+            
+            <tag> 脚本 </tag>
             
         </tags>
       
@@ -3335,9 +3354,9 @@
       
         <tags>
             
-            <tag> 命令行 </tag>
-            
             <tag> 学习 </tag>
+            
+            <tag> 命令行 </tag>
             
         </tags>
       
@@ -3362,9 +3381,9 @@
       
         <tags>
             
-            <tag> 效率 </tag>
-            
             <tag> 分享 </tag>
+            
+            <tag> 效率 </tag>
             
             <tag> 工具 </tag>
             
